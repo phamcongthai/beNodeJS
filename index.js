@@ -39,11 +39,12 @@ const routeClient = require('./routes/client/index.route');
 const routeAdmin = require('./routes/admin/index.route');
 
 // Cấu hình thư mục public
-app.use(express.static("public"));
+//Nhưng khi deploy online thì nó sẽ không hiểu public là gì => phải dùng _dirname
+app.use(express.static(`${__dirname}/public`));
 
 // Cấu hình pug
 app.set('view engine', 'pug');
-app.set('views', './views');
+app.set('views', `${__dirname}/views`);
 
 // Lấy route
 routeClient(app);
