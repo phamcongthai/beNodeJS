@@ -1,0 +1,50 @@
+header {
+  color: rebeccapurple;
+  transition: color 0.3s ease-in-out;
+}
+
+header:hover {
+  color: darkorange;
+}
+
+.footer {
+  background-color: black;
+  color: white;
+  text-align: center;
+  padding: 10px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.footer:hover {
+  background-color: #333;
+}
+
+.product-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.product-item {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  width: calc(25% - 15px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.product-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.inner-image img {
+  width: 100px;
+  height: auto;
+  object-fit: cover;
+}

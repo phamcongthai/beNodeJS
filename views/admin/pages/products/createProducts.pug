@@ -1,0 +1,45 @@
+extends ../../layouts/default.pug
+include ../../mixin/flash.pug
+block main
+    h1.mb-4 Thêm mới sản phẩm
+    +alert-error(5000)
+    form#form-create-product(action="/admin/products/create" method="POST" enctype="multipart/form-data")
+        div.form-group
+            label(for="title") Tiêu đề
+            input#title.form-control(type="text" name="title" required)
+
+        div.form-group
+            label(for="desc") Mô tả
+            textarea#desc.form-control(name="description" rows="5")
+
+        div.form-group
+            label(for="price") Giá
+            input#price.form-control(type="number" name="price" value="0" min="0")
+
+        div.form-group
+            label(for="discount") % Giảm giá
+            input#discount.form-control(type="number" name="discountPercentage" value="0" min="0")
+
+        div.form-group
+            label(for="stock") Số lượng
+            input#stock.form-control(type="number" name="stock" value="0" min="0")
+
+        div.form-group
+            label(for="image") Ảnh
+            input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" input-upload-img)
+            img(src="" alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+        div.form-group
+            label(for="position") Vị trí
+            input#position.form-control(type="number" name="position" placeholder="Tự động tăng" min="1")
+
+        div.form-group
+            label Trạng thái
+            div
+                input#active(type="radio" name="status" value="active" checked)
+                label(for="active") Hoạt động
+                input#inactive(type="radio" name="status" value="inactive")
+                label(for="inactive") Dừng hoạt động
+
+        button.btn.btn-primary(type="submit") Tạo mới
+
+    script(src="/admin/js/script.js")
