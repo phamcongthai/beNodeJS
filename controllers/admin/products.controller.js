@@ -153,11 +153,7 @@ module.exports.createProductsBE = async (req, res) => {
     }
     // console.log(req.file); có thể lấy ra được file bằng req.file 
     //Xử lí cho phần ảnh :
-    //Mặc định đường dẫn ảnh có dạng : /uploads/+chuỗi filename.
-    const fileImg = req.file;
-    if (fileImg) {
-        req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
+    //Phần hình ảnh đã được edit bên router
     const product = new ProductsModel(req.body);
     await product.save();
     res.redirect('/admin/products');
@@ -190,10 +186,7 @@ module.exports.editProductBE = async (req, res) => {
     req.body.position = parseInt(req.body.position);
     console.log(req.body);
     const id = req.params.id;
-    if(req.file){
-        req.body.thumbnail = `/uploads/${req.file.filename}`
-        console.log(req.body.thumbnail);
-    }
+    //Phần hình ảnh đã được edit bên router
    try {
     await ProductsModel.updateOne({_id : id}, req.body);
    } catch (error) {
