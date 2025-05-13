@@ -1,27 +1,46 @@
 extends ../../layouts/default.pug
 
 block main
-  .container.my-3
-    .row
-      .col-12
-        if (product.title)
-          h1(class="mb-4") #{product.title}
+  .container.my-5
+    .row.justify-content-center
+      .col-lg-8
+        .card.shadow-lg.rounded-3
+          .card-body
+            .row
+              .col-md-4.mb-3
+                if (product.thumbnail)
+                  img(src=product.thumbnail, alt=product.title, class="img-fluid rounded")
+                else
+                  img(src="/images/no-image.png", alt="No Image", class="img-fluid rounded")
 
-        if (product.price)
-          div(class="mb-4") Giá: <b>#{product.price}$</b>
+              .col-md-8
+                if (product.title)
+                  h2.mb-3.text-primary #{product.title}
 
-        if (product.discountPercentage)
-          div(class="mb-4") Giảm giá: <b>#{product.discountPercentage}%</b>
+                ul.list-unstyled
+                  if (product.price)
+                    li.mb-2
+                      span.fw-bold Giá: 
+                      | #{product.price}$
+                  
+                  if (product.discountPercentage)
+                    li.mb-2
+                      span.fw-bold Giảm giá: 
+                      | #{product.discountPercentage}%
+                  
+                  if (product.stock)
+                    li.mb-2
+                      span.fw-bold Còn lại: 
+                      | #{product.stock}
 
-        if (product.stock)
-          div(class="mb-4") Còn lại: <b>#{product.stock}</b>
+                form(method="POST", action=`/cart/add/${product.id}`)
+                  .mb-3
+                    label.form-label(for="quantity") Số lượng:
+                    input#quantity.form-control(type="number", name="quantity", value="1", min="1", max=product.stock, required)
 
-        if (product.thumbnail)
-          div(class="mb-4")
-            img(src=product.thumbnail style="width: 100px")
+                  button.btn.btn-success(type="submit") Thêm vào giỏ hàng
 
-        if (product.description)
-          div(class="mb-4") Mô tả: <b>#{product.description}</b>
-
-        if (product.createdAt)
-          div(class="mb-4") Ngày tạo: <b>#{new Date(product.createdAt).toLocaleString()}</b>
+            if (product.description)
+              hr
+              h5.mt-4.mb-2.text-secondary Mô tả sản phẩm
+              p.lead !{product.description}

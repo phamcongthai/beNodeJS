@@ -3,6 +3,8 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
 const flash = require('express-flash');
+const moment = require("moment");
+var path = require('path');//Đi kèm với tiny mce
 //Cấu hình slug :
 var slug = require('mongoose-slug-updater');
 //Cài multer để tải ảnh lên từ máy :
@@ -37,7 +39,9 @@ const port = process.env.PORT;
 // Import routes
 const routeClient = require('./routes/client/index.route');
 const routeAdmin = require('./routes/admin/index.route');
-
+//
+//Cấu hình tiny MCE :
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 // Cấu hình thư mục public
 //Nhưng khi deploy online thì nó sẽ không hiểu public là gì => phải dùng _dirname
 app.use(express.static(`${__dirname}/public`));
@@ -49,7 +53,8 @@ app.set('views', `${__dirname}/views`);
 // Lấy route
 routeClient(app);
 routeAdmin(app);
-
+//Cấu hình moment :
+app.locals.moment = moment;
 // Cấu hình mongoose
 const database = require("./config/database.config");
 database.connect();

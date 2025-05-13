@@ -1,0 +1,73 @@
+mixin tableTree(items, level = 1)
+  each item, index in items
+    - const prefix = Array(level + 1).join('-- ')
+    tr
+      td
+        input(type="checkbox" id=`${item._id}` name="idCategory")
+
+      td= index + 1
+
+      td
+        if item.thumbnail
+          img(src=item.thumbnail, alt=item.title, width="100px", height="auto")
+        else
+          span Không có ảnh
+
+      td= `${prefix}${item.title}`
+
+      td
+        input(
+          type="number"
+          value=item.position
+          style="width: 60px; padding: 4px; border-radius: 4px; border: 1px solid #ccc;"
+          min="1"
+          name="position"
+        )
+
+      td
+        if item.status === 'active'
+          button(
+            class="badge badge-success"
+            data-status=`${item.status}`
+            data-id=`${item._id}`
+            handle-status-category
+            style="background-color: #28a745; color: white; border: none; padding: 4px 8px; border-radius: 12px;"
+          )
+            | Hoạt động
+        else
+          button(
+            class="badge badge-danger"
+            data-status=`${item.status}`
+            data-id=`${item._id}`
+            handle-status-category
+            style="background-color: #dc3545; color: white; border: none; padding: 4px 8px; border-radius: 12px;"
+          )
+            | Không hoạt động
+
+      td
+        button(
+          class="btn btn-success btn-sm"
+          id=`${item._id}`
+          button-detail
+          style="background-color: #28a745; color: white; padding: 4px 8px; border: none; border-radius: 4px;"
+        )
+          | Chi tiết
+        if(currentRole.permissions.includes("products-category_edit"))
+          button(
+            class="btn btn-warning btn-sm ml-1"
+            id=`${item._id}`
+            button-edit-category
+            style="background-color: #ffc107; color: black; padding: 4px 8px; border: none; border-radius: 4px; margin-left: 5px;"
+          )
+            | Sửa
+        if(currentRole.permissions.includes("products-category_delete"))
+          button(
+            class="btn btn-danger btn-sm ml-1"
+            id=`${item._id}`
+            button-del
+            style="background-color: #dc3545; color: white; padding: 4px 8px; border: none; border-radius: 4px; margin-left: 5px;"
+          )
+            | Xóa
+
+    if item.children && item.children.length > 0
+      +tableTree(item.children, level + 1)

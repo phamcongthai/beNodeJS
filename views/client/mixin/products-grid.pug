@@ -1,0 +1,22 @@
+mixin products-grid(data, name)
+    h1 #{name}
+    .product-container
+        each item in data
+            .product-item
+                if item.isFeatured
+                    .featured-tag Nổi bật
+
+                .inner-image
+                    img(src=item.thumbnail, alt="img")
+                
+                .inner-content
+                    h3.inner-title
+                        a(href=`/products/detail/${item.slug}`) #{item.title}
+                    
+                    - const discountedPrice = (item.price * (1 - item.discountPercentage / 100)).toFixed(2)
+
+                    .inner-price
+                        span.inner-price-old(style="text-decoration: line-through; color: #888; margin-right: 8px;") #{item.price}$
+                        span.inner-price-new(style="color: red; font-weight: bold;") #{discountedPrice}$
+                    
+                    .inner-discount(style="color: green;") -#{item.discountPercentage}%

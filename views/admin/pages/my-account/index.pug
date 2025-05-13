@@ -1,0 +1,58 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.mt-5
+    .row.justify-content-center
+      .col-md-8
+        .card.shadow-lg
+          .card-body
+            .row.align-items-center.mb-4
+              .col-md-4.text-center
+                if currentUser.avatar
+                  img(
+                    src=currentUser.avatar,
+                    alt='Avatar',
+                    class='rounded-circle shadow',
+                    style='width: 150px; height: 150px; object-fit: cover;'
+                  )
+                else
+                  img(
+                    src='/admin/images/avatar.png',
+                    alt='Default Avatar',
+                    class='rounded-circle shadow',
+                    style='width: 150px; height: 150px; object-fit: cover;'
+                  )
+              .col-md-8
+                h3.mb-0= currentUser.fullName || 'Chưa cập nhật họ tên'
+                small.text-muted #{currentUser.email}
+
+            hr
+
+            dl.row
+              if currentUser.phone
+                dt.col-sm-4 Số điện thoại:
+                dd.col-sm-8= currentUser.phone
+
+              dt.col-sm-4 Email:
+              dd.col-sm-8= currentUser.email || 'Chưa có'
+
+              dt.col-sm-4 Trạng thái:
+              dd.col-sm-8
+                if currentUser.status === 'active'
+                  span.badge.bg-success Hoạt động
+                else
+                  span.badge.bg-danger Dừng hoạt động
+
+              if role && role.title
+                dt.col-sm-4 Quyền:
+                dd.col-sm-8
+                  span.badge.bg-info.text-dark= role.title
+
+              if currentUser.createdAt
+                dt.col-sm-4 Ngày tạo:
+                dd.col-sm-8= new Date(currentUser.createdAt).toLocaleDateString()
+
+            .mt-4.text-end
+              a.btn.btn-primary(href=`${prefixAdmin}/my-account/edit`)
+                i.fas.fa-edit.me-1
+                | Chỉnh sửa thông tin

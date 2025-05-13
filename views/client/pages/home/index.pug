@@ -1,4 +1,4 @@
 extends ../../layouts/default
-
+include ../../mixin/products-grid
 block main 
-    h1 Trang chủ 
+    +products-grid(FeaturedProducts, "Sản phẩm nổi bật")

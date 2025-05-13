@@ -1,0 +1,14 @@
+extends ../../layouts/default.pug
+
+block main
+  h1.mb-4 Thông tin nhóm quyền
+
+  .card
+    .card-body
+      .mb-3
+        strong Tên:
+        span.ml-2 #{roles.title}
+
+      .mb-3
+        strong Mô tả:
+        span.ml-2 #{roles.description}

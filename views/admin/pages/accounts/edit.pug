@@ -1,0 +1,44 @@
+extends ../../layouts/default
+
+block main
+  h1.mb-4 Chỉnh sửa tài khoản
+
+  form(action=`/admin/accounts/edit/${account._id}?_method=PATCH`, method="POST", enctype="multipart/form-data")
+    .form-group
+      label(for="fullName") Họ tên *
+      input#fullName.form-control(type="text", name="fullName", required, value=account.fullName)
+
+    .form-group
+      label(for="email") Email *
+      input#email.form-control(type="email", name="email", required, value=account.email)
+
+    .form-group
+      label(for="password") Mật khẩu (để trống nếu không đổi)
+      input#password.form-control(type="password", name="password")
+
+    .form-group
+      label(for="phone") Số điện thoại
+      input#phone.form-control(type="text", name="phone", value=account.phone)
+
+    .form-group
+      label(for="avatar") Avatar
+      input#avatar.form-control(type="file", name="avatar", accept="image/*", input-upload-img)
+      img(src=account.avatar, alt="avatar", style="width: 100px; height: 100px; border-radius: 5px;", img-upload)
+      
+
+    .form-group
+      label(for="role_id") Phân quyền
+      select#role_id.form-control(name="role_id")
+        each item in roles
+          option(value=item._id, selected=item._id.toString() === account.role_id.toString()) #{item.title}
+
+    .form-group
+      label Trạng thái
+      .form-check
+        input#active.form-check-input(type="radio", name="status", value="active", checked=account.status === 'active')
+        label.form-check-label(for="active") Hoạt động
+      .form-check
+        input#inactive.form-check-input(type="radio", name="status", value="inactive", checked=account.status === 'inactive')
+        label.form-check-label(for="inactive") Dừng hoạt động
+
+    button.btn.btn-primary(type="submit") Cập nhật

@@ -5,3 +5,7 @@ header.header
         .inner-logo
           a(href=`${prefixAdmin}/dashboard`) ADMIN
       .col-9
+        div.d-flex.justify-content-end
+          a(href=`${prefixAdmin}/my-account`, class="btn btn-primary btn-sm me-2")
+            = currentUser.fullName
+          a(href=`${prefixAdmin}/auth/logout`, class="btn btn-danger btn-sm") Đăng xuất

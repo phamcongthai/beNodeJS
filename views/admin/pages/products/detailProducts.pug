@@ -3,6 +3,7 @@ extends ../../layouts/default.pug
 block main
     if (product.title)
         h1(class="mb-4")= product.title
+    
 
     if (product.price)
         div(class="mb-4") Giá: 
@@ -33,6 +34,6 @@ block main
             b= product.position
 
     if (product.description)
-        div(class="mb-4")= product.description
+        div(class="mb-4") !{product.description}
     button(class="btn btn-warning btn-sm ml-1" id=`${product.id}` button-edit) Chỉnh sửa
     script(src="/admin/js/script.js")

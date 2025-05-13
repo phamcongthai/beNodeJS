@@ -1,0 +1,43 @@
+extends ../../layouts/default.pug
+include ../../mixin/flash.pug
+block main
+  h1.mb-4 Thêm mới tài khoản
+  +alert-error(5000)
+  form(action="/admin/accounts/create", method="POST", enctype="multipart/form-data")
+    .form-group
+      label(for="fullName") Họ tên *
+      input#fullName.form-control(type="text", name="fullName", required)
+
+    .form-group
+      label(for="email") Email *
+      input#email.form-control(type="email", name="email", required, value="nguyenthia@gmail.com")
+
+    .form-group
+      label(for="password") Mật khẩu *
+      input#password.form-control(type="password", name="password", required, value="12345678")
+
+    .form-group
+      label(for="phone") Số điện thoại
+      input#phone.form-control(type="text", name="phone")
+
+    .form-group
+      label(for="avatar") Avatar
+      input#avatar.form-control(type="file" name="avatar" accept="image/*" input-upload-img)
+      img(src="" alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+
+    .form-group
+      label(for="role_id") Phân quyền
+      select#role_id.form-control(name="role_id")
+        each item in roles 
+          option(value=item._id) #{item.title}
+
+    .form-group
+      label Trạng thái
+      .form-check
+        input#active.form-check-input(type="radio", name="status", value="active", checked)
+        label.form-check-label(for="active") Hoạt động
+      .form-check
+        input#inactive.form-check-input(type="radio", name="status", value="inactive")
+        label.form-check-label(for="inactive") Dừng hoạt động
+
+    button.btn.btn-primary(type="submit") Tạo mới

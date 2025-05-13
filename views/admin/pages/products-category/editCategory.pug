@@ -1,0 +1,84 @@
+extends ../../layouts/default.pug
+include ../../mixin/flash.pug
+include ../../mixin/select.pug
+
+block main
+    h1.mb-4 Chỉnh sửa danh mục
+    +alert-error(5000)
+
+    form#form-create-category(
+        action=`/admin/products-category/edit/${categoryCurr._id}?_method=PATCH` 
+        method="POST" 
+        enctype="multipart/form-data"
+    )
+        div.form-group
+            label(for="title") Tiêu đề
+            input#title.form-control(
+                type="text" 
+                name="title" 
+                required 
+                value=categoryCurr.title
+            )
+
+        div.form-group
+            label(for="parent_id") Danh mục cha
+            select#parent_id.form-control(name="parent_id")
+                option(value="") -- Chọn danh mục cha --
+                +select-tree-edit(category, 1, categoryCurr.parent_id)
+
+        div.form-group
+            label(for="desc") Mô tả
+            textarea#desc.form-control(name="description" rows="5")= categoryCurr.description
+
+        div.form-group
+            label(for="thumbnail") Hình thu nhỏ
+            input#thumbnail.form-control(
+                type="file" 
+                name="thumbnail" 
+                accept="image/*" 
+                input-upload-img
+            )
+            if categoryCurr.thumbnail
+                img(src=categoryCurr.thumbnail alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+            else
+                img(src="" alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+
+        div.form-group
+            label(for="position") Vị trí
+            input#position.form-control(
+                type="number" 
+                name="position" 
+                placeholder="Tự động tăng" 
+                min="1" 
+                value=categoryCurr.position
+            )
+
+        div.form-group
+            label Trạng thái
+            div
+                input#active(
+                    type="radio" 
+                    name="status" 
+                    value="active" 
+                    checked=categoryCurr.status === 'active'
+                )
+                label(for="active") Hoạt động
+                input#inactive(
+                    type="radio" 
+                    name="status" 
+                    value="inactive" 
+                    checked=categoryCurr.status === 'inactive'
+                )
+                label(for="inactive") Dừng hoạt động
+
+        div.form-group
+            label(for="deleted") Đã xoá
+            input#deleted(
+                type="checkbox" 
+                name="deleted" 
+                checked=categoryCurr.deleted
+            )
+
+        button.btn.btn-primary(type="submit" btn-update-category) Cập nhật
+
+    script(src="/admin/js/script.js")

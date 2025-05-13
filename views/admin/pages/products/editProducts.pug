@@ -1,13 +1,41 @@
 extends ../../layouts/default.pug
 include ../../mixin/flash.pug
+include ../../mixin/select.pug
 
 block main
     h1.mb-4 Chỉnh sửa sản phẩm
     +alert-error(5000)
+
     form#form-edit-product(action=`/admin/products/edit/${product.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
         div.form-group
             label(for="title") Tiêu đề
             input#title.form-control(type="text" name="title" value=product.title required)
+
+        div.form-group
+            label(for="category_id") Danh mục cha
+            select#parent_id.form-control(name="category_id")
+                option(value="") -- Chọn danh mục cha --
+                +select-tree-edit(category, 1, product.category_id)
+
+        // ✅ Sản phẩm nổi bật: Có / Không
+        div.form-group
+            label Sản phẩm nổi bật
+            div.form-check
+                input#featured-yes.form-check-input(
+                    type="radio" 
+                    name="isFeatured" 
+                    value="true" 
+                    checked=product.isFeatured === true || product.isFeatured === "true"
+                )
+                label.form-check-label(for="featured-yes") Có
+            div.form-check
+                input#featured-no.form-check-input(
+                    type="radio" 
+                    name="isFeatured" 
+                    value="false" 
+                    checked=product.isFeatured === false || product.isFeatured === "false"
+                )
+                label.form-check-label(for="featured-no") Không
 
         div.form-group
             label(for="desc") Mô tả
@@ -32,15 +60,16 @@ block main
 
         div.form-group
             label(for="position") Vị trí
-            input#position.form-control(type="number" name="position" placeholder="Tự động tăng" value=product.position min="1")
+            input#position.form-control(type="number" name="position" value=product.position placeholder="Tự động tăng" min="1")
 
         div.form-group
             label Trạng thái
-            div
-                input#active(type="radio" name="status" value="active" checked=product.status==="active")
-                label(for="active") Hoạt động
-                input#inactive(type="radio" name="status" value="inactive" checked=product.status==="inactive")
-                label(for="inactive") Dừng hoạt động
+            div.form-check
+                input#active.form-check-input(type="radio" name="status" value="active" checked=product.status === "active")
+                label.form-check-label(for="active") Hoạt động
+            div.form-check
+                input#inactive.form-check-input(type="radio" name="status" value="inactive" checked=product.status === "inactive")
+                label.form-check-label(for="inactive") Dừng hoạt động
 
         button.btn.btn-primary(type="submit") Lưu
 

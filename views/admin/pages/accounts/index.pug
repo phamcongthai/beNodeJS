@@ -1,0 +1,51 @@
+extends ../../layouts/default
+
+block main
+  h1(class="mb-4") Danh sách tài khoản
+
+  .card.mb-3
+    .card-header Danh sách
+    .card-body
+      .row.mb-3
+        .col-8
+        .col-4.text-right
+          if(currentRole.permissions.includes("account_create"))
+            a(
+              href=`${prefixAdmin}/accounts/create`,
+              class="btn btn-outline-success"
+            ) + Thêm mới
+
+      table.table.table-bordered.table-hover
+        thead
+          tr
+            th STT
+            th Avatar
+            th Họ tên
+            th Phân quyền
+            th Email
+            th Trạng thái
+            th Hành động
+        tbody
+          each item, index in accounts
+            tr
+              td #{index + 1}
+              td 
+                if item.avatar
+                  img(src=item.avatar, alt="avatar", style="width:40px; height:40px; border-radius:50%")
+                else
+                  | Không có
+              td #{item.fullName}
+              td #{item.role_title}
+              td #{item.email}
+              td 
+                if item.status == 'active'
+                  span.badge.badge-success Hoạt động
+                else
+                  span.badge.badge-secondary Dừng hoạt động
+              td
+                a.btn.btn-info.btn-sm(href=`${prefixAdmin}/accounts/${item._id}`) Chi tiết
+                if(currentRole.permissions.includes("account_edit"))
+                  a.btn.btn-warning.btn-sm.ml-1(href=`${prefixAdmin}/accounts/edit/${item._id}`) Sửa
+                if(currentRole.permissions.includes("account_delete"))
+                  form.d-inline(method="POST", action=`${prefixAdmin}/accounts/${item._id}/delete`)
+                    button.btn.btn-danger.btn-sm.ml-1(type="submit", onclick="return confirm('Bạn có chắc muốn xoá?')") Xoá

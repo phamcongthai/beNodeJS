@@ -217,3 +217,180 @@ if(btnDetail){
         })
     })
 }
+//Sắp xếp sản phẩm :
+const sortSelect = document.querySelector("select[name='sort']");
+const clearSort = document.querySelector("button[sort-clear]")
+if(sortSelect){
+    sortSelect.addEventListener("change", (event)=>{
+        const [sortKey, sortValue] = sortSelect.value.split('-');
+        url.searchParams.set("sortKey", sortKey);
+        url.searchParams.set("sortValue", sortValue);   
+        window.location.href = url;     
+    })
+}
+if(clearSort){
+    clearSort.addEventListener("click", (event)=>{
+        url.searchParams.delete("sortKey");
+        url.searchParams.delete("sortValue");
+        window.location.href = url;
+    })
+}
+  //Gán giá trị selected cho ô select :
+const sortKey = url.searchParams.get("sortKey");
+const sortValue = url.searchParams.get("sortValue");
+
+if(sortKey && sortValue){
+    const sortString = `${sortKey}-${sortValue}`;
+    const opt = document.querySelectorAll("option[opt]");
+    opt.forEach((item)=>{
+            if(item.value == sortString){
+                item.selected = true;
+            }else{
+                item.selected = false;
+            }
+    })
+}
+
+//Trang danh mục sản phẩm :
+const createCategoryBtn = document.querySelector("[createCategoryBtn]");
+if(createCategoryBtn){
+    createCategoryBtn.addEventListener("click", (event)=>{
+        window.location.href = `/admin/products-category/create`
+    })
+}
+ //Sắp xếp :
+const formSearchCategory = document.querySelector("#form-search-category");
+if(formSearchCategory){
+    formSearchCategory.addEventListener("submit", (event)=>{
+       event.preventDefault();
+       const find = event.target.elements.keyword.value;
+       if(find){
+        url.searchParams.set("keyword", find);
+       }else{
+        url.searchParams.delete("keyword")
+       }
+       window.location.href = url;
+    })
+}
+//Xử lí ô check box : 
+
+//Lấy ra bảng danh sách trước :
+const tableCheckBoxCategory = document.querySelector("[table-checkall-category]");
+if(tableCheckBoxCategory){
+    
+    //Lấy các phần tử con của nó  :
+    //1-Lấy ra ô check all :
+    const checkAll = tableCheckBoxCategory.querySelector("input[name='checkallCategory']");
+    //Lấy ra các ô check con :
+    const checkBox = tableCheckBoxCategory.querySelectorAll("input[name='idCategory']");//một tập hợp.
+    //Nếu ấn vào nút check all thì tất cả check box cũng được tích :
+    checkAll.addEventListener("click", (event)=>{
+        
+        if(checkAll.checked){
+            checkBox.forEach((item)=>{
+                item.checked = true;
+            })
+        }else{
+            checkBox.forEach((item)=>{
+                item.checked = false;
+            })
+        }
+
+    });
+    checkBox.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+            console.log("hehe");
+            // Tìm kiếm thẻ input chứa trong tableCheckBox có name là id và được tíchc chọn.
+            const countChecked = tableCheckBoxCategory.querySelectorAll("input[name='idCategory']:checked").length;
+            //So sánh giữa số lượng checkbox và count :
+            if(countChecked == checkBox.length){
+                checkAll.checked = true;
+            }else{
+                checkAll.checked = false;
+            }
+            console.log(countChecked, checkBox.length);
+            
+        })
+    })
+    
+}
+//Phần form :
+const formChangeMultiCategory = document.querySelector("#form-change-multi-category");
+if(formChangeMultiCategory){
+    formChangeMultiCategory.addEventListener("submit", (event)=>{
+        event.preventDefault();
+        const boxChecked = tableCheckBoxCategory.querySelectorAll("input[name='idCategory']:checked");
+        const typeChange = formChangeMultiCategory.querySelector('select[name="type"]').value;
+        console.log(typeChange);
+        
+        if(boxChecked.length > 0){
+            let ids = [];
+            boxChecked.forEach((item) => {
+                if(typeChange == "changePosition"){
+                    const position = item.closest("tr").querySelector("input[name='position']").value;
+                    ids.push(`${item.id}-${position}`);  
+                }else{
+                    ids.push(item.id);
+                }
+            });
+            console.log(ids);
+            
+            const inputIds = document.querySelector("#selected-ids-category"); // Đưa vào input ẩn
+            inputIds.value = JSON.stringify(ids);//input không nhận mảng, nên chuyển thành json cho ez.
+            formChangeMultiCategory.submit();
+        }else{
+            alert("Vui lòng chọn 1 ô !");
+        }
+        
+    })
+}
+//Kết thúc phần check box.
+//Phần thay đổi trạng thái trên sản phẩm :
+const handleStatusCategory = document.querySelectorAll("[handle-status-category]");
+const formChangeStatusCategory = document.querySelector("#form-change-status-category");
+if(handleStatusCategory){
+    handleStatusCategory.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+           
+            
+            event.preventDefault();
+            let status = item.getAttribute("data-status");
+            status = status == "active" ? "inactive" : "active";
+            const id = item.getAttribute("data-id");
+            
+            
+            if(formChangeStatusCategory){
+                console.log("hehe");
+                formChangeStatusCategory.action = `/admin/products-category/change-status/${status}/${id}?_method=PATCH`;
+                formChangeStatusCategory.submit();
+            }
+        })
+    })
+    
+}
+//Kết thúc phần thay đổi trạng thái sản phẩm.
+//Trang tạo danh mục sản phẩm : 
+const btnCreateCategory = document.querySelector("[btn-create-category]");
+const formCreateCategory = document.querySelector("[form-create-category]");
+if(btnCreateCategory){
+    
+}
+//Trang chỉnh sửa danh mục sản phẩm :
+//Lấy ra :
+const  btnEditCategory = document.querySelectorAll("[button-edit-category]")
+if(btnEditCategory){
+
+    
+    btnEditCategory.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+            const id = item.getAttribute("id")
+            window.location.href = `/admin/products-category/edit/${id}`;
+        })
+    })
+}
+//Cập nhật :
+const btnUpdateCategory = document.querySelector("[btn-update-category]");
+if(btnUpdateCategory){
+    
+    
+}

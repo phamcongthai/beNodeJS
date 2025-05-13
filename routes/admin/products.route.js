@@ -15,7 +15,6 @@ router.patch('/change-status/:status/:id', productController.changeStatus);
 router.patch('/change-multi', productController.changeMulti);
 router.delete('/deleteT/:id', productController.deleteT);
 
-
 //Tạo mới sản phẩm.
 router.get('/create', productController.createProducts);
 router.post(

@@ -1,0 +1,102 @@
+extends ../../layouts/default
+include ../../mixin/tableTree.pug
+//- Nhúng file mixin :
+include ../../mixin/flash.pug
+
+block main 
+    +alert-success(5000)
+
+    h1 Trang danh mục sản phẩm
+
+    //- Phần Tìm kiếm, Lọc, Sắp xếp
+    .card.mb-3
+        .card-header Bộ lọc, Tìm kiếm và Sắp xếp
+        .card-body.d-flex.align-items-center.justify-content-between.flex-wrap
+            form(id="form-search-category", method="GET", action="/admin/products-category" class="d-flex align-items-center")
+                .input-group
+                    input(
+                        type="text"
+                        placeholder="Nhập từ khóa"
+                        name="keyword"
+                        class="form-control"
+                        style="min-width: 200px"
+                        value=keySearch
+                    )
+                    .input-group-append
+                        button(
+                            class="btn btn-success"
+                            type="submit"
+                        ) Tìm
+            .box
+                each item in filterStatus                                                              
+                    button(class=`btn btn-sm ml-1 btn-outline-success ${item.class}` button-status=item.status) #{item.name}
+
+            .d-flex.align-items-center.ml-3.mt-2.mt-md-0
+                select(
+                    class="form-control"
+                    name="sort"
+                    style="min-width: 180px"
+                )
+                    option(value="position-desc" opt) Vị trí giảm dần
+                    option(value="position-asc" opt) Vị trí tăng dần
+                    option(value="title-asc" opt) Tiêu đề A - Z
+                    option(value="title-desc" opt) Tiêu đề Z - A
+                button(
+                    class="btn btn-danger ml-2"
+                    sort-clear
+                ) Clear
+
+            .row
+                .col-8
+                    form(
+                        action="/admin/products-category/change-multi?_method=PATCH"
+                        method="POST"
+                        id="form-change-multi-category"
+                    )
+                        input(type="hidden" name="ids" id="selected-ids-category")
+                        .d-flex.align-items-center.flex-wrap
+                            .form-group.mb-0.mr-2
+                                select(name="type" class="form-control")
+                                    option(value="active") Hoạt động
+                                    option(value="inactive") Dừng hoạt động
+                                    option(value="deleteAll") Xóa tất cả
+                                    option(value="changePosition") Thay đổi vị trí
+                            button(
+                                type="submit"
+                                class="btn btn-primary ml-2"
+                                style="min-width: 100px"
+                            ) Áp dụng
+
+
+
+    //- Nút thêm danh mục
+    .row.mb-3
+        .col-12.d-flex.justify-content-end
+            if(currentRole.permissions.includes("products-category_create"))
+                button(
+                    class="btn btn-primary" 
+                    createCategoryBtn 
+                    style="background-color: #007bff; color: white; border: none; padding: 8px 12px; border-radius: 4px;"
+                ).
+                    Thêm danh mục sản phẩm
+
+    //- Phần Danh sách
+    .card-header Danh sách
+    table(
+        class="table table-hover table-sm" 
+        table-checkall-category
+        style="width: 100%; border-collapse: collapse; margin-top: 10px;"
+    )
+        thead
+            tr
+                th
+                    input(type="checkbox" name="checkallCategory")
+                th STT
+                th Hình ảnh
+                th Tiêu đề
+                th Vị trí
+                th Trạng thái
+                th Hành động
+        tbody
+            +tableTree(category)
+    form(action="" method="POST" id="form-change-status-category")

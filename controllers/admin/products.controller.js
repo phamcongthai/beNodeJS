@@ -1,101 +1,118 @@
-//[GET] : /admin/products
-const productsModel = require('../../models/products.model');
+const ProductsModel = require('../../models/products.model');
+const ProductsCategoryModel = require('../../models/products-category.model');
+const AccountModel = require('../../models/account.model');
 const filterStatusHelper = require('../../helpers/filterStatus.helper');
 const searchHelper = require('../../helpers/search');
 const paginationHelper = require('../../helpers/pagination.helper');
-const ProductsModel = require('../../models/products.model');
+const createTreeHelper = require('../../helpers/createTree.helper');
+const {
+    account
+} = require('./accounts.controller');
+
+// [GET] /admin/products
 module.exports.products = async (req, res) => {
     const find = {
         deleted: false
-    }
-    //Lọc theo trạng thái sản phẩm : 
+    };
+
+    // Filter status
     const status = req.query.status;
-    let filterStatus = filterStatusHelper.filterStatus(status);
+    let filterStatus = filterStatusHelper.filterStatus();
     if (status) {
-        //Lọc sản phẩm theo status : 
-        find.status = req.query.status;
+        find.status = status;
         filterStatus = filterStatusHelper.filterStatus(status);
     }
 
-    //Tìm kiếm theo từ khóa : 
-    const keyword = req.query.keyword; //Vừa để gán cho giá trị cho ô input, vừa là 1 thuộc tính để tìm kiếm (title)
+    // Search by keyword
+    const keyword = req.query.keyword;
     if (keyword) {
         find.title = searchHelper.search(keyword);
     }
 
-    //Phân trang : 
-    let pagination = {};
+    // Pagination
     const page = parseInt(req.query.page) || 1;
-    if (page) {
-        pagination = await paginationHelper.pagination(page);
+    const pagination = await paginationHelper.pagination(page);
+
+    // Sort
+    const sort = {};
+    if (req.query.sortKey && req.query.sortValue) {
+        sort[req.query.sortKey] = req.query.sortValue;
+    } else {
+        sort.position = "asc";
     }
-    //Kết thúc phân trang
-    const productData = await productsModel.find(find).sort({
-        position: "asc"
-    }).limit(pagination.limit).skip(pagination.skip);
+
+    const productData = await ProductsModel.find(find)
+        .sort(sort)
+        .limit(pagination.limit)
+        .skip(pagination.skip)
+        .lean();
+
+    for (const item of productData) {
+        if (item.createBy?.account_id) {
+            item.account = await AccountModel.findOne({
+                deleted: false,
+                _id: item.createBy.account_id,
+            }).lean();
+        } else {
+            item.account = {
+                fullName: "Không rõ"
+            }; // hoặc null tùy bạn
+        }
+    }
+
+
     res.render('admin/pages/products/index', {
         title: "Trang sản phẩm",
-        productData: productData,
-        filterStatus: filterStatus,
-        keyword: keyword,
-        pagination: pagination
-    })
-}
+        productData,
+        filterStatus,
+        keyword,
+        pagination,
+    });
+};
+
+// [GET] /admin/products/change-status/:status/:id
 module.exports.changeStatus = async (req, res) => {
-    console.log(req.params);
-
-    const status = req.params.status;
-    const id = req.params.id;
-
-    //Cập nhật trạng thái sản phẩm :
-    await productsModel.updateOne({
+    const {
+        status,
+        id
+    } = req.params;
+    await ProductsModel.updateOne({
         _id: id
     }, {
-        status: status
+        status
     });
-    req.flash('success', 'Cập nhật trạng thái thành công !');
+    req.flash('success', 'Cập nhật trạng thái thành công!');
     res.redirect("back");
-}
-//Change multi :
+};
+
+// [POST] /admin/products/change-multi
 module.exports.changeMulti = async (req, res) => {
     try {
         const status = req.body.type;
         let ids = req.body.ids;
-        console.log(req.body);
 
         if (status === "changePosition") {
             ids = JSON.parse(ids);
-            let tmp = [];
-
-            // Tạo danh sách cập nhật
-            ids.forEach(item => {
+            for (const item of ids) {
                 const [id, position] = item.split('-');
-                tmp.push({
-                    id,
-                    position: parseInt(position)
-                });
-            });
-
-            // Dùng for...of để chờ từng lần cập nhật hoàn tất
-            for (const item of tmp) {
-                await productsModel.updateOne({
-                    _id: item.id
+                await ProductsModel.updateOne({
+                    _id: id
                 }, {
-                    position: item.position
+                    position: parseInt(position)
                 });
             }
         } else if (status !== "deleteAll") {
             ids = JSON.parse(ids);
-            await productsModel.updateMany({
+            await ProductsModel.updateMany({
                 _id: {
                     $in: ids
                 }
             }, {
-                status: status
+                status
             });
         } else {
             ids = JSON.parse(ids);
-            await productsModel.updateMany({
+            await ProductsModel.updateMany({
                 _id: {
                     $in: ids
                 }
@@ -112,107 +129,131 @@ module.exports.changeMulti = async (req, res) => {
     }
 };
 
-//Xóa tạm thời  :
+// [GET] /admin/products/delete/:id
 module.exports.deleteT = async (req, res) => {
     const id = req.params.id;
-    await productsModel.updateOne({
+    await ProductsModel.updateOne({
         _id: id
     }, {
         deleted: true,
-        deletedTime: new Date()
-    }); //Xóa kèm thời gian
+        deleteBy: {
+            account_id: res.locals.currentUser._id,
+            deleteAt: new Date()
+        }
+    });
     res.redirect("back");
-}
-//Thêm mới sản phẩm : 
+};
+
+// [GET] /admin/products/create/:id
 module.exports.createProducts = async (req, res) => {
+    const find = {
+        deleted: false
+    };
+    const category = await ProductsCategoryModel.find(find);
+
+    if (!category || category.length === 0) {
+        return res.status(404).send("Không có danh mục nào.");
+    }
+
+    const newCategory = createTreeHelper(category);
     res.render('admin/pages/products/createProducts', {
         title: "Trang tạo mới sản phẩm",
-    })
-}
+        category: newCategory,
+    });
+};
+
+// [POST] /admin/products/create/:id
 module.exports.createProductsBE = async (req, res) => {
-    //Validate dữ liệu :
-    //Trước hết là phải nhập tiêu đề, yêu cầu tiêu đề phải trên 8 kí tự :
-    //Phải nhập tiêu đề :
-    if (!req.body.title) {
-        req.flash('error', 'Vui lòng nhập tiêu đề');
-        res.redirect("back");
-        return; //Đóng luôn các câu lênh ở phía sau
-    }
-    if (req.body.title.length < 8) {
-        req.flash('error', 'Vui lòng nhập ít nhất 8 kí tự');
-        res.redirect("back")
-        return;
-    }
-    //format dữ liệu, bên mongoDB chỉ nhận đúng dạng data :
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
-    //Tự động thêm data vào cho thuộc tính position :
-    if (req.body.position == "") {
+
+    if (!req.body.position) {
         req.body.position = await ProductsModel.countDocuments() + 1;
+    } else {
+        req.body.position = parseInt(req.body.position);
     }
-    // console.log(req.file); có thể lấy ra được file bằng req.file 
-    //Xử lí cho phần ảnh :
-    //Phần hình ảnh đã được edit bên router
+
+    req.body.createBy = {
+        account_id: res.locals.currentUser._id
+    };
+    console.log(req.body);
+    
     const product = new ProductsModel(req.body);
     await product.save();
     res.redirect('/admin/products');
-}
-//Chỉnh sửa sản phẩm :
+};
+
+// [GET] /admin/products/edit/:id
 module.exports.editProduct = async (req, res) => {
-    //Dùng try catch để nếu mà người dùng họ nhập linh tinh thì ko bị hỏng server
     try {
-        //Tìm sản phẩm đó :
         const find = {
             deleted: false,
             _id: req.params.id
-        }
-        const product = await ProductsModel.findOne(find); //Dùng find thì nó trả về 1 mảng, findOne thì trả về 1 obj thôi.
+        };
+        const product = await ProductsModel.findOne(find);
+        const category = await ProductsCategoryModel.find({
+            deleted: false
+        });
+        const newCategory = createTreeHelper(category);
 
         res.render('admin/pages/products/editProducts', {
             title: "Trang chỉnh sửa sản phẩm",
-            product: product
-        })
+            product,
+            category: newCategory
+        });
     } catch (error) {
         res.redirect("/admin/products");
-
     }
+};
 
-}
+// [POST] /admin/products/edit/:id
 module.exports.editProductBE = async (req, res) => {
+  try {
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
     req.body.position = parseInt(req.body.position);
-    console.log(req.body);
+
     const id = req.params.id;
-    //Phần hình ảnh đã được edit bên router
-   try {
-    await ProductsModel.updateOne({_id : id}, req.body);
-   } catch (error) {
-    console.log(error);
-    
-   }
+    const currentUpdate = {
+      account_id: res.locals.currentUser._id,
+      updateAt: new Date()
+    };
+
+    // Tách phần updateBy để push riêng, phần còn lại update bình thường
+    const updateData = { ...req.body };
+    delete updateData.updateBy;
+
+    await ProductsModel.updateOne(
+      { _id: id },
+      {
+        $set: updateData,
+        $push: { updateBy: currentUpdate }
+      }
+    );
+
     res.redirect("back");
-}
-//Xem chi tiết :
+  } catch (error) {
+    console.error(error);
+    res.redirect("back");
+  }
+};
+
+// [GET] /admin/products/detail/:id
 module.exports.detailProducts = async (req, res) => {
-    //Dùng try catch để nếu mà người dùng họ nhập linh tinh thì ko bị hỏng server
     try {
-        //Tìm sản phẩm đó :
         const find = {
             deleted: false,
             _id: req.params.id
-        }
-        const product = await ProductsModel.findOne(find); //Dùng find thì nó trả về 1 mảng, findOne thì trả về 1 obj thôi.
+        };
+        const product = await ProductsModel.findOne(find);
 
         res.render('admin/pages/products/detailProducts', {
             title: product.title,
-            product: product
-        })
+            product
+        });
     } catch (error) {
         res.redirect("/admin/products");
-
     }
-
-}
+};
