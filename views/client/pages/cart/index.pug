@@ -1,0 +1,52 @@
+extends ../../layouts/default.pug
+include ../../mixin/flash.pug
+
+block main
+  +alert-success(5000)
+  +alert-error(5000)
+
+  .container.my-3
+    .row
+      .col-12
+        table.table.table-bordered
+          thead
+            tr
+              th STT
+              th Ảnh
+              th Tên
+              th Giá (sau giảm)
+              th Số lượng
+              th Thành tiền
+              th 
+          tbody
+            - let totalPrice = 0
+            each item, index in products
+              - const finalPrice = Math.round(item.price * (1 - item.discountPercentage / 100))
+              - const quantity = item.quantity || 1
+              - const amount = finalPrice * quantity
+              - totalPrice += amount
+              tr
+                td #{index + 1}
+                td 
+                  img(src=item.thumbnail, alt=item.title, width="80px")
+                td 
+                  a(href=`/products/detail/${item.slug}`) #{item.title}
+                td #{finalPrice.toLocaleString()}₫
+                td
+                  input(
+                    type="number", 
+                    name="quantity", 
+                    value=quantity, 
+                    min="1", 
+                    product-id=item.id, 
+                    style="width: 60px"
+                    input-quantity
+                  )
+                td #{amount.toLocaleString()}₫
+                td
+                  a(href=`/cart/delete/${item.id}`, class="btn btn-danger") Xóa
+
+        h3.text-right Tổng đơn hàng: #{totalPrice.toLocaleString()}₫
+
+        div.text-right.mt-3
+          a(href="/checkout", class="btn btn-success") THANH TOÁN

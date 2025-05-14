@@ -242,3 +242,27 @@ input#quantity.form-control {
     width: 100%;
   }
 }
+/* Show Alert */
+[showAlert] {
+    position: fixed;
+    top: 70px;
+    right: 15px;
+    z-index: 9999;
+}
+
+[showAlert].alert-hidden {
+    animation-name: alert-hidden;
+    animation-duration: 0.55s;
+    animation-fill-mode: both;
+}
+
+@keyframes alert-hidden {
+    from {
+        right: 15px;
+    }
+    to {
+        right: -100%;
+        display: none;
+    }
+}
+/* End Show Alert */

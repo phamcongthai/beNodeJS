@@ -1,6 +1,8 @@
 extends ../../layouts/default.pug
-
+include ../../mixin/flash.pug
 block main
+  +alert-success(5000)
+  +alert-error(5000)
   .container.my-5
     .row.justify-content-center
       .col-lg-8
@@ -21,7 +23,7 @@ block main
                   if (product.price)
                     li.mb-2
                       span.fw-bold Giá: 
-                      | #{product.price}$
+                      | #{product.price}đ
                   
                   if (product.discountPercentage)
                     li.mb-2

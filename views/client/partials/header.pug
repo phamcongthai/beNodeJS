@@ -1,7 +1,5 @@
 include ../mixin/select-tree.pug
-include ../mixin/flash.pug
 header.navbar.navbar-expand-lg.navbar-dark.bg-primary
-  +alert-success(5000)
   .container-fluid
     .row.w-100.align-items-center
       // Left: Logo
@@ -31,3 +29,5 @@ header.navbar.navbar-expand-lg.navbar-dark.bg-primary
             a.nav-link(href="/products") Sản phẩm
             if categories && categories.length > 0
               +menu-tree(categories)
+          li 
+            a.nav-link(href="/cart") Giỏ hàng (#{miniCart ? total : 0})
