@@ -1,0 +1,12 @@
+"use strict";
+
+var express = require('express');
+
+var router = express.Router();
+
+var orderController = require('../../controllers/client/order.controller'); //[GET] : Check thông tin trước khi xử lí đặt hàng :
+
+
+router.get('/', orderController.checkout);
+router.post('/order', orderController.order);
+module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.

@@ -1,0 +1,11 @@
+mixin swalAlert(text, icon)
+  script.
+    Swal.fire({
+      title: 'Thông báo',
+      text: text,
+      icon: icon,
+      confirmButtonText: 'Đồng ý'
+    }).then(() => {
+      // Chuyển hướng đến trang sản phẩm sau khi người dùng click "Đồng ý"
+      window.location.href = "/products"; 
+    });

@@ -1,0 +1,51 @@
+<!DOCTYPE html >
+<html> 
+  <head>   
+    <title></title>
+    <link rel="icon" href="https://frontend.tikicdn.com/_desktop-next/static/img/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <!-- SweetAlert2 CSS (tùy chọn, để có style đẹp hơn)-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"/>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <header class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+          <div class="row w-100 align-items-center">
+            <!-- Left: Logo-->
+            <div class="nav__left col-md-3"><a class="navbar-brand" href="/"><img src="/images/logo.png" alt="logo" width="100"/></a></div>
+            <!-- Center: Search Form-->
+            <div class="col-5">
+              <form action="/search" method="GET">
+                <div class="form-group d-flex mb-0">
+                  <input class="form-control" type="text" placeholder="Nhập từ khóa..." name="keyword"/>
+                  <button class="btn btn-light" type="submit">Tìm</button>
+                </div>
+              </form>
+            </div>
+            <!-- Right: Navigation Menu-->
+            <div class="nav__right col-md-4 d-flex justify-content-end">
+              <ul class="navbar-nav menu-right">
+                <li class="nav-item"><a class="nav-link" href="/">Trang chủ</a></li>
+                <li class="nav-item sub-menu"><a class="nav-link" href="/products">Sản phẩm</a>
+                </li>
+                <li> <a class="nav-link" href="/cart">Giỏ hàng (0)</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main>
+      </main>
+      <footer class="footer"> 
+        <h6>Copyright © 2025 by Pham Cong Thai CT070347</h6>
+      </footer>
+    </div>
+    <!-- Scripts-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/index.js"></script>
+    <!-- SweetAlert2 JS-->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>

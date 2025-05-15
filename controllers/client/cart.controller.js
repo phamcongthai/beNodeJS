@@ -90,6 +90,6 @@ module.exports.updateProducts = async (req, res) => {
             "products.$.quantity": quantity
         }
     })
-    req.flash("success", "Cập nhật số lượng thành công !")
+    req.flash("success", "Cập nhật số lượng thành công !");
     res.redirect("back")
 }

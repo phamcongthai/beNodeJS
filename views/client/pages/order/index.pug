@@ -1,0 +1,58 @@
+extends ../../layouts/default.pug
+include ../../mixin/sweet-alert.pug
+
+block main
+  // Kiểm tra nếu có thông báo swal trong flash
+  if (locals.flash && locals.flash.swal)
+    +swalAlert(locals.flash.swal.text, locals.flash.swal.icon)
+  h2 Trang đặt hàng
+  .container.my-4
+    .row
+      .col-12
+        table.table.table-striped.table-bordered
+          thead.thead-dark
+            tr
+              th STT
+              th Ảnh
+              th Tên
+              th Giá (sau giảm)
+              th Số lượng
+              th Thành tiền
+              th 
+          tbody
+            - let totalPrice = 0
+            each item, index in products
+              - const finalPrice = Math.round(item.price * (1 - item.discountPercentage / 100))
+              - const quantity = item.quantity || 1
+              - const amount = finalPrice * quantity
+              - totalPrice += amount
+              tr
+                td #{index + 1}
+                td 
+                  img(src=item.thumbnail, alt=item.title, width="80px")
+                td 
+                  a(href=`/products/detail/${item.slug}`) #{item.title}
+                td.text-center #{finalPrice.toLocaleString()}₫
+                td.text-center #{item.quantity}
+                td.text-center #{amount.toLocaleString()}₫
+                td
+                  a.btn.btn-sm.btn-danger(href=`/cart/delete/${item.id}`) Xóa
+
+        h4.text-right.mt-4 Tổng đơn hàng: 
+          strong.text-danger #{totalPrice.toLocaleString()}₫
+
+        if(miniCart.products.length > 0)
+          form(action="/checkout/order", method="POST")
+            .form-group
+              label(for="fullName") Họ tên
+              input#fullName.form-control(type="text", name="fullName", required=true, placeholder="Nhập họ tên")
+
+            .form-group
+              label(for="phone") Số điện thoại
+              input#phone.form-control(type="tel", name="phone", required=true, placeholder="Nhập số điện thoại")
+
+            .form-group
+              label(for="address") Địa chỉ
+              input#address.form-control(type="text", name="address", required=true, placeholder="Nhập địa chỉ")
+
+            button.btn.btn-success.btn-block.mt-3(type="submit") ĐẶT HÀNG
