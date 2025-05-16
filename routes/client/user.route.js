@@ -9,4 +9,6 @@ router.post('/register', userController.registerBE);
 //Đăng nhập :
 router.get('/login', userController.login);
 router.post('/login', userController.loginBE);
+//Đăng kí :
+router.get('/logout', userController.logout)
 module.exports = router;// viết như này là để sau này thêm được nhiều route hơn.

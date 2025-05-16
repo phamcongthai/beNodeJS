@@ -8,7 +8,7 @@ module.exports.userMiddleware = async (req, res, next) => {
         })
         if(user){
             console.log(user);
-            
+            res.locals.user = user;
         }
         
     }

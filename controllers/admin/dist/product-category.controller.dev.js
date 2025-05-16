@@ -181,65 +181,88 @@ module.exports.changeMulti = function _callee2(req, res) {
     }
   }, null, null, [[0, 29]]);
 }; //Xóa tạm thời  :
-//Tạo mới danh mục sản phẩm :
 
 
-module.exports.products_categoryCreate = function _callee3(req, res) {
-  var find, category, newCategory;
+module.exports.deleteCategory = function _callee3(req, res) {
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
-          _context3.prev = 0;
+          _context3.next = 2;
+          return regeneratorRuntime.awrap(ProductsCategoryModel.updateOne({
+            _id: req.params.id
+          }, {
+            deleted: true
+          }));
+
+        case 2:
+          res.redirect("/admin/products-category");
+
+        case 3:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  });
+}; //Tạo mới danh mục sản phẩm :
+
+
+module.exports.products_categoryCreate = function _callee4(req, res) {
+  var find, category, newCategory;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          _context4.prev = 0;
           find = {
             deleted: false
           };
-          _context3.next = 4;
+          _context4.next = 4;
           return regeneratorRuntime.awrap(ProductsCategoryModel.find(find));
 
         case 4:
-          category = _context3.sent;
+          category = _context4.sent;
           newCategory = category.length > 0 ? createTreeHelper(category) : [];
           res.render("admin/pages/products-category/createCategory", {
             title: "Trang tạo mới danh mục sản phẩm",
             category: newCategory
           });
-          _context3.next = 13;
+          _context4.next = 13;
           break;
 
         case 9:
-          _context3.prev = 9;
-          _context3.t0 = _context3["catch"](0);
-          console.error("Lỗi khi tạo cây phân cấp:", _context3.t0);
+          _context4.prev = 9;
+          _context4.t0 = _context4["catch"](0);
+          console.error("Lỗi khi tạo cây phân cấp:", _context4.t0);
           res.status(500).send("Lỗi server");
 
         case 13:
         case "end":
-          return _context3.stop();
+          return _context4.stop();
       }
     }
   }, null, null, [[0, 9]]);
 }; //[POST] : Đẩy lên db :
 
 
-module.exports.products_categoryCreateBE = function _callee4(req, res) {
+module.exports.products_categoryCreateBE = function _callee5(req, res) {
   var productCategory;
-  return regeneratorRuntime.async(function _callee4$(_context4) {
+  return regeneratorRuntime.async(function _callee5$(_context5) {
     while (1) {
-      switch (_context4.prev = _context4.next) {
+      switch (_context5.prev = _context5.next) {
         case 0:
           if (!(req.body.position == "")) {
-            _context4.next = 7;
+            _context5.next = 7;
             break;
           }
 
-          _context4.next = 3;
+          _context5.next = 3;
           return regeneratorRuntime.awrap(ProductsCategoryModel.countDocuments());
 
         case 3:
-          _context4.t0 = _context4.sent;
-          req.body.position = _context4.t0 + 1;
-          _context4.next = 8;
+          _context5.t0 = _context5.sent;
+          req.body.position = _context5.t0 + 1;
+          _context5.next = 8;
           break;
 
         case 7:
@@ -247,7 +270,7 @@ module.exports.products_categoryCreateBE = function _callee4(req, res) {
 
         case 8:
           productCategory = new ProductsCategoryModel(req.body);
-          _context4.next = 11;
+          _context5.next = 11;
           return regeneratorRuntime.awrap(productCategory.save());
 
         case 11:
@@ -255,23 +278,23 @@ module.exports.products_categoryCreateBE = function _callee4(req, res) {
 
         case 12:
         case "end":
-          return _context4.stop();
+          return _context5.stop();
       }
     }
   });
 }; //[POST] : Thay đổi trạng thái 1 danh mục sản phẩm :
 
 
-module.exports.changeStatus = function _callee5(req, res) {
+module.exports.changeStatus = function _callee6(req, res) {
   var status, id;
-  return regeneratorRuntime.async(function _callee5$(_context5) {
+  return regeneratorRuntime.async(function _callee6$(_context6) {
     while (1) {
-      switch (_context5.prev = _context5.next) {
+      switch (_context6.prev = _context6.next) {
         case 0:
           status = req.params.status;
           id = req.params.id; //Cập nhật trạng thái sản phẩm :
 
-          _context5.next = 4;
+          _context6.next = 4;
           return regeneratorRuntime.awrap(ProductsCategoryModel.updateOne({
             _id: id
           }, {
@@ -284,41 +307,41 @@ module.exports.changeStatus = function _callee5(req, res) {
 
         case 6:
         case "end":
-          return _context5.stop();
+          return _context6.stop();
       }
     }
   });
 };
 
-module.exports.editCategory = function _callee6(req, res) {
+module.exports.editCategory = function _callee7(req, res) {
   var allCategory, categoryCurr, newCategory;
-  return regeneratorRuntime.async(function _callee6$(_context6) {
+  return regeneratorRuntime.async(function _callee7$(_context7) {
     while (1) {
-      switch (_context6.prev = _context6.next) {
+      switch (_context7.prev = _context7.next) {
         case 0:
-          _context6.prev = 0;
-          _context6.next = 3;
+          _context7.prev = 0;
+          _context7.next = 3;
           return regeneratorRuntime.awrap(ProductsCategoryModel.find({
             deleted: false
           }));
 
         case 3:
-          allCategory = _context6.sent;
-          _context6.next = 6;
+          allCategory = _context7.sent;
+          _context7.next = 6;
           return regeneratorRuntime.awrap(ProductsCategoryModel.findOne({
             _id: req.params.id,
             deleted: false
           }));
 
         case 6:
-          categoryCurr = _context6.sent;
+          categoryCurr = _context7.sent;
 
           if (!(!allCategory || allCategory.length === 0 || !categoryCurr)) {
-            _context6.next = 9;
+            _context7.next = 9;
             break;
           }
 
-          return _context6.abrupt("return", res.status(404).send("Không tìm thấy danh mục."));
+          return _context7.abrupt("return", res.status(404).send("Không tìm thấy danh mục."));
 
         case 9:
           newCategory = createTreeHelper(allCategory);
@@ -327,30 +350,30 @@ module.exports.editCategory = function _callee6(req, res) {
             category: newCategory,
             categoryCurr: categoryCurr
           });
-          _context6.next = 17;
+          _context7.next = 17;
           break;
 
         case 13:
-          _context6.prev = 13;
-          _context6.t0 = _context6["catch"](0);
-          console.error("Lỗi khi tạo cây phân cấp:", _context6.t0);
+          _context7.prev = 13;
+          _context7.t0 = _context7["catch"](0);
+          console.error("Lỗi khi tạo cây phân cấp:", _context7.t0);
           res.status(500).send("Lỗi server");
 
         case 17:
         case "end":
-          return _context6.stop();
+          return _context7.stop();
       }
     }
   }, null, null, [[0, 13]]);
 };
 
-module.exports.editCategoryBE = function _callee7(req, res) {
-  return regeneratorRuntime.async(function _callee7$(_context7) {
+module.exports.editCategoryBE = function _callee8(req, res) {
+  return regeneratorRuntime.async(function _callee8$(_context8) {
     while (1) {
-      switch (_context7.prev = _context7.next) {
+      switch (_context8.prev = _context8.next) {
         case 0:
           req.body.position = parseInt(req.body.position);
-          _context7.next = 3;
+          _context8.next = 3;
           return regeneratorRuntime.awrap(ProductsCategoryModel.updateOne({
             _id: req.params.id
           }, req.body));
@@ -360,7 +383,7 @@ module.exports.editCategoryBE = function _callee7(req, res) {
 
         case 4:
         case "end":
-          return _context7.stop();
+          return _context8.stop();
       }
     }
   });

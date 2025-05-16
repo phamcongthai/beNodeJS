@@ -25,6 +25,7 @@ module.exports.userMiddleware = function _callee(req, res, next) {
 
           if (user) {
             console.log(user);
+            res.locals.user = user;
           }
 
         case 5:

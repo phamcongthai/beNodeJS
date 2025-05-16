@@ -139,4 +139,21 @@ module.exports.loginBE = function _callee4(req, res) {
       }
     }
   });
+}; //[GET] : Đăng xuất :
+
+
+module.exports.logout = function _callee5(req, res) {
+  return regeneratorRuntime.async(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          res.clearCookie("token_user");
+          res.redirect("/");
+
+        case 2:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  });
 };

@@ -58,3 +58,8 @@ module.exports.loginBE = async (req, res) => {
    }
    
 }
+//[GET] : Đăng xuất :
+module.exports.logout = async (req, res)  => {
+    res.clearCookie("token_user");
+    res.redirect("/");
+}

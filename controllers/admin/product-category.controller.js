@@ -101,6 +101,10 @@ module.exports.changeMulti = async (req, res) => {
 };
 
 //Xóa tạm thời  :
+module.exports.deleteCategory = async (req, res) => {
+    await ProductsCategoryModel.updateOne({_id : req.params.id}, {deleted : true});
+    res.redirect("/admin/products-category");
+} 
 //Tạo mới danh mục sản phẩm :
 module.exports.products_categoryCreate = async (req, res) => {
     try {

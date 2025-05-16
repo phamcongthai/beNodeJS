@@ -394,3 +394,13 @@ if(btnUpdateCategory){
     
     
 }
+//Xóa danh mục : 
+const btnDeleleCategory = document.querySelectorAll("[button-del-category]");
+if(btnDeleleCategory){
+    btnDeleleCategory.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+            const id = item.getAttribute("id")
+            window.location.href = `/admin/products-category/delete/${id}`;
+        })
+    })
+}

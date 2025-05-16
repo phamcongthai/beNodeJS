@@ -41,15 +41,21 @@ header.navbar.navbar-expand-lg.bg-dark.py-3.shadow
             i.fas.fa-shopping-cart.me-1
             |   Giỏ hàng (#{miniCart ? total : 0})
 
-        li.nav-item
-          a.nav-link.text-light(href="/user/login")
-            i.fas.fa-sign-in-alt.me-1
-            |   Đăng nhập
+        if user
+          li.nav-item
+            a.nav-link.text-light(href="/user/logout")
+              i.fas.fa-sign-out-alt.me-1
+              |   Đăng xuất
+        else
+          li.nav-item
+            a.nav-link.text-light(href="/user/login")
+              i.fas.fa-sign-in-alt.me-1
+              |   Đăng nhập
 
-        li.nav-item
-          a.nav-link.text-light(href="/user/register")
-            i.fas.fa-user-plus.me-1
-            |   Đăng ký
+          li.nav-item
+            a.nav-link.text-light(href="/user/register")
+              i.fas.fa-user-plus.me-1
+              |   Đăng ký
 
 // Font Awesome + Custom Dark Style
 link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")

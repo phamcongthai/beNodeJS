@@ -34,4 +34,6 @@ router.patch('/edit/:id',
   validateProducts.validateCreateProducts,
   productsCategoryController.editCategoryBE
 )
+//[GET] : Xóa :
+router.get('/delete/:id', productsCategoryController.deleteCategory);
 module.exports = router;
