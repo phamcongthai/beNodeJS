@@ -1,33 +1,96 @@
 include ../mixin/select-tree.pug
-header.navbar.navbar-expand-lg.navbar-dark.bg-primary
+
+header.navbar.navbar-expand-lg.bg-dark.py-3.shadow
   .container-fluid
-    .row.w-100.align-items-center
+    .d-flex.w-100.align-items-center.justify-content-between.flex-wrap
+
       // Left: Logo
-      .nav__left.col-md-3
-        a.navbar-brand(href="/")
-          img(src="/images/logo.png", alt="logo", width="100")
+      a.navbar-brand.d-flex.align-items-center.gap-2(href="/")
+        img(src="/images/logo.png", alt="logo", width="50", height="50")
+        span.text-light.fw-bold.fs-4 MyShop
 
-      // Center: Search Form
-      .col-5
-        form(action="/search", method="GET")
-          .form-group.d-flex.mb-0
-            input.form-control(
-              type="text", 
-              placeholder="Nhập từ khóa...", 
-              name="keyword"
-              value=keyword
+      // Center: Search
+      form.d-flex.flex-grow-1.mx-3(action="/search", method="GET")
+        .input-group
+          input.form-control.bg-secondary.text-white.border-0(
+            type="text", 
+            name="keyword", 
+            placeholder="Nhập từ khóa...", 
+            value=keyword
+          )
+          button.btn.btn-outline-light(type="submit")
+            i.fas.fa-search.me-1
+            | Tìm
 
-            )
-            button.btn.btn-light(type="submit") Tìm
+      // Right: Nav Menu
+      ul.navbar-nav.d-flex.flex-row.gap-3.mb-0
+        li.nav-item
+          a.nav-link.text-light(href="/")
+            i.fas.fa-home.me-1
+            |   Trang chủ
 
-      // Right: Navigation Menu
-      .nav__right.col-md-4.d-flex.justify-content-end
-        ul.navbar-nav.menu-right
-          li.nav-item
-            a.nav-link(href="/") Trang chủ
-          li.nav-item.sub-menu
-            a.nav-link(href="/products") Sản phẩm
-            if categories && categories.length > 0
-              +menu-tree(categories)
-          li 
-            a.nav-link(href="/cart") Giỏ hàng (#{miniCart ? total : 0})
+        li.nav-item.sub-menu
+          a.nav-link.text-light(href="/products")
+            i.fas.fa-boxes.me-1
+            |   Sản phẩm
+          if categories && categories.length > 0
+            +menu-tree(categories)
+
+        li.nav-item
+          a.nav-link.text-light(href="/cart")
+            i.fas.fa-shopping-cart.me-1
+            |   Giỏ hàng (#{miniCart ? total : 0})
+
+        li.nav-item
+          a.nav-link.text-light(href="/user/login")
+            i.fas.fa-sign-in-alt.me-1
+            |   Đăng nhập
+
+        li.nav-item
+          a.nav-link.text-light(href="/user/register")
+            i.fas.fa-user-plus.me-1
+            |   Đăng ký
+
+// Font Awesome + Custom Dark Style
+link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
+style.
+  .navbar {
+    background-color: #1c1c1e !important;
+  }
+
+  .form-control::placeholder {
+    color: #ccc;
+  }
+
+  .form-control:focus {
+    box-shadow: none;
+    border-color: #555;
+    color: #fff;
+  }
+
+  .nav-link {
+    padding: 8px 12px;
+    transition: background-color 0.3s ease;
+    border-radius: 6px;
+  }
+
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  .btn-outline-light {
+    border-color: #fff;
+    color: #fff;
+  }
+
+  .btn-outline-light:hover {
+    background-color: #fff;
+    color: #000;
+  }
+
+  .input-group .form-control {
+    background-color: #2c2c2e;
+    border: none;
+    color: #fff;
+  }

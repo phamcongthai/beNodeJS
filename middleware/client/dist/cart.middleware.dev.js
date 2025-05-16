@@ -25,7 +25,7 @@ module.exports.cart = function _callee(req, res, next) {
           res.cookie("cartId", newCart._id, {
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
           });
-          _context.next = 14;
+          _context.next = 13;
           break;
 
         case 7:
@@ -36,17 +36,16 @@ module.exports.cart = function _callee(req, res, next) {
 
         case 9:
           cart = _context.sent;
-          console.log(cart);
           total = cart.products.reduce(function (sum, item) {
             return sum + item.quantity;
           }, 0);
           res.locals.total = total;
           res.locals.miniCart = cart;
 
-        case 14:
+        case 13:
           next();
 
-        case 15:
+        case 14:
         case "end":
           return _context.stop();
       }

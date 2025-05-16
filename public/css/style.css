@@ -8,7 +8,7 @@ html, body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: #f4f6f9;
+  background: #ffffff; /* trắng */
   color: #333;
 }
 
@@ -25,7 +25,7 @@ main {
 
 /* ========== Header ========== */
 header.navbar {
-  background: linear-gradient(90deg, #1a237e, #3949ab);
+  background: #d70018; /* đỏ FPT Shop */
   padding: 10px 20px;
 }
 
@@ -40,7 +40,7 @@ header.navbar {
 }
 
 .navbar-nav .nav-link:hover {
-  color: #ffeb3b !important;
+  color: #ffcccb !important; /* đỏ nhạt */
 }
 
 /* ========== Sub Menu ========== */
@@ -56,7 +56,7 @@ header.navbar {
   list-style: none;
   margin: 0;
   padding: 0;
-  background: linear-gradient(to right, #ffffff, #f2f2f2);
+  background: #fff; /* trắng */
   min-width: 180px;
   display: none;
   border-radius: 6px;
@@ -69,7 +69,7 @@ header.navbar {
 
 .sub-menu > ul > li,
 .sub-menu ul li ul > li {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #eee;
 }
 
 .sub-menu > ul > li a,
@@ -77,14 +77,14 @@ header.navbar {
   display: block;
   padding: 10px;
   text-decoration: none;
-  color: #222;
+  color: #333;
   width: 100%;
   transition: background-color 0.2s;
 }
 
 .sub-menu > ul > li a:hover,
 .sub-menu ul li ul > li a:hover {
-  background-color: #e2e2e2;
+  background-color: #ffe6e6; /* đỏ rất nhạt khi hover */
 }
 
 /* Submenu cấp 2 */
@@ -92,7 +92,7 @@ header.navbar {
   position: absolute;
   top: 0;
   right: 100%;
-  background-color: #f9f9f9;
+  background-color: #fff;
   min-width: 180px;
   display: none;
   list-style: none;
@@ -110,23 +110,26 @@ header.navbar {
 form .form-control {
   border-radius: 20px 0 0 20px;
   border-right: none;
+  border: 1px solid #ccc;
 }
 
 form .btn {
   border-radius: 0 20px 20px 0;
-  background-color: #ff5722;
+  background-color: #d70018;
   border: none;
   font-weight: 600;
   padding: 0 20px;
+  color: white;
 }
 
 form .btn:hover {
-  background-color: #e64a19;
+  background-color: #b60014;
 }
 
 /* ========== Product Grid ========== */
 .product-container {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 20px;
@@ -159,14 +162,14 @@ form .btn:hover {
   display: block;
   margin-top: 8px;
   font-weight: 600;
-  color: #2c3e50;
+  color: #222;
   text-decoration: none;
   font-size: 16px;
   transition: color 0.2s;
 }
 
 .inner-title a:hover {
-  color: #f44336;
+  color: #d70018; /* đỏ FPT khi hover */
 }
 
 /* ========== Featured Tag ========== */
@@ -174,7 +177,7 @@ form .btn:hover {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: #e91e63;
+  background: #d70018; /* đỏ đậm */
   color: white;
   font-size: 12px;
   font-weight: bold;
@@ -193,16 +196,17 @@ form .btn:hover {
 .card h2 {
   font-size: 28px;
   font-weight: bold;
-  color: #3f51b5;
+  color: #d70018; /* dùng màu chủ đạo */
 }
 
 ul.list-unstyled li span.fw-bold {
-  color: #007bff;
+  color: #d70018;
 }
 
 input#quantity.form-control {
   max-width: 100px;
   border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 /* ========== Footer ========== */
@@ -214,9 +218,6 @@ input#quantity.form-control {
   font-size: 14px;
 }
 
-.footer:hover {
-  background: #424242;
-}
 
 /* ========== Responsive ========== */
 @media (max-width: 1200px) {
@@ -242,12 +243,18 @@ input#quantity.form-control {
     width: 100%;
   }
 }
+
 /* Show Alert */
 [showAlert] {
     position: fixed;
     top: 70px;
     right: 15px;
     z-index: 9999;
+    background-color: #d70018;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
 }
 
 [showAlert].alert-hidden {

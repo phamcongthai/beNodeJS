@@ -1,0 +1,68 @@
+
+<header class="navbar navbar-expand-lg bg-dark py-3 shadow">
+  <div class="container-fluid">
+    <div class="d-flex w-100 align-items-center justify-content-between flex-wrap">
+      <!-- Left: Logo--><a class="navbar-brand d-flex align-items-center gap-2" href="/"><img src="/images/logo.png" alt="logo" width="50" height="50"/><span class="text-light fw-bold fs-4">MyShop</span></a>
+      <!-- Center: Search-->
+      <form class="d-flex flex-grow-1 mx-3" action="/search" method="GET">
+        <div class="input-group">
+          <input class="form-control bg-secondary text-white border-0" type="text" name="keyword" placeholder="Nhập từ khóa..."/>
+          <button class="btn btn-outline-light" type="submit"><i class="fas fa-search me-1"></i>Tìm</button>
+        </div>
+      </form>
+      <!-- Right: Nav Menu-->
+      <ul class="navbar-nav d-flex flex-row gap-3 mb-0">
+        <li class="nav-item"><a class="nav-link text-light" href="/"><i class="fas fa-home me-1"></i>  Trang chủ</a></li>
+        <li class="nav-item sub-menu"><a class="nav-link text-light" href="/products"><i class="fas fa-boxes me-1"></i>  Sản phẩm</a>
+        </li>
+        <li class="nav-item"><a class="nav-link text-light" href="/cart"><i class="fas fa-shopping-cart me-1"></i>  Giỏ hàng (0)</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="/user/login"><i class="fas fa-sign-in-alt me-1"></i>  Đăng nhập</a></li>
+        <li class="nav-item"><a class="nav-link text-light" href="/user/register"><i class="fas fa-user-plus me-1"></i>  Đăng ký</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+<!-- Font Awesome + Custom Dark Style-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+  .navbar {
+    background-color: #1c1c1e !important;
+  }
+  
+  .form-control::placeholder {
+    color: #ccc;
+  }
+  
+  .form-control:focus {
+    box-shadow: none;
+    border-color: #555;
+    color: #fff;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+    transition: background-color 0.3s ease;
+    border-radius: 6px;
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  
+  .btn-outline-light {
+    border-color: #fff;
+    color: #fff;
+  }
+  
+  .btn-outline-light:hover {
+    background-color: #fff;
+    color: #000;
+  }
+  
+  .input-group .form-control {
+    background-color: #2c2c2e;
+    border: none;
+    color: #fff;
+  }
+</style>

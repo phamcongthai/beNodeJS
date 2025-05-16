@@ -18,13 +18,19 @@ var cartRoutes = require('../../routes/client/cart.route');
 
 var orderRoutes = require('../../routes/client/order.route');
 
+var userRoutes = require('../../routes/client/user.route');
+
+var userMiddleware = require('../../middleware/client/user.middleware');
+
 module.exports = function (app) {
   app.use(categorySubmenu.categorySubmenu); // Chỉ dùng cách gọi 1 lần như này bên client
 
   app.use(cartMiddleware.cart);
+  app.use(userMiddleware.userMiddleware);
   app.use('/', homeRoutes);
   app.use('/products', productsRoutes);
   app.use('/search', searchRoutes);
   app.use('/cart', cartRoutes);
   app.use('/checkout', orderRoutes);
+  app.use('/user', userRoutes);
 };

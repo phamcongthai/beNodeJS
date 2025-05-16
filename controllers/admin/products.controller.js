@@ -177,7 +177,6 @@ module.exports.createProductsBE = async (req, res) => {
     req.body.createBy = {
         account_id: res.locals.currentUser._id
     };
-    console.log(req.body);
     
     const product = new ProductsModel(req.body);
     await product.save();

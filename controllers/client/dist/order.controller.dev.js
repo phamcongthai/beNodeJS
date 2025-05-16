@@ -197,7 +197,7 @@ module.exports.order = function _callee2(req, res) {
 
         case 38:
           res.clearCookie("cartId");
-          res.redirect("/products");
+          res.redirect("/checkout/success/".concat(order._id));
           _context2.next = 46;
           break;
 
@@ -213,4 +213,108 @@ module.exports.order = function _callee2(req, res) {
       }
     }
   }, null, null, [[0, 42], [7, 20, 24, 32], [25,, 27, 31]]);
+}; //[GET] : Thành công !
+
+
+module.exports.success = function _callee3(req, res) {
+  var order_id, order, products, totalOrderPrice, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, item, product, quantity, discountPercentage, newPrice, totalPrice, userInfo;
+
+  return regeneratorRuntime.async(function _callee3$(_context3) {
+    while (1) {
+      switch (_context3.prev = _context3.next) {
+        case 0:
+          order_id = req.params.order_id;
+          _context3.next = 3;
+          return regeneratorRuntime.awrap(OrderModel.findById(order_id));
+
+        case 3:
+          order = _context3.sent;
+          products = [];
+          totalOrderPrice = 0;
+          _iteratorNormalCompletion3 = true;
+          _didIteratorError3 = false;
+          _iteratorError3 = undefined;
+          _context3.prev = 9;
+          _iterator3 = order.products[Symbol.iterator]();
+
+        case 11:
+          if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
+            _context3.next = 20;
+            break;
+          }
+
+          item = _step3.value;
+          _context3.next = 15;
+          return regeneratorRuntime.awrap(ProductModel.findById(item.product_id));
+
+        case 15:
+          product = _context3.sent;
+
+          if (product) {
+            quantity = item.quantity; // Sử dụng discountPercentage thay vì discount
+
+            discountPercentage = product.discountPercentage || 0;
+            newPrice = product.price - product.price * discountPercentage / 100;
+            totalPrice = newPrice * quantity;
+            totalOrderPrice += totalPrice;
+            product.quantity = quantity;
+            product.newPrice = newPrice;
+            product.totalPrice = totalPrice;
+            products.push(product);
+          }
+
+        case 17:
+          _iteratorNormalCompletion3 = true;
+          _context3.next = 11;
+          break;
+
+        case 20:
+          _context3.next = 26;
+          break;
+
+        case 22:
+          _context3.prev = 22;
+          _context3.t0 = _context3["catch"](9);
+          _didIteratorError3 = true;
+          _iteratorError3 = _context3.t0;
+
+        case 26:
+          _context3.prev = 26;
+          _context3.prev = 27;
+
+          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+            _iterator3["return"]();
+          }
+
+        case 29:
+          _context3.prev = 29;
+
+          if (!_didIteratorError3) {
+            _context3.next = 32;
+            break;
+          }
+
+          throw _iteratorError3;
+
+        case 32:
+          return _context3.finish(29);
+
+        case 33:
+          return _context3.finish(26);
+
+        case 34:
+          userInfo = order.userInfo;
+          res.render('client/pages/order/success', {
+            title: "Trang đặt hàng thành công",
+            products: products,
+            totalOrderPrice: totalOrderPrice,
+            userInfo: userInfo
+          });
+
+        case 36:
+        case "end":
+          return _context3.stop();
+      }
+    }
+  }, null, null, [[9, 22, 26, 34], [27,, 29, 33]]);
 };

@@ -8,5 +8,7 @@ var orderController = require('../../controllers/client/order.controller'); //[G
 
 
 router.get('/', orderController.checkout);
-router.post('/order', orderController.order);
+router.post('/order', orderController.order); //[GET] : Trang đặt hàng thành công :
+
+router.get('/success/:order_id', orderController.success);
 module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.

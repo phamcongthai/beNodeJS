@@ -1,0 +1,34 @@
+extends ../../layouts/default
+include ../../mixin/flash.pug
+
+block main
+  +alert-error(5000)
+
+  .container.my-5
+    .row.justify-content-center
+      .col-8
+        h1.text-center.mb-4 Đăng ký tài khoản
+
+        form(action="/user/register", method="POST")
+          .form-group.mb-3
+            label(for="fullName") Họ và tên
+            input#fullName.form-control(type="text", name="fullName", required)
+
+          .form-group.mb-3
+            label(for="email") Email
+            input#email.form-control(type="email", name="email", required)
+
+          .form-group.mb-4
+            label(for="password") Mật khẩu
+            input#password.form-control(type="password", name="password", required)
+
+          button.btn.btn-primary.btn-block(type="submit") Đăng ký
+
+  // 👇 Có thể thêm style nếu muốn tùy chỉnh thêm
+  style.
+    .form-control {
+      height: 45px;
+    }
+    .btn-block {
+      width: 100%;
+    }

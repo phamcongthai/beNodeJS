@@ -24,9 +24,6 @@ app.use(session({
 
 // Cấu hình express-flash
 app.use(flash());
-
-
-
 // Method override
 app.use(methodOverride('_method'));
 

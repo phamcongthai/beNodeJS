@@ -59,10 +59,44 @@ module.exports.order = async (req, res) => {
         // Sau khi render xong thì mới xóa giỏ hàng và cookie
         await CartModel.findByIdAndDelete(cart._id);
         res.clearCookie("cartId");
-        res.redirect("/products")
+        res.redirect(`/checkout/success/${order._id}`);
 
     } catch (error) {
         console.error("Lỗi khi tạo đơn hàng:", error);
         res.redirect("back");
     }
+};
+//[GET] : Thành công !
+module.exports.success = async (req, res) => {
+    const order_id = req.params.order_id;
+    const order = await OrderModel.findById(order_id);
+    const products = [];
+    let totalOrderPrice = 0;
+
+    for (const item of order.products) {
+        const product = await ProductModel.findById(item.product_id);
+        if (product) {
+            const quantity = item.quantity;
+
+            // Sử dụng discountPercentage thay vì discount
+            const discountPercentage = product.discountPercentage || 0;
+            const newPrice = product.price - (product.price * discountPercentage / 100);
+
+            const totalPrice = newPrice * quantity;
+            totalOrderPrice += totalPrice;
+
+            product.quantity = quantity;
+            product.newPrice = newPrice;
+            product.totalPrice = totalPrice;
+
+            products.push(product);
+        }
+    }
+    const userInfo = order.userInfo;
+    res.render('client/pages/order/success', {
+        title: "Trang đặt hàng thành công",
+        products,
+        totalOrderPrice,
+        userInfo
+    });
 };
