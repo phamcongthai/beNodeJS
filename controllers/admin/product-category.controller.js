@@ -102,24 +102,13 @@ module.exports.changeMulti = async (req, res) => {
 
 //Xóa tạm thời  :
 //Tạo mới danh mục sản phẩm :
-
-//[GET] : Lấy ra trang tạo mới danh mục sản phẩm :
 module.exports.products_categoryCreate = async (req, res) => {
     try {
-        const find = {
-            deleted: false
-        };
+        const find = { deleted: false };
         const category = await ProductsCategoryModel.find(find);
 
-        if (!category || category.length === 0) {
-            return res.status(404).send("Không có danh mục nào.");
-        }
-        
-        const newCategory = createTreeHelper(category);
+        const newCategory = category.length > 0 ? createTreeHelper(category) : [];
 
-
-        // Trả về JSON cho client
-        // res.json(newCategory);
         res.render("admin/pages/products-category/createCategory", {
             title: "Trang tạo mới danh mục sản phẩm",
             category: newCategory
