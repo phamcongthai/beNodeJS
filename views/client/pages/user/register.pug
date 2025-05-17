@@ -12,15 +12,15 @@ block main
         form(action="/user/register", method="POST")
           .form-group.mb-3
             label(for="fullName") Họ và tên
-            input#fullName.form-control(type="text", name="fullName", required)
+            input#fullName.form-control(type="text", name="fullName", required, style="color: black")
 
           .form-group.mb-3
             label(for="email") Email
-            input#email.form-control(type="email", name="email", required)
+            input#email.form-control(type="email", name="email", required, style="color: black")
 
           .form-group.mb-4
             label(for="password") Mật khẩu
-            input#password.form-control(type="password", name="password", required)
+            input#password.form-control(type="password", name="password", required, style="color: black")
 
           button.btn.btn-primary.btn-block(type="submit") Đăng ký
 

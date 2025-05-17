@@ -6,6 +6,8 @@ var ForgotPassModel = require('../../models/forgot-password');
 
 var genToken = require('../../helpers/generateToken.helper');
 
+var sendMailHelper = require('../../helpers/sendMail.helper');
+
 var md5 = require('md5'); //[GET] : Lấy ra trang đăng kí 
 
 
@@ -182,7 +184,7 @@ module.exports.forgot = function _callee6(req, res) {
 
 
 module.exports.forgotBE = function _callee7(req, res) {
-  var email, userExist, data, foPass;
+  var email, userExist, otp, data, foPass, subject, content;
   return regeneratorRuntime.async(function _callee7$(_context7) {
     while (1) {
       switch (_context7.prev = _context7.next) {
@@ -205,19 +207,24 @@ module.exports.forgotBE = function _callee7(req, res) {
           return _context7.abrupt("return", res.redirect("back"));
 
         case 7:
+          otp = genToken.generateRandomNumber(8);
           data = {
             email: email,
-            opt: genToken.generateRandomNumber(8) // Không cần đặt expireAt nữa
+            opt: otp // Không cần đặt expireAt nữa
 
           };
           foPass = new ForgotPassModel(data);
-          _context7.next = 11;
+          _context7.next = 12;
           return regeneratorRuntime.awrap(foPass.save());
 
-        case 11:
+        case 12:
+          //Gửi mail :
+          subject = "Mã OTP lấy lại mật khẩu : ";
+          content = "M\xE3 OTP l\xE0 <b>".concat(otp, "</b>");
+          sendMailHelper.sendMail(email, subject, content);
           res.redirect("/user/password/otp?email=".concat(email));
 
-        case 12:
+        case 16:
         case "end":
           return _context7.stop();
       }
