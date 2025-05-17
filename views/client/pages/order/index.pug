@@ -56,3 +56,20 @@ block main
               input#address.form-control(type="text", name="address", required=true, placeholder="Nhập địa chỉ")
 
             button.btn.btn-success.btn-block.mt-3(type="submit") ĐẶT HÀNG
+
+    style.
+      input.form-control {
+        color: black !important;
+        background-color: white !important;
+        border: 1px solid #ccc !important;
+        caret-color: black;
+      }
+
+      input.form-control::placeholder {
+        color: #888 !important;
+      }
+
+      input.form-control:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+      }

@@ -3,13 +3,28 @@ const ProductsModel = require('../../models/products.model');
 module.exports.index = async (req, res) => {
   try {
     const FeaturedProducts = await ProductsModel.find({
-      deleted : false,
-      status : "active",
-      isFeatured : true
-    });
+      deleted: false,
+      status: "active",
+      isFeatured: true
+    }).limit(5);
+    const NewProducts = await ProductsModel.find({
+      deleted: false,
+      status: "active",
+    }).sort({
+      position : -1
+    }).limit(5);
+    const DisProducts = await ProductsModel.find({
+      deleted: false,
+      status: "active",
+    }).sort({
+      discountPercentage: -1
+    }).limit(5);
+
     res.render('client/pages/home/index', {
       pageTitle: 'Trang chủ',
-      FeaturedProducts 
+      FeaturedProducts,
+      NewProducts,
+      DisProducts
     });
   } catch (err) {
     console.error('Lỗi lấy danh mục:', err);

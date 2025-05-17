@@ -2,6 +2,10 @@
 
 var UserModel = require('../../models/user.model');
 
+var ForgotPassModel = require('../../models/forgot-password');
+
+var genToken = require('../../helpers/generateToken.helper');
+
 var md5 = require('md5'); //[GET] : Lấy ra trang đăng kí 
 
 
@@ -153,6 +157,219 @@ module.exports.logout = function _callee5(req, res) {
         case 2:
         case "end":
           return _context5.stop();
+      }
+    }
+  });
+}; //[GET] : Quên mật khẩu :
+
+
+module.exports.forgot = function _callee6(req, res) {
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          res.render('client/pages/user/forgot-password', {
+            title: "Trang đổi mật khẩu"
+          });
+
+        case 1:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  });
+}; //[POST] : Quên mật khẩu :
+
+
+module.exports.forgotBE = function _callee7(req, res) {
+  var email, userExist, data, foPass;
+  return regeneratorRuntime.async(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          email = req.body.email;
+          _context7.next = 3;
+          return regeneratorRuntime.awrap(UserModel.findOne({
+            email: email
+          }));
+
+        case 3:
+          userExist = _context7.sent;
+
+          if (userExist) {
+            _context7.next = 7;
+            break;
+          }
+
+          req.flash("error", "Email không tồn tại !");
+          return _context7.abrupt("return", res.redirect("back"));
+
+        case 7:
+          data = {
+            email: email,
+            opt: genToken.generateRandomNumber(8) // Không cần đặt expireAt nữa
+
+          };
+          foPass = new ForgotPassModel(data);
+          _context7.next = 11;
+          return regeneratorRuntime.awrap(foPass.save());
+
+        case 11:
+          res.redirect("/user/password/otp?email=".concat(email));
+
+        case 12:
+        case "end":
+          return _context7.stop();
+      }
+    }
+  });
+}; //[GET] : Trang nhập mã otp :
+
+
+module.exports.opt = function _callee8(req, res) {
+  var email;
+  return regeneratorRuntime.async(function _callee8$(_context8) {
+    while (1) {
+      switch (_context8.prev = _context8.next) {
+        case 0:
+          email = req.query.email;
+          res.render("client/pages/user/otp", {
+            title: "Trang otp",
+            email: email
+          });
+
+        case 2:
+        case "end":
+          return _context8.stop();
+      }
+    }
+  });
+}; //[POST] : Trang nhập mã otp :
+
+
+module.exports.optBE = function _callee9(req, res) {
+  var otp, userExist, user;
+  return regeneratorRuntime.async(function _callee9$(_context9) {
+    while (1) {
+      switch (_context9.prev = _context9.next) {
+        case 0:
+          otp = req.body.otp;
+          _context9.next = 3;
+          return regeneratorRuntime.awrap(ForgotPassModel.findOne({
+            opt: otp
+          }));
+
+        case 3:
+          userExist = _context9.sent;
+
+          if (userExist) {
+            _context9.next = 9;
+            break;
+          }
+
+          req.flash("error", "Mã OTP không hợp lệ !");
+          res.redirect("back");
+          _context9.next = 13;
+          break;
+
+        case 9:
+          _context9.next = 11;
+          return regeneratorRuntime.awrap(UserModel.findOne({
+            email: req.body.email
+          }));
+
+        case 11:
+          user = _context9.sent;
+
+          if (user) {
+            res.cookie("token_user", user.token_user);
+            res.redirect('/user/password/reset');
+          }
+
+        case 13:
+        case "end":
+          return _context9.stop();
+      }
+    }
+  });
+}; //[GET] : Trang nhập reset mật khẩu :
+
+
+module.exports.reset = function _callee10(req, res) {
+  return regeneratorRuntime.async(function _callee10$(_context10) {
+    while (1) {
+      switch (_context10.prev = _context10.next) {
+        case 0:
+          res.render("client/pages/user/reset", {
+            title: "Trang reset mật khẩu"
+          });
+
+        case 1:
+        case "end":
+          return _context10.stop();
+      }
+    }
+  });
+}; //[POST] : Trang nhập reset mật khẩu :
+
+
+module.exports.resetBE = function _callee11(req, res) {
+  var newPass, confirmPass, tokenUser;
+  return regeneratorRuntime.async(function _callee11$(_context11) {
+    while (1) {
+      switch (_context11.prev = _context11.next) {
+        case 0:
+          newPass = req.body.password;
+          confirmPass = req.body.confirmPassword;
+
+          if (newPass) {
+            _context11.next = 7;
+            break;
+          }
+
+          req.flash("error", "Vui lòng nhập mật khẩu mới");
+          res.redirect("back");
+          _context11.next = 21;
+          break;
+
+        case 7:
+          if (confirmPass) {
+            _context11.next = 12;
+            break;
+          }
+
+          req.flash("error", "Vui lòng nhập mật khẩu xác nhận");
+          res.redirect("back");
+          _context11.next = 21;
+          break;
+
+        case 12:
+          if (!(newPass != confirmPass)) {
+            _context11.next = 17;
+            break;
+          }
+
+          req.flash("error", "Mật khẩu xác nhận không đúng");
+          res.redirect("back");
+          _context11.next = 21;
+          break;
+
+        case 17:
+          //Đổi mật khẩu 
+          tokenUser = req.cookies.token_user;
+          _context11.next = 20;
+          return regeneratorRuntime.awrap(UserModel.updateOne({
+            token_user: tokenUser
+          }, {
+            password: md5(newPass)
+          }));
+
+        case 20:
+          res.redirect("/products");
+
+        case 21:
+        case "end":
+          return _context11.stop();
       }
     }
   });

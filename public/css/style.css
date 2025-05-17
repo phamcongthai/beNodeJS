@@ -1,6 +1,9 @@
 /* ========== Reset & Base Layout ========== */
 * {
   box-sizing: border-box;
+   a:hover{
+    text-decoration: none;
+  }
 }
 
 html, body {
@@ -90,7 +93,7 @@ header.navbar {
 /* Submenu cấp 2 */
 .sub-menu ul li ul {
   position: absolute;
-  top: 0;
+  top: 20px;
   right: 100%;
   background-color: #fff;
   min-width: 180px;

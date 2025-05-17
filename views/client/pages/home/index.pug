@@ -2,3 +2,7 @@ extends ../../layouts/default
 include ../../mixin/products-grid
 block main 
     +products-grid(FeaturedProducts, "Sản phẩm nổi bật")
+    br
+    +products-grid(NewProducts, "Sản phẩm mới")
+    br
+    +products-grid(DisProducts, "Sản phẩm giảm giá mạnh")

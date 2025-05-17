@@ -1,0 +1,31 @@
+extends ../../layouts/auth.pug
+include ../../mixin/flash.pug
+
+block main
+  +alert-error(5000)
+  .container.my-5
+    .row.justify-content-center
+      .col-md-4.col-sm-6
+        h2.text-center.mb-4 Đổi mật khẩu
+
+        form(method="POST", action="/user/password/reset")
+          .form-group
+            label(for="password") Mật khẩu mới
+            input#password.form-control(
+              type="password",
+              name="password",
+              placeholder="Nhập mật khẩu mới",
+              required
+            )
+
+          .form-group
+            label(for="confirmPassword") Xác nhận mật khẩu
+            input#confirmPassword.form-control(
+              type="password",
+              name="confirmPassword",
+              placeholder="Nhập lại mật khẩu mới",
+              required
+            )
+
+          button.btn.btn-primary.btn-block(type="submit")
+            | Đổi mật khẩu

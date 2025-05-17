@@ -38,7 +38,7 @@ block main
                 form(method="POST", action=`/cart/add/${product.id}`)
                   .mb-3
                     label.form-label(for="quantity") Số lượng:
-                    input#quantity.form-control(type="number", name="quantity", value="1", min="1", max=product.stock, required)
+                    input#quantity.form-control(type="number", name="quantity", value="1", min="1", max=product.stock, required, style="color: black;")
 
                   button.btn.btn-success(type="submit") Thêm vào giỏ hàng
 
