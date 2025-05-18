@@ -57,6 +57,12 @@ app.locals.moment = moment;
 // Cấu hình mongoose
 const database = require("./config/database.config");
 database.connect();
+//Cấu hình trang 404 :
+app.get("*", (req, res) => {
+  res.render("client/pages/errors/404", {
+    pageTitle: "404 Not Found",
+  });
+});
 
 // Biến local toàn cục
 const systemConfig = require('./config/system.config');

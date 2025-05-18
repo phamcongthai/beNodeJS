@@ -30,5 +30,5 @@ var productCategorychema = new mongoose.Schema({
 }, {
   timestamps: true
 });
-var ProductsCategoryModel = mongoose.model('ProductsCategoty', productCategorychema, 'products-category');
+var ProductsCategoryModel = mongoose.model('ProductsCategory', productCategorychema, 'products-category');
 module.exports = ProductsCategoryModel;

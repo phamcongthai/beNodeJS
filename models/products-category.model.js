@@ -21,6 +21,6 @@ const productCategorychema = new mongoose.Schema({
         default : false
     },
 }, {timestamps : true});
-const ProductsCategoryModel = mongoose.model('ProductsCategoty', productCategorychema, 'products-category');
+const ProductsCategoryModel = mongoose.model('ProductsCategory', productCategorychema, 'products-category');
 
 module.exports = ProductsCategoryModel;

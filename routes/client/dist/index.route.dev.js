@@ -24,11 +24,14 @@ var userMiddleware = require('../../middleware/client/user.middleware');
 
 var auth = require('../../middleware/client/authRequire.middleware');
 
+var settingsGeneral = require('../../middleware/admin/settingsGeneral.middleware');
+
 module.exports = function (app) {
   app.use(categorySubmenu.categorySubmenu); // Chỉ dùng cách gọi 1 lần như này bên client
 
   app.use(cartMiddleware.cart);
   app.use(userMiddleware.userMiddleware);
+  app.use(settingsGeneral.settingsGeneral);
   app.use('/', homeRoutes);
   app.use('/products', productsRoutes);
   app.use('/search', searchRoutes);

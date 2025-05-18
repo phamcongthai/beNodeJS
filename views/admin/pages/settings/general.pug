@@ -1,0 +1,79 @@
+extends ../../layouts/default.pug
+include ../../mixin/flash.pug
+
+block main
+  h1 Cài đặt chung
+
+  +alert-error(5000)
+  +alert-success(5000)
+
+  form(
+    action=`${prefixAdmin}/settings/general?_method=PATCH`
+    method="POST"
+    enctype="multipart/form-data"
+  )
+    .form-group
+      label(for="websiteName") Tên website
+      input(
+        type="text"
+        class="form-control"
+        id="websiteName"
+        name="websiteName"
+        value=settingsGeneral && settingsGeneral.websiteName ? settingsGeneral.websiteName : ''
+      )
+
+    .form-group
+      label(for="logo") Logo
+      input#logo.form-control(
+        type="file"
+        name="logo"
+        accept="image/*"
+        input-upload-img
+        value = settingsGeneral.logo
+      )
+      if settingsGeneral && settingsGeneral.logo
+        img(src=settingsGeneral.logo alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+      else
+        img(src="" alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+
+    .form-group
+      label(for="phone") Số điện thoại
+      input(
+        type="text"
+        class="form-control"
+        id="phone"
+        name="phone"
+        value=settingsGeneral && settingsGeneral.phone ? settingsGeneral.phone : ''
+      )
+
+    .form-group
+      label(for="email") Email
+      input(
+        type="email"
+        class="form-control"
+        id="email"
+        name="email"
+        value=settingsGeneral && settingsGeneral.email ? settingsGeneral.email : ''
+      )
+
+    .form-group
+      label(for="address") Địa chỉ
+      input(
+        type="text"
+        class="form-control"
+        id="address"
+        name="address"
+        value=settingsGeneral && settingsGeneral.address ? settingsGeneral.address : ''
+      )
+
+    .form-group
+      label(for="copyright") Copyright
+      input(
+        type="text"
+        class="form-control"
+        id="copyright"
+        name="copyright"
+        value=settingsGeneral && settingsGeneral.copyright ? settingsGeneral.copyright : ''
+      )
+
+    button.btn.btn-primary(type="submit") Cập nhật

@@ -205,6 +205,19 @@ block main
                 input(type="checkbox", checked)
               else
                 input(type="checkbox")
+        //Nhóm cài đặt chung   
+        tr
+          td(colspan="4")
+            strong Phân quyền
+
+        tr(data-name="settings_view")
+          td Xem
+          each item in roles
+            td.text-center
+              if item.permissions.includes("settings_view")
+                input(type="checkbox", checked)
+              else
+                input(type="checkbox")
     else 
       h1 Bạn không có quyền chỉnh sửa !
     // form nằm dưới cùng trang
