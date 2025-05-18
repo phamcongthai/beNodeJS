@@ -59,6 +59,18 @@ module.exports.order = async (req, res) => {
         // Sau khi render xong thì mới xóa giỏ hàng và cookie
         await CartModel.findByIdAndDelete(cart._id);
         res.clearCookie("cartId");
+        if (cart.user_id) {
+    // Tạo giỏ hàng mới cho user
+    const newCart = new CartModel({
+        user_id: cart.user_id,
+        products: []
+    });
+    await newCart.save();
+
+    res.cookie("cartId", newCart._id.toString(), {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+    });
+}
         res.redirect(`/checkout/success/${order._id}`);
 
     } catch (error) {

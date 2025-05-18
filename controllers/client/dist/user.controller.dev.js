@@ -94,7 +94,7 @@ module.exports.login = function _callee3(req, res) {
 
 
 module.exports.loginBE = function _callee4(req, res) {
-  var _req$body, email, password, user, cart;
+  var _req$body, email, password, user, cart, cartId;
 
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
@@ -109,46 +109,56 @@ module.exports.loginBE = function _callee4(req, res) {
         case 3:
           user = _context4.sent;
 
-          if (user) {
+          if (!(!user || user.password !== md5(password))) {
             _context4.next = 7;
             break;
           }
 
-          req.flash("error", "Email không tồn tại!");
+          req.flash("error", "Thông tin đăng nhập sai!");
           return _context4.abrupt("return", res.redirect("back"));
 
         case 7:
-          if (!(user.password !== md5(password))) {
-            _context4.next = 10;
-            break;
-          }
-
-          req.flash("error", "Mật khẩu sai!");
-          return _context4.abrupt("return", res.redirect("back"));
-
-        case 10:
           if (!(user.status !== "active")) {
-            _context4.next = 13;
+            _context4.next = 10;
             break;
           }
 
           req.flash("error", "Tài khoản bị khóa!");
           return _context4.abrupt("return", res.redirect("back"));
 
-        case 13:
-          // Đăng nhập thành công
-          res.cookie("token_user", user.token_user); // Tìm hoặc tạo giỏ hàng theo user
+        case 10:
+          res.cookie("token_user", user.token_user); // Nếu đã có cartId cookie nhưng cart không tồn tại nữa, thì tìm hoặc tạo
+
+          cart = null;
+          cartId = req.cookies.cartId;
+
+          if (!cartId) {
+            _context4.next = 17;
+            break;
+          }
 
           _context4.next = 16;
-          return regeneratorRuntime.awrap(CartModel.findOne({
-            user_id: user._id
-          }));
+          return regeneratorRuntime.awrap(CartModel.findById(cartId));
 
         case 16:
           cart = _context4.sent;
 
+        case 17:
           if (cart) {
-            _context4.next = 21;
+            _context4.next = 25;
+            break;
+          }
+
+          _context4.next = 20;
+          return regeneratorRuntime.awrap(CartModel.findOne({
+            user_id: user._id
+          }));
+
+        case 20:
+          cart = _context4.sent;
+
+          if (cart) {
+            _context4.next = 25;
             break;
           }
 
@@ -156,17 +166,17 @@ module.exports.loginBE = function _callee4(req, res) {
             user_id: user._id,
             products: []
           });
-          _context4.next = 21;
+          _context4.next = 25;
           return regeneratorRuntime.awrap(cart.save());
 
-        case 21:
-          res.cookie("cartId", cart._id, {
+        case 25:
+          res.cookie("cartId", cart._id.toString(), {
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
           });
           req.flash("success", "Đăng nhập thành công!");
-          return _context4.abrupt("return", res.redirect("/"));
+          res.redirect("/");
 
-        case 24:
+        case 28:
         case "end":
           return _context4.stop();
       }

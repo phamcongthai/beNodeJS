@@ -39,13 +39,8 @@ module.exports.loginBE = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await UserModel.findOne({ email });
-    if (!user) {
-        req.flash("error", "Email không tồn tại!");
-        return res.redirect("back");
-    }
-
-    if (user.password !== md5(password)) {
-        req.flash("error", "Mật khẩu sai!");
+    if (!user || user.password !== md5(password)) {
+        req.flash("error", "Thông tin đăng nhập sai!");
         return res.redirect("back");
     }
 
@@ -54,26 +49,35 @@ module.exports.loginBE = async (req, res) => {
         return res.redirect("back");
     }
 
-    // Đăng nhập thành công
     res.cookie("token_user", user.token_user);
 
-    // Tìm hoặc tạo giỏ hàng theo user
-    let cart = await CartModel.findOne({user_id : user._id });
-    if (!cart) {
-        cart = new CartModel({
-            user_id : user._id,
-            products: []
-        });
-        await cart.save();
+    // Nếu đã có cartId cookie nhưng cart không tồn tại nữa, thì tìm hoặc tạo
+    let cart = null;
+    const cartId = req.cookies.cartId;
+    if (cartId) {
+        cart = await CartModel.findById(cartId);
     }
 
-    res.cookie("cartId", cart._id, {
+    // Nếu không tìm thấy cart -> tìm theo user_id
+    if (!cart) {
+        cart = await CartModel.findOne({ user_id: user._id });
+        if (!cart) {
+            cart = new CartModel({
+                user_id: user._id,
+                products: []
+            });
+            await cart.save();
+        }
+    }
+
+    res.cookie("cartId", cart._id.toString(), {
         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
     });
 
     req.flash("success", "Đăng nhập thành công!");
-    return res.redirect("/");
+    res.redirect("/");
 };
+
 //[GET] : Đăng xuất :
 module.exports.logout = (req, res) => {
     res.clearCookie("token_user");

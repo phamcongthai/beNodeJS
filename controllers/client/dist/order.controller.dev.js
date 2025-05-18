@@ -101,7 +101,7 @@ module.exports.checkout = function _callee(req, res) {
 };
 
 module.exports.order = function _callee2(req, res) {
-  var userInfo, cart, products, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, cart_id, order;
+  var userInfo, cart, products, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, cart_id, order, newCart;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
@@ -197,22 +197,42 @@ module.exports.order = function _callee2(req, res) {
 
         case 38:
           res.clearCookie("cartId");
+
+          if (!cart.user_id) {
+            _context2.next = 44;
+            break;
+          }
+
+          // Tạo giỏ hàng mới cho user
+          newCart = new CartModel({
+            user_id: cart.user_id,
+            products: []
+          });
+          _context2.next = 43;
+          return regeneratorRuntime.awrap(newCart.save());
+
+        case 43:
+          res.cookie("cartId", newCart._id.toString(), {
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+          });
+
+        case 44:
           res.redirect("/checkout/success/".concat(order._id));
-          _context2.next = 46;
+          _context2.next = 51;
           break;
 
-        case 42:
-          _context2.prev = 42;
+        case 47:
+          _context2.prev = 47;
           _context2.t1 = _context2["catch"](0);
           console.error("Lỗi khi tạo đơn hàng:", _context2.t1);
           res.redirect("back");
 
-        case 46:
+        case 51:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 42], [7, 20, 24, 32], [25,, 27, 31]]);
+  }, null, null, [[0, 47], [7, 20, 24, 32], [25,, 27, 31]]);
 }; //[GET] : Thành công !
 
 
