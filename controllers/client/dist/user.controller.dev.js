@@ -8,6 +8,8 @@ var genToken = require('../../helpers/generateToken.helper');
 
 var sendMailHelper = require('../../helpers/sendMail.helper');
 
+var CartModel = require('../../models/cart.model');
+
 var md5 = require('md5'); //[GET] : Lấy ra trang đăng kí 
 
 
@@ -135,11 +137,20 @@ module.exports.loginBE = function _callee4(req, res) {
           return _context4.abrupt("return", res.redirect("back"));
 
         case 20:
-          req.flash('success', "Đăng nhập thành công !");
+          req.flash('success', "Đăng nhập thành công !"); //Cập nhật user_id vào giỏ hàng :
+
+          _context4.next = 23;
+          return regeneratorRuntime.awrap(CartModel.updateOne({
+            _id: req.cookies.cartId
+          }, {
+            user_id: userExist._id
+          }));
+
+        case 23:
           res.cookie("token_user", userExist.token_user);
           return _context4.abrupt("return", res.redirect("/"));
 
-        case 23:
+        case 25:
         case "end":
           return _context4.stop();
       }
@@ -377,6 +388,24 @@ module.exports.resetBE = function _callee11(req, res) {
         case 21:
         case "end":
           return _context11.stop();
+      }
+    }
+  });
+}; //[GET] : Lấy ra trang thông tin tài khoản :
+
+
+module.exports.profile = function _callee12(req, res) {
+  return regeneratorRuntime.async(function _callee12$(_context12) {
+    while (1) {
+      switch (_context12.prev = _context12.next) {
+        case 0:
+          res.render("client/pages/user/profile", {
+            title: "Trang tài khoản"
+          });
+
+        case 1:
+        case "end":
+          return _context12.stop();
       }
     }
   });

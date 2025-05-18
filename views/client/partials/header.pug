@@ -27,38 +27,52 @@ header.navbar.navbar-expand-lg.bg-dark.py-3.shadow
         li.nav-item
           a.nav-link.text-light(href="/")
             i.fas.fa-home.me-1
-            |   Trang chủ
+            | Trang chủ
 
         li.nav-item.sub-menu
           a.nav-link.text-light(href="/products")
             i.fas.fa-boxes.me-1
-            |   Sản phẩm
+            | Sản phẩm
           if categories && categories.length > 0
             +menu-tree(categories)
 
         li.nav-item
           a.nav-link.text-light(href="/cart")
             i.fas.fa-shopping-cart.me-1
-            |   Giỏ hàng (#{miniCart ? total : 0})
+            | Giỏ hàng (#{miniCart ? total : 0})
 
         if user
-          li.nav-item
-            a.nav-link.text-light(href="/user/logout")
-              i.fas.fa-sign-out-alt.me-1
-              |   Đăng xuất
+          li.nav-item.position-relative.account-wrapper
+            a.nav-link.text-light.account-icon(href="#", title="Tài khoản")
+              i.fas.fa-user-circle.fs-5.me-1
+
+            ul.account-menu.shadow
+              li
+                a(href="/user/profile") 
+                  i.fas.fa-id-badge.me-2
+                  |  Thông tin tài khoản
+              li
+                a(href="/user/orders") 
+                  i.fas.fa-receipt.me-2
+                  |  Đơn hàng của tôi
+              li
+                a(href="/user/logout") 
+                  i.fas.fa-sign-out-alt.me-2
+                  |  Đăng xuất
         else
           li.nav-item
             a.nav-link.text-light(href="/user/login")
               i.fas.fa-sign-in-alt.me-1
-              |   Đăng nhập
-
+              | Đăng nhập
           li.nav-item
             a.nav-link.text-light(href="/user/register")
               i.fas.fa-user-plus.me-1
-              |   Đăng ký
+              | Đăng ký
 
-// Font Awesome + Custom Dark Style
+// Font Awesome
 link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
+
+// Custom CSS
 style.
   .navbar {
     background-color: #1c1c1e !important;
@@ -99,4 +113,49 @@ style.
     background-color: #2c2c2e;
     border: none;
     color: #fff;
+  }
+
+  /* Đặt position relative cho container icon */
+  .account-wrapper {
+    position: relative;
+  }
+
+  .account-icon i {
+    font-size: 1.9rem;
+  }
+
+  /* Menu hiện ra, căn giữa so với icon */
+  .account-menu {
+    display: none;
+    position: absolute;
+    top: 100%;             /* ngay dưới icon */
+    left: 50%;             /* bắt đầu từ giữa icon */
+    transform: translateX(-50%); /* dịch ngược lại 50% chiều rộng menu để căn giữa */
+    margin-top: 0;
+    background-color: white;
+    border-radius: 6px;
+    min-width: 200px;
+    z-index: 1000;
+    padding: 0.5rem 0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  /* Hiển thị menu khi hover vào account-wrapper */
+  .account-wrapper:hover .account-menu {
+    display: block;
+  }
+
+  .account-menu li {
+    list-style: none;
+  }
+
+  .account-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #000;
+    text-decoration: none;
+  }
+
+  .account-menu a:hover {
+    background-color: #f1f1f1;
   }

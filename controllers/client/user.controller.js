@@ -2,6 +2,7 @@ const UserModel = require('../../models/user.model');
 const ForgotPassModel = require('../../models/forgot-password');
 const genToken = require('../../helpers/generateToken.helper');
 const sendMailHelper = require('../../helpers/sendMail.helper');
+const CartModel = require('../../models/cart.model');
 var md5 = require('md5');
 //[GET] : Lấy ra trang đăng kí 
 module.exports.register = async (req, res) => {
@@ -54,6 +55,8 @@ module.exports.loginBE = async (req, res) => {
                 return res.redirect("back");
             }else{
                 req.flash('success', "Đăng nhập thành công !");
+                //Cập nhật user_id vào giỏ hàng :
+                await CartModel.updateOne({_id : req.cookies.cartId}, {user_id : userExist._id});
                 res.cookie("token_user", userExist.token_user)
                 return res.redirect("/");
             }
@@ -153,4 +156,11 @@ module.exports.resetBE = async (req, res) => {
             }
         }
     }
+}
+//[GET] : Lấy ra trang thông tin tài khoản :
+module.exports.profile = async (req, res) => {
+    res.render("client/pages/user/profile", {
+        title : "Trang tài khoản",
+
+    })
 }

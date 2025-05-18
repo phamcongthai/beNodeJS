@@ -9,6 +9,7 @@ const cartRoutes = require('../../routes/client/cart.route')
 const orderRoutes = require('../../routes/client/order.route')
 const userRoutes = require('../../routes/client/user.route')
 const userMiddleware = require('../../middleware/client/user.middleware')
+const auth = require('../../middleware/client/authRequire.middleware');
 module.exports = (app) => {
     app.use(categorySubmenu.categorySubmenu);// Chỉ dùng cách gọi 1 lần như này bên client
     app.use(cartMiddleware.cart);

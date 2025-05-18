@@ -22,6 +22,8 @@ var userRoutes = require('../../routes/client/user.route');
 
 var userMiddleware = require('../../middleware/client/user.middleware');
 
+var auth = require('../../middleware/client/authRequire.middleware');
+
 module.exports = function (app) {
   app.use(categorySubmenu.categorySubmenu); // Chỉ dùng cách gọi 1 lần như này bên client
 

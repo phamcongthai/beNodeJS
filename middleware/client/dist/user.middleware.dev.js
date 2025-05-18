@@ -14,7 +14,7 @@ module.exports.userMiddleware = function _callee(req, res, next) {
           }
 
           _context.next = 3;
-          return regeneratorRuntime.awrap(UserModel.find({
+          return regeneratorRuntime.awrap(UserModel.findOne({
             token_user: req.cookies.token_user,
             deleted: false,
             status: "active"

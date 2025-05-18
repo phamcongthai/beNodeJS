@@ -232,7 +232,7 @@ module.exports.editProductBE = async (req, res) => {
       }
     );
 
-    res.redirect("back");
+    res.redirect("/admin/products");
   } catch (error) {
     console.error(error);
     res.redirect("back");

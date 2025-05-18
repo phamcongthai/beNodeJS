@@ -4,7 +4,9 @@ var express = require('express');
 
 var router = express.Router();
 
-var userController = require('../../controllers/client/user.controller'); //Đăng kí :
+var userController = require('../../controllers/client/user.controller');
+
+var auth = require('../../middleware/client/authRequire.middleware'); //Đăng kí :
 
 
 router.get('/register', userController.register); //Đăng kí : 
@@ -21,5 +23,7 @@ router.post('/password/forgot', userController.forgotBE);
 router.get('/password/otp', userController.opt);
 router.post('/password/otp', userController.optBE);
 router.get('/password/reset', userController.reset);
-router.post('/password/reset', userController.resetBE);
+router.post('/password/reset', userController.resetBE); //Thông tin user :
+
+router.get('/profile', auth.authRequire, userController.profile);
 module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.
