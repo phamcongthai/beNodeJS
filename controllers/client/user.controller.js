@@ -36,39 +36,51 @@ module.exports.login = async (req, res) => {
 }
 //[GET] : Trang đăng nhập :
 module.exports.loginBE = async (req, res) => {
-   const email = req.body.email;
-   const password = req.body.password;
-   //Xác thực xem email tồn tại không :
-   const userExist = await UserModel.findOne({email : email});
-   if(!userExist){
-    req.flash("error", "Email không tồn tại !");
-    return res.redirect("back");
-   }else{
-    //Kiểm tra mật khẩu :
-    if(userExist.password != md5(password)){
-        req.flash("error", "Mật khẩu sai !");
+    const { email, password } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+        req.flash("error", "Email không tồn tại!");
         return res.redirect("back");
-    }else{
-        //Kiểm tra xem tài khoản active không
-        if(userExist.status != "active"){
-                req.flash('error', "Tài khoản đã bị khóa !");
-                return res.redirect("back");
-            }else{
-                req.flash('success', "Đăng nhập thành công !");
-                //Cập nhật user_id vào giỏ hàng :
-                await CartModel.updateOne({_id : req.cookies.cartId}, {user_id : userExist._id});
-                res.cookie("token_user", userExist.token_user)
-                return res.redirect("/");
-            }
     }
-   }
-   
-}
+
+    if (user.password !== md5(password)) {
+        req.flash("error", "Mật khẩu sai!");
+        return res.redirect("back");
+    }
+
+    if (user.status !== "active") {
+        req.flash("error", "Tài khoản bị khóa!");
+        return res.redirect("back");
+    }
+
+    // Đăng nhập thành công
+    res.cookie("token_user", user.token_user);
+
+    // Tìm hoặc tạo giỏ hàng theo user
+    let cart = await CartModel.findOne({user_id : user._id });
+    if (!cart) {
+        cart = new CartModel({
+            user_id : user._id,
+            products: []
+        });
+        await cart.save();
+    }
+
+    res.cookie("cartId", cart._id, {
+        expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
+    });
+
+    req.flash("success", "Đăng nhập thành công!");
+    return res.redirect("/");
+};
 //[GET] : Đăng xuất :
-module.exports.logout = async (req, res)  => {
+module.exports.logout = (req, res) => {
     res.clearCookie("token_user");
+    res.clearCookie("cartId");
     res.redirect("/");
-}
+};
+
 //[GET] : Quên mật khẩu :
 module.exports.forgot = async (req, res) => {
     res.render('client/pages/user/forgot-password',

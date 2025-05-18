@@ -7,45 +7,43 @@ var OrderModel = require('../../models/cart.model');
 var ProductsModel = require('../../models/products.model');
 
 module.exports.cart = function _callee(req, res, next) {
-  var newCart, cart, total;
+  var cartId, cart, total;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
-          if (req.cookies.cartId) {
-            _context.next = 7;
+          cartId = req.cookies.cartId;
+
+          if (cartId) {
+            _context.next = 3;
             break;
           }
 
-          newCart = new CartModel();
-          _context.next = 4;
-          return regeneratorRuntime.awrap(newCart.save());
+          return _context.abrupt("return", next());
 
-        case 4:
-          res.cookie("cartId", newCart._id, {
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
-          });
-          _context.next = 13;
-          break;
+        case 3:
+          _context.next = 5;
+          return regeneratorRuntime.awrap(CartModel.findById(cartId));
 
-        case 7:
-          _context.next = 9;
-          return regeneratorRuntime.awrap(CartModel.findOne({
-            _id: req.cookies.cartId
-          }));
-
-        case 9:
+        case 5:
           cart = _context.sent;
+
+          if (cart) {
+            _context.next = 8;
+            break;
+          }
+
+          return _context.abrupt("return", next());
+
+        case 8:
           total = cart.products.reduce(function (sum, item) {
             return sum + item.quantity;
           }, 0);
           res.locals.total = total;
           res.locals.miniCart = cart;
-
-        case 13:
           next();
 
-        case 14:
+        case 12:
         case "end":
           return _context.stop();
       }
