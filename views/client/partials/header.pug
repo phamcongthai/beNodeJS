@@ -40,7 +40,10 @@ header.navbar.navbar-expand-lg.bg-dark.py-3.shadow
           a.nav-link.text-light(href="/cart")
             i.fas.fa-shopping-cart.me-1
             | Giỏ hàng (#{miniCart ? total : 0})
-
+        li.nav-item
+          // Chat Floating Button
+          a#chat-button(href="/chat", title="Chat hỗ trợ")
+            i.fas.fa-comments
         if user
           li.nav-item.position-relative.account-wrapper
             a.nav-link.text-light.account-icon(href="#", title="Tài khoản")
@@ -68,7 +71,6 @@ header.navbar.navbar-expand-lg.bg-dark.py-3.shadow
             a.nav-link.text-light(href="/user/register")
               i.fas.fa-user-plus.me-1
               | Đăng ký
-
 // Font Awesome
 link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
 
@@ -158,4 +160,25 @@ style.
 
   .account-menu a:hover {
     background-color: #f1f1f1;
+  }
+  #chat-button {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    background-color: #007bff;
+    color: #fff;
+    padding: 14px 16px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+  }
+
+  #chat-button:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+  }
+
+  #chat-button i {
+    font-size: 20px;
   }

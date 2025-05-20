@@ -19,7 +19,20 @@ var path = require('path'); //Đi kèm với tiny mce
 var slug = require('mongoose-slug-updater'); //Cài multer để tải ảnh lên từ máy :
 
 
-var app = express(); // Cấu hình cookie-parser
+var app = express(); //Cấu hình socket :
+//Socket IO :
+
+var http = require('http');
+
+var server = http.createServer(app);
+
+var _require = require('socket.io'),
+    Server = _require.Server;
+
+var io = new Server(server); //Tạo biến io toàn cục :
+
+global._io = io; //Kết thúc cấu hình socket :
+// Cấu hình cookie-parser
 
 app.use(cookieParser()); // Cấu hình session (bắt buộc để dùng express-flash)
 
@@ -81,6 +94,6 @@ var systemConfig = require('./config/system.config');
 
 app.locals.prefixAdmin = systemConfig.prefixAdmin; // Chạy server
 
-app.listen(port, function () {
+server.listen(port, function () {
   console.log("App \u0111ang ch\u1EA1y t\u1EA1i c\u1ED5ng ".concat(port));
 });

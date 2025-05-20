@@ -1,0 +1,101 @@
+extends ../../layouts/default.pug
+
+block main
+  .container.my-3
+    .row
+      .col-12
+        h1 Chat
+        .chat(user_id=user._id)
+          .inner-head
+          //.inner-avatar EY
+          //.inner-name Em Yêu
+          .inner-body 
+            each item in msg
+              if (item.user_id != user._id)
+                .inner-incoming
+                  .inner-name #{item.userName}
+                  .inner-content #{item.content}
+              else
+                .inner-outgoing
+                  .inner-content #{item.content}
+          .inner-foot
+            form(class="inner-form", action="")
+              input(type="text", placeholder="Nhập nội dung...", name="content")
+              button
+                i.fa-solid.fa-paper-plane
+
+  //- CSS ở đây để cho giống ảnh giao diện
+  style.
+    .chat {
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 15px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 500px; /* chiều cao cố định để khung chat ổn định */
+    }
+
+    .inner-body {
+      flex: 1;
+      overflow-y: auto;
+      padding-right: 5px; /* để tránh nội dung bị che bởi thanh scroll */
+      margin-bottom: 10px;
+    }
+
+    .inner-incoming, .inner-outgoing {
+      margin-bottom: 10px;
+    }
+
+    .inner-incoming .inner-content {
+      background: #f0f0f0;
+      color: #000;
+      padding: 10px;
+      border-radius: 15px;
+      display: inline-block;
+      max-width: 70%;
+    }
+
+    .inner-outgoing {
+      text-align: right;
+    }
+
+    .inner-outgoing .inner-content {
+      background: #ff69b4;
+      color: #fff;
+      padding: 10px;
+      border-radius: 15px;
+      display: inline-block;
+      max-width: 70%;
+    }
+
+    .inner-name {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+
+    .inner-foot {
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+
+    .inner-form {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .inner-form input {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 20px;
+      border: 1px solid #ccc;
+    }
+
+    .inner-form button {
+      background: #ff69b4;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 50%;
+    }

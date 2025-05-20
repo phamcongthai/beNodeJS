@@ -11,6 +11,16 @@ var slug = require('mongoose-slug-updater');
 
 const app = express();
 
+//Cấu hình socket :
+//Socket IO :
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server);
+ //Tạo biến io toàn cục :
+global._io = io;
+//Kết thúc cấu hình socket :
+
 // Cấu hình cookie-parser
 app.use(cookieParser());
 
@@ -69,6 +79,6 @@ const systemConfig = require('./config/system.config');
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
 
 // Chạy server
-app.listen(port, () => {
+server.listen(port, () => {
     console.log(`App đang chạy tại cổng ${port}`);
 });

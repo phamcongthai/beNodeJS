@@ -11,6 +11,7 @@ const userRoutes = require('../../routes/client/user.route')
 const userMiddleware = require('../../middleware/client/user.middleware')
 const auth = require('../../middleware/client/authRequire.middleware');
 const settingsGeneral = require('../../middleware/admin/settingsGeneral.middleware');
+const chatRoutes = require('../../routes/client/chat.route');
 module.exports = (app) => {
     app.use(categorySubmenu.categorySubmenu);// Chỉ dùng cách gọi 1 lần như này bên client
     app.use(cartMiddleware.cart);
@@ -22,4 +23,5 @@ module.exports = (app) => {
     app.use('/cart', cartRoutes);
     app.use('/checkout', orderRoutes);
     app.use('/user', userRoutes);
+    app.use('/chat', chatRoutes);
 }

@@ -26,6 +26,8 @@ var auth = require('../../middleware/client/authRequire.middleware');
 
 var settingsGeneral = require('../../middleware/admin/settingsGeneral.middleware');
 
+var chatRoutes = require('../../routes/client/chat.route');
+
 module.exports = function (app) {
   app.use(categorySubmenu.categorySubmenu); // Chỉ dùng cách gọi 1 lần như này bên client
 
@@ -38,4 +40,5 @@ module.exports = function (app) {
   app.use('/cart', cartRoutes);
   app.use('/checkout', orderRoutes);
   app.use('/user', userRoutes);
+  app.use('/chat', chatRoutes);
 };

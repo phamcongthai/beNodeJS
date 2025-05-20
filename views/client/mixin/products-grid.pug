@@ -2,6 +2,10 @@ mixin products-grid(data, name)
   h1 #{name}
   .product-container
     each item in data
+      - const discountedPrice = item.price * (1 - item.discountPercentage / 100)
+      - const formattedOldPrice = item.price.toLocaleString('vi-VN')
+      - const formattedNewPrice = discountedPrice.toLocaleString('vi-VN')
+
       a.product-item(href=`/products/detail/${item.slug}`, style="text-decoration: none; color: inherit; display: block;")
         .inner-image
           if item.isFeatured
@@ -11,11 +15,9 @@ mixin products-grid(data, name)
         .inner-content
           h3.inner-title #{item.title}
           
-          - const discountedPrice = (item.price * (1 - item.discountPercentage / 100)).toFixed(2)
-
           .inner-price
-            span.inner-price-old #{item.price}đ
-            span.inner-price-new #{discountedPrice}đ
+            span.inner-price-old #{formattedOldPrice}đ
+            span.inner-price-new #{formattedNewPrice}đ
           
           .inner-discount -#{item.discountPercentage}%
 

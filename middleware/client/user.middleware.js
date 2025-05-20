@@ -7,7 +7,6 @@ module.exports.userMiddleware = async (req, res, next) => {
             status : "active"
         })
         if(user){
-            console.log(user);
             res.locals.user = user;
         }
         
