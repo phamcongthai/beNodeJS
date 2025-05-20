@@ -9,7 +9,7 @@ module.exports.formChat = async (req, res) => {
         //Lưu vào db :
         socket.on("CLIENT_SEND_MSG", async (content) => {
             const chat = new ChatModel({
-                user_id: res.locals.user.id,
+                user_id: user_id,
                 content: content
             });
             await chat.save();

@@ -25,7 +25,7 @@ module.exports.formChat = function _callee2(req, res) {
                   switch (_context.prev = _context.next) {
                     case 0:
                       chat = new ChatModel({
-                        user_id: res.locals.user.id,
+                        user_id: user_id,
                         content: content
                       });
                       _context.next = 3;
