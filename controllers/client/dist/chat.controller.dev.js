@@ -6,12 +6,15 @@ var UserModel = require('../../models/user.model'); //[GET] : Lấy ra giao di�
 
 
 module.exports.formChat = function _callee2(req, res) {
-  var user, msg, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, item, userName;
+  var user_id, userName, msg, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, item, _userName;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
+          user_id = res.locals.user._id;
+          userName = res.locals.user.fullName;
+
           _io.once('connection', function (socket) {
             console.log('ID của user kết nối', socket.id); //Lưu vào db :
 
@@ -31,8 +34,8 @@ module.exports.formChat = function _callee2(req, res) {
                     case 3:
                       //Trả lại tin nhắn cho tất cả các client :
                       _io.emit("SERVER_SEND_MSG", {
-                        user_id: res.locals.user._id,
-                        userName: res.locals.user.fullName,
+                        user_id: user_id,
+                        userName: userName,
                         content: content
                       });
 
@@ -46,83 +49,82 @@ module.exports.formChat = function _callee2(req, res) {
           }); //Lấy tin nhắn cũ đưa ra giao diện (không có thì thôi)
 
 
-          user = res.locals.user;
-          _context2.next = 4;
+          _context2.next = 5;
           return regeneratorRuntime.awrap(ChatModel.find({}).lean());
 
-        case 4:
+        case 5:
           msg = _context2.sent;
           _iteratorNormalCompletion = true;
           _didIteratorError = false;
           _iteratorError = undefined;
-          _context2.prev = 8;
+          _context2.prev = 9;
           _iterator = msg[Symbol.iterator]();
 
-        case 10:
+        case 11:
           if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-            _context2.next = 19;
+            _context2.next = 20;
             break;
           }
 
           item = _step.value;
-          _context2.next = 14;
+          _context2.next = 15;
           return regeneratorRuntime.awrap(UserModel.findOne({
-            _id: user._id
+            _id: item.user_id
           }).select("fullName"));
 
-        case 14:
-          userName = _context2.sent;
-          item.userName = userName.fullName;
+        case 15:
+          _userName = _context2.sent;
+          item.userName = _userName.fullName;
 
-        case 16:
+        case 17:
           _iteratorNormalCompletion = true;
-          _context2.next = 10;
+          _context2.next = 11;
           break;
 
-        case 19:
-          _context2.next = 25;
+        case 20:
+          _context2.next = 26;
           break;
 
-        case 21:
-          _context2.prev = 21;
-          _context2.t0 = _context2["catch"](8);
+        case 22:
+          _context2.prev = 22;
+          _context2.t0 = _context2["catch"](9);
           _didIteratorError = true;
           _iteratorError = _context2.t0;
 
-        case 25:
-          _context2.prev = 25;
+        case 26:
           _context2.prev = 26;
+          _context2.prev = 27;
 
           if (!_iteratorNormalCompletion && _iterator["return"] != null) {
             _iterator["return"]();
           }
 
-        case 28:
-          _context2.prev = 28;
+        case 29:
+          _context2.prev = 29;
 
           if (!_didIteratorError) {
-            _context2.next = 31;
+            _context2.next = 32;
             break;
           }
 
           throw _iteratorError;
 
-        case 31:
-          return _context2.finish(28);
-
         case 32:
-          return _context2.finish(25);
+          return _context2.finish(29);
 
         case 33:
+          return _context2.finish(26);
+
+        case 34:
           res.render("client/pages/chat/index", {
             title: "Chat",
             msg: msg
           });
 
-        case 34:
+        case 35:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[8, 21, 25, 33], [26,, 28, 32]]);
+  }, null, null, [[9, 22, 26, 34], [27,, 29, 33]]);
 };
