@@ -21,81 +21,104 @@ block main
           .inner-foot
             form(class="inner-form", action="")
               input(type="text", placeholder="Nhập nội dung...", name="content")
+              button(class="button-emoji" type="button") 😊
               button
                 i.fa-solid.fa-paper-plane
+          div(class="tooltip" role="tooltip")
+            emoji-picker
+    style.
+      emoji-picker {
+        width: 400px;
+        height: 300px;
+        --border-radius : 8px;
+      }
+      .tooltip {
+        position: absolute;
+        bottom: 60px; /* khoảng cách từ input lên */
+        right: 70px;  /* điều chỉnh ngang sang trái nếu cần */
+        z-index: 999;
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
 
-  //- CSS ở đây để cho giống ảnh giao diện
-  style.
-    .chat {
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 15px;
-      background: #fff;
-      display: flex;
-      flex-direction: column;
-      height: 500px; /* chiều cao cố định để khung chat ổn định */
-    }
+      .tooltip.shown {
+        visibility: visible;
+        opacity: 1;
+      }
 
-    .inner-body {
-      flex: 1;
-      overflow-y: auto;
-      padding-right: 5px; /* để tránh nội dung bị che bởi thanh scroll */
-      margin-bottom: 10px;
-    }
+      .chat {
+        position: relative; /* để absolute trong .tooltip định vị theo .chat */
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        height: 500px;
+      }
 
-    .inner-incoming, .inner-outgoing {
-      margin-bottom: 10px;
-    }
+      .inner-body {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+        padding-right: 5px;
+      }
 
-    .inner-incoming .inner-content {
-      background: #f0f0f0;
-      color: #000;
-      padding: 10px;
-      border-radius: 15px;
-      display: inline-block;
-      max-width: 70%;
-    }
+      .inner-incoming, .inner-outgoing {
+        margin-bottom: 10px;
+      }
 
-    .inner-outgoing {
-      text-align: right;
-    }
+      .inner-incoming .inner-content {
+        background: #f0f0f0;
+        color: #000;
+        padding: 10px;
+        border-radius: 15px;
+        display: inline-block;
+        max-width: 70%;
+      }
 
-    .inner-outgoing .inner-content {
-      background: #ff69b4;
-      color: #fff;
-      padding: 10px;
-      border-radius: 15px;
-      display: inline-block;
-      max-width: 70%;
-    }
+      .inner-outgoing {
+        text-align: right;
+      }
 
-    .inner-name {
-      font-weight: bold;
-      margin-bottom: 3px;
-    }
+      .inner-outgoing .inner-content {
+        background: #ff69b4;
+        color: #fff;
+        padding: 10px;
+        border-radius: 15px;
+        display: inline-block;
+        max-width: 70%;
+      }
 
-    .inner-foot {
-      border-top: 1px solid #eee;
-      padding-top: 10px;
-    }
+      .inner-name {
+        font-weight: bold;
+        margin-bottom: 3px;
+      }
 
-    .inner-form {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+      .inner-foot {
+        border-top: 1px solid #eee;
+        padding-top: 10px;
+      }
 
-    .inner-form input {
-      flex: 1;
-      padding: 8px 12px;
-      border-radius: 20px;
-      border: 1px solid #ccc;
-    }
+      .inner-form {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
 
-    .inner-form button {
-      background: #ff69b4;
-      border: none;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 50%;
-    }
+      .inner-form input {
+        flex: 1;
+        padding: 8px 12px;
+        border-radius: 20px;
+        border: 1px solid #ccc;
+      }
+
+      .inner-form button {
+        background: #ff69b4;
+        border: none;
+        color: white;
+        padding: 8px 12px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
