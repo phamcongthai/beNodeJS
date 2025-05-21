@@ -1,4 +1,3 @@
-const path = require('path');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
 const ProductsCategoryModel = require('../../models/products-category.model');
@@ -6,17 +5,19 @@ const ProductModel = require('../../models/products.model');
 const AccountsModel = require('../../models/account.model');
 const UserModel = require('../../models/user.model');
 
-// Đường dẫn tới service account file JSON
-const KEY_FILE_PATH = path.join(__dirname, '../../config/service-account.json');
+// Lấy Property ID từ biến môi trường
+const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
 
-// GA4 Property ID - KHÔNG phải là Measurement ID
-const PROPERTY_ID = '481189639'; // Thay đúng GA4 Property ID của bạn
-
-// Tạo client GA4
+// Khởi tạo GA4 client bằng credentials từ .env
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: KEY_FILE_PATH,
+  credentials: {
+    client_email: process.env.GOOGLE_CLIENT_EMAIL,
+    private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  },
+  projectId: process.env.GOOGLE_PROJECT_ID,
 });
 
+// Lấy realtime users
 async function getRealtimeUsers() {
   try {
     const [response] = await analyticsDataClient.runRealtimeReport({
@@ -24,7 +25,7 @@ async function getRealtimeUsers() {
       metrics: [{ name: 'activeUsers' }],
     });
 
-    if (response.rows && response.rows.length > 0) {
+    if (response.rows?.length > 0) {
       return parseInt(response.rows[0].metricValues[0].value, 10);
     }
   } catch (err) {
@@ -33,6 +34,7 @@ async function getRealtimeUsers() {
   return 0;
 }
 
+// Lấy pageviews hôm nay
 async function getTodayPageviews() {
   try {
     const [response] = await analyticsDataClient.runReport({
@@ -41,7 +43,7 @@ async function getTodayPageviews() {
       metrics: [{ name: 'screenPageViews' }],
     });
 
-    if (response.rows && response.rows.length > 0) {
+    if (response.rows?.length > 0) {
       return parseInt(response.rows[0].metricValues[0].value, 10);
     }
   } catch (err) {
@@ -50,6 +52,7 @@ async function getTodayPageviews() {
   return 0;
 }
 
+// Controller chính
 module.exports.index = async (req, res) => {
   const statistic = {
     categoryProduct: { total: 0, active: 0, inactive: 0 },
@@ -63,24 +66,24 @@ module.exports.index = async (req, res) => {
   };
 
   try {
-    // Đếm MongoDB
+    // MongoDB counts
     statistic.categoryProduct.total = await ProductsCategoryModel.countDocuments();
-    statistic.categoryProduct.active = await ProductsCategoryModel.countDocuments({ status: "active" });
-    statistic.categoryProduct.inactive = await ProductsCategoryModel.countDocuments({ status: "inactive" });
+    statistic.categoryProduct.active = await ProductsCategoryModel.countDocuments({ status: 'active' });
+    statistic.categoryProduct.inactive = await ProductsCategoryModel.countDocuments({ status: 'inactive' });
 
     statistic.product.total = await ProductModel.countDocuments();
-    statistic.product.active = await ProductModel.countDocuments({ status: "active" });
-    statistic.product.inactive = await ProductModel.countDocuments({ status: "inactive" });
+    statistic.product.active = await ProductModel.countDocuments({ status: 'active' });
+    statistic.product.inactive = await ProductModel.countDocuments({ status: 'inactive' });
 
     statistic.account.total = await AccountsModel.countDocuments();
-    statistic.account.active = await AccountsModel.countDocuments({ status: "active" });
-    statistic.account.inactive = await AccountsModel.countDocuments({ status: "inactive" });
+    statistic.account.active = await AccountsModel.countDocuments({ status: 'active' });
+    statistic.account.inactive = await AccountsModel.countDocuments({ status: 'inactive' });
 
     statistic.user.total = await UserModel.countDocuments();
-    statistic.user.active = await UserModel.countDocuments({ status: "active" });
-    statistic.user.inactive = await UserModel.countDocuments({ status: "inactive" });
+    statistic.user.active = await UserModel.countDocuments({ status: 'active' });
+    statistic.user.inactive = await UserModel.countDocuments({ status: 'inactive' });
 
-    // Lấy dữ liệu GA4
+    // Google Analytics data
     statistic.googleAnalytics.realtimeUsers = await getRealtimeUsers();
     statistic.googleAnalytics.todayPageviews = await getTodayPageviews();
 
@@ -89,7 +92,7 @@ module.exports.index = async (req, res) => {
   }
 
   res.render('admin/pages/dashboard/index', {
-    title: "Trang tổng quan",
+    title: 'Trang tổng quan',
     statistic
   });
 };
