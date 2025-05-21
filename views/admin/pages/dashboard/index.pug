@@ -21,7 +21,18 @@ block main
             p Số điện thoại: <b>#{currentUser.phone}</b>
           if (currentRole.title)
             p Phân quyền: <b>#{currentRole.title}</b>
+    // Thêm phần Google Analytics
+    .col-6
+      .card.mb-4
+        .card-header Google Analytics - Người truy cập realtime
+        .card-body
+          p Số người truy cập hiện tại: <b>#{statistic.googleAnalytics.realtimeUsers}</b>
 
+    .col-6
+      .card.mb-4
+        .card-header Google Analytics - Lượt xem hôm nay
+        .card-body
+          p Số lượt xem trang hôm nay: <b>#{statistic.googleAnalytics.todayPageviews}</b>
     .col-6
       .card.mb-4
         .card-header Danh mục sản phẩm
@@ -53,3 +64,5 @@ block main
           p Số lượng: <b>#{statistic.user.total}</b>
           p Hoạt động: <b>#{statistic.user.active}</b>
           p Dừng hoạt động: <b>#{statistic.user.inactive}</b>
+
+    
