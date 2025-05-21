@@ -16,7 +16,7 @@ module.exports.formChat = function _callee2(req, res) {
           userName = res.locals.user.fullName;
 
           _io.once('connection', function (socket) {
-            console.log('ID của user kết nối', socket.id); //Lưu vào db :
+            console.log('ID của user kết nối', socket.id); // Lắng nghe sự kiện từ client
 
             socket.on("CLIENT_SEND_MSG", function _callee(content) {
               var chat;
@@ -24,29 +24,38 @@ module.exports.formChat = function _callee2(req, res) {
                 while (1) {
                   switch (_context.prev = _context.next) {
                     case 0:
+                      if (!(!content || content.trim() === "")) {
+                        _context.next = 2;
+                        break;
+                      }
+
+                      return _context.abrupt("return");
+
+                    case 2:
+                      // Lưu vào db
                       chat = new ChatModel({
                         user_id: user_id,
-                        content: content
+                        content: content.trim()
                       });
-                      _context.next = 3;
+                      _context.next = 5;
                       return regeneratorRuntime.awrap(chat.save());
 
-                    case 3:
-                      //Trả lại tin nhắn cho tất cả các client :
+                    case 5:
+                      // Trả lại tin nhắn cho tất cả các client
                       _io.emit("SERVER_SEND_MSG", {
                         user_id: user_id,
                         userName: userName,
-                        content: content
+                        content: content.trim()
                       });
 
-                    case 4:
+                    case 6:
                     case "end":
                       return _context.stop();
                   }
                 }
               });
             });
-          }); //Lấy tin nhắn cũ đưa ra giao diện (không có thì thôi)
+          }); // Lấy tin nhắn cũ đưa ra giao diện
 
 
           _context2.next = 5;
