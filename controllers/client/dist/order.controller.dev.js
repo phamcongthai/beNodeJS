@@ -199,6 +199,7 @@ module.exports.order = function _callee2(req, res) {
           cart_id = cart._id; // Tạo đơn hàng, thêm trường totalPrice
 
           order = new OrderModel({
+            user_id: res.locals.user._id,
             userInfo: userInfo,
             products: products,
             cart_id: cart_id,
@@ -356,4 +357,106 @@ module.exports.success = function _callee3(req, res) {
       }
     }
   }, null, null, [[10, 23, 27, 35], [28,, 30, 34]]);
+}; //[GET] : Trang đơn hàng của client :
+
+
+module.exports.myOrders = function _callee4(req, res) {
+  var find, status, orders;
+  return regeneratorRuntime.async(function _callee4$(_context4) {
+    while (1) {
+      switch (_context4.prev = _context4.next) {
+        case 0:
+          find = {
+            user_id: res.locals.user._id
+          };
+          status = req.query.status;
+
+          if (status) {
+            find.status = status;
+          }
+
+          _context4.next = 5;
+          return regeneratorRuntime.awrap(OrderModel.find(find));
+
+        case 5:
+          orders = _context4.sent;
+          res.render('client/pages/order/myorders', {
+            title: "Trang đơn hàng",
+            orders: orders
+          });
+
+        case 7:
+        case "end":
+          return _context4.stop();
+      }
+    }
+  });
+}; //[PATCH] : Hủy đơn hàng :
+
+
+module.exports.cancel = function _callee5(req, res) {
+  var order;
+  return regeneratorRuntime.async(function _callee5$(_context5) {
+    while (1) {
+      switch (_context5.prev = _context5.next) {
+        case 0:
+          _context5.next = 2;
+          return regeneratorRuntime.awrap(OrderModel.findById(req.params.id));
+
+        case 2:
+          order = _context5.sent;
+
+          if (!(order.status === "pending")) {
+            _context5.next = 8;
+            break;
+          }
+
+          order.prevStatus = order.status;
+          _context5.next = 7;
+          return regeneratorRuntime.awrap(OrderModel.updateOne({
+            _id: req.params.id
+          }, {
+            status: "cancelled",
+            prevStatus: order.prevStatus
+          }));
+
+        case 7:
+          req.flash("success", "Bạn đã hủy đơn hàng thành công !");
+
+        case 8:
+        case "end":
+          return _context5.stop();
+      }
+    }
+  });
+}; //[PATCH] : Hoàn hủy đơn hàng :
+
+
+module.exports.undoCancel = function _callee6(req, res) {
+  var order;
+  return regeneratorRuntime.async(function _callee6$(_context6) {
+    while (1) {
+      switch (_context6.prev = _context6.next) {
+        case 0:
+          _context6.next = 2;
+          return regeneratorRuntime.awrap(OrderModel.findById(req.params.id));
+
+        case 2:
+          order = _context6.sent;
+          _context6.next = 5;
+          return regeneratorRuntime.awrap(OrderModel.updateOne({
+            _id: req.params.id
+          }, {
+            status: order.prevStatus
+          }));
+
+        case 5:
+          res.redirect("back");
+
+        case 6:
+        case "end":
+          return _context6.stop();
+      }
+    }
+  });
 };

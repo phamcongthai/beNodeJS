@@ -1,0 +1,98 @@
+extends ../../layouts/default
+include ../../mixin/flash.pug
+
+block main
+  +alert-success(5000)
+  h1.mb-4 Đơn hàng của bạn
+
+  // FILTER BUTTONS
+  .btn-group.mb-4.d-flex.flex-wrap.gap-2
+    button.btn.btn-outline-secondary.filter-btn(data-status='' btn-order) Tất cả
+    button.btn.btn-outline-dark.filter-btn(data-status='pending' btn-order) Đơn hàng mới
+    button.btn.btn-outline-info.filter-btn(data-status='confirmed' btn-order) Đã xác nhận
+    button.btn.btn-outline-warning.filter-btn(data-status='preparing' btn-order) Đang chuẩn bị hàng
+    button.btn.btn-outline-primary.filter-btn(data-status='shipping' btn-order) Đang giao
+    button.btn.btn-outline-success.filter-btn(data-status='completed' btn-order) Hoàn thành
+    button.btn.btn-outline-danger.filter-btn(data-status='cancelled' btn-order) Đã hủy
+
+  // ORDER LIST
+  #orders-list
+    if orders.length === 0
+      .alert.alert-info Không có đơn hàng nào.
+    else
+      each order in orders
+        .card.mb-4.order-item(data-status=order.status)
+          .card-header.d-flex.justify-content-between.align-items-center.flex-wrap
+            h5.mb-0 Mã đơn: #{order._id}
+            .text-muted.big
+              | Trạng thái:
+              if order.status === 'completed'
+                span.text-success.ml-1 Hoàn thành
+              else if order.status === 'pending'
+                span.text-dark.ml-1 Đơn hàng mới
+              else if order.status === 'confirmed'
+                span.text-dark.ml-1 Đã xác nhận
+              else if order.status === 'preparing'
+                span.text-warning.ml-1 Đang chuẩn bị hàng
+              else if order.status === 'shipping'
+                span.text-primary.ml-1 Đang giao
+              else if order.status === 'cancelled'
+                span.text-danger.ml-1 Đã hủy
+              else
+                span.text-secondary.ml-1 Không rõ
+
+          .card-body
+            p
+              strong Người nhận:
+              | #{order.userInfo.fullName} - #{order.userInfo.phone}
+            p
+              strong Địa chỉ:
+              | #{order.userInfo.address}
+            p
+              strong Phương thức thanh toán:
+              | #{order.paymentMethod === 'online' ? 'Thanh toán online' : 'Thanh toán khi nhận hàng (COD)'}
+            p
+              strong Trạng thái thanh toán:
+              if order.paymentStatus === 'paid'
+                span.text-success.ml-1 Đã thanh toán
+              else
+                span.text-danger.ml-1 Chưa thanh toán
+
+            table.table.table-sm.mt-3
+              thead
+                tr
+                  th Hình
+                  th Tên sản phẩm
+                  th SL
+                  th Giá
+                  th Tổng
+              tbody
+                each product in order.products
+                  tr
+                    td: img(src=product.thumbnail, alt="thumb", width="60")
+                    td #{product.title}
+                    td #{product.quantity}
+                    td #{product.price.toLocaleString()}₫
+                    td #{(product.price * product.quantity * (1 - product.discountPercentage / 100)).toLocaleString()}₫
+
+          .card-footer.d-flex.justify-content-between.align-items-center.flex-wrap
+            strong Tổng tiền:
+              | #{order.products.reduce((sum, p) => sum + (p.price * p.quantity * (1 - p.discountPercentage / 100)), 0).toLocaleString()}₫
+
+            // HỦY ĐƠN
+            // HỦY ĐƠN
+            if order.status === 'pending' || order.status === 'confirmed'
+              form(action=`/checkout/cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này không?');")
+                button.btn.btn-sm.btn-outline-danger(type="submit")
+                  | Hủy đơn hàng
+
+            // UNDO HỦY ĐƠN
+            if order.status === 'cancelled'
+                form(action=`/checkout/undo-cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Khôi phục lại đơn hàng này?');")
+                  button.btn.btn-sm.btn-outline-secondary(type="submit")
+                    | Khôi phục đơn hàng
+            //Yêu cầu hủy đơn khi ở trạng thái preparing 
+            if order.status === 'preparing'
+              form(action=`/checkout/request-cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Bạn muốn yêu cầu hủy đơn hàng này? Admin sẽ xem xét và xác nhận.');")
+                button.btn.btn-sm.btn-outline-warning(type="submit")
+                  | Yêu cầu hủy đơn hàng

@@ -21,6 +21,10 @@ block main
             | Đã hủy
           else if order.status === 'completed'
             | Hoàn thành
+          else if order.status === 'confirmed'
+            | Đã xác nhận 
+          else if order.status === 'preparing'
+            | Đang chuẩn bị hàng
           else
             | Không xác định
       //- a.btn.btn-sm.btn-warning(href=`edit/${order._id}`) Chỉnh sửa
@@ -60,7 +64,7 @@ block main
             tr
               td
                 if product.thumbnail
-                  img(src=product.thumbnail, alt=product.title, width="60", height="60", style="object-fit: cover; border-radius: 6px;")
+                  img(src=product.thumbnail, alt=product.title, width="60" height="60" style="object-fit: cover; border-radius: 6px;")
                 else
                   span.text-muted Không có ảnh
               td= product.title || "Sản phẩm không rõ"
@@ -71,7 +75,7 @@ block main
               td= product.quantity
               td= (newPrice * product.quantity).toLocaleString() + ' đ'
           tr.total-row
-            td(colspan="6", class="text-end fw-bold") Tổng tiền:
+            td(colspan="6" class="text-end fw-bold") Tổng tiền:
             td.text-danger.fw-bold #{order.totalPrice.toLocaleString()} đ
 
   style.

@@ -11,6 +11,8 @@ block main
         label.fw-bold(for="status") Trạng thái đơn hàng:
         select.form-select(name="status", id="status", required)
           option(value="pending" selected=order.status === 'pending') Đang xử lý
+          option(value="confirmed" selected=order.status === 'confirmed') Đã xác nhận 
+          option(value="preparing" selected=order.status === 'preparing') Đang chuẩn bị
           option(value="shipping" selected=order.status === 'shipping') Đang giao
           option(value="delivered" selected=order.status === 'delivered') Đã giao
           option(value="completed" selected=order.status === 'completed') Hoàn thành

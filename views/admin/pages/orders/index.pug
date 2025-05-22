@@ -47,6 +47,10 @@ block main
                             span.text-dark Đã giao
                         else if order.status === 'cancelled'
                             span.text-danger Hủy đơn hàng
+                        else if order.status === 'confirmed'
+                            span.text-dark Đã xác nhận 
+                        else if order.status === 'preparing'
+                            span.text-dark Đang chuẩn bị hàng
                         else
                             span.text-secondary Không rõ
                     td
@@ -59,7 +63,9 @@ block main
                     td
                         .d-flex.flex-wrap.gap-2
                             a.btn.btn-success.btn-sm(href=`/admin/orders/detail/${order._id}`) Chi tiết
-                            a.btn.btn-warning.btn-sm.text-dark(href=`/admin/orders/edit/${order._id}`) Sửa
+                            br 
+                            a.btn.btn-warning.btn-sm.text-dark(href=`/admin/orders/edit/${order._id}`) Cập nhật
+                            br
                             button.btn.btn-danger.btn-sm(type="button" button-del id=`${order._id}`) Xóa
 
     form#form-change-status(action="" method="POST" data-path="/admin/orders/change-status")

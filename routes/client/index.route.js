@@ -16,7 +16,7 @@ module.exports = (app) => {
     app.use(categorySubmenu.categorySubmenu);// Chỉ dùng cách gọi 1 lần như này bên client
     app.use(cartMiddleware.cart);
     app.use(userMiddleware.userMiddleware);
-     app.use(settingsGeneral.settingsGeneral);
+    app.use(settingsGeneral.settingsGeneral);
     app.use('/', homeRoutes);
     app.use('/products', productsRoutes);
     app.use('/search', searchRoutes);

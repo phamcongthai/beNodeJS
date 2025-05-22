@@ -59,6 +59,7 @@ module.exports.order = async (req, res) => {
 
         // Tạo đơn hàng, thêm trường totalPrice
         const order = new OrderModel({
+            user_id : res.locals.user._id,
             userInfo: userInfo,
             products: products,
             cart_id: cart_id,
@@ -125,3 +126,41 @@ module.exports.success = async (req, res) => {
         paymentMethod
     });
 };
+//[GET] : Trang đơn hàng của client :
+module.exports.myOrders = async (req, res) => {
+    let find = {
+        user_id : res.locals.user._id
+    }
+    const status = req.query.status;
+    if(status){
+        find.status = status;
+    }
+    
+    const orders = await OrderModel.find(find)
+    res.render('client/pages/order/myorders', {
+        title : "Trang đơn hàng",
+        orders
+    })
+}
+//[PATCH] : Hủy đơn hàng :
+module.exports.cancel = async (req, res) => {
+    const order = await OrderModel.findById(req.params.id);
+    if(order.status === "pending"){
+        order.prevStatus = order.status;
+        await OrderModel.updateOne({_id : req.params.id}, {
+            status : "cancelled",
+            prevStatus : order.prevStatus
+        })
+        req.flash("success", "Bạn đã hủy đơn hàng thành công !");
+        
+    }
+    
+}
+//[PATCH] : Hoàn hủy đơn hàng :
+module.exports.undoCancel = async (req, res) => {
+    const order = await OrderModel.findById(req.params.id);
+    await OrderModel.updateOne({_id : req.params.id}, {
+            status : order.prevStatus
+    })
+    res.redirect("back");
+} 
