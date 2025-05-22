@@ -11,6 +11,7 @@ const authMiddleware = require('../../middleware/admin/authRequire.middleware');
 const my_accountRoutes = require('../../routes/admin/my-account.route');
 const settingsRoutes = require('../../routes/admin/settings.route');
 const settingsGeneral = require('../../middleware/admin/settingsGeneral.middleware');
+const ordersRoutes = require('../../routes/admin/orders.route')
 module.exports = (app) => {
     app.use(settingsGeneral.settingsGeneral);
     app.use(pathAdmin.prefixAdmin+'/dashboard', authMiddleware.authRequire, dashboardRoutes);
@@ -21,4 +22,5 @@ module.exports = (app) => {
     app.use(pathAdmin.prefixAdmin+'/auth', authRoutes);
     app.use(pathAdmin.prefixAdmin+'/my-account', authMiddleware.authRequire, my_accountRoutes);
     app.use(pathAdmin.prefixAdmin+'/settings', authMiddleware.authRequire, settingsRoutes);
+    app.use(pathAdmin.prefixAdmin+'/orders', authMiddleware.authRequire, ordersRoutes);
 }

@@ -20,6 +20,9 @@ block main
         tr
           th Địa chỉ
           td= userInfo.address
+        tr
+          th Phương thức thanh toán
+          td= paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'VNPay (đã thanh toán)'
 
     // Danh sách sản phẩm
     .product-list.mt-5
@@ -49,7 +52,6 @@ block main
             td(colspan="6", class="text-end fw-bold") Tổng tiền:
             td.text-danger.fw-bold #{totalOrderPrice.toLocaleString()} đ
 
-  // 👇 Thêm style ngay dưới block main
   style.
     .order-success {
       max-width: 800px;

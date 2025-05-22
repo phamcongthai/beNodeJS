@@ -98,146 +98,163 @@ module.exports.checkout = function _callee(req, res) {
       }
     }
   }, null, null, [[8, 21, 25, 33], [26,, 28, 32]]);
-};
+}; //[GET] : Trang thanh toán 
+
 
 module.exports.order = function _callee2(req, res) {
-  var userInfo, cart, products, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, cart_id, order, newCart;
+  var userInfo, paymentMethod, cart, products, totalPrice, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, productTotal, cart_id, order, newCart;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
           _context2.prev = 0;
-          userInfo = req.body;
+          console.log(req.body);
+          userInfo = {
+            fullName: req.body.fullName,
+            phone: req.body.phone,
+            address: req.body.address
+          };
+          paymentMethod = req.body.paymentMethod;
           cart = res.locals.miniCart; // Lấy giỏ hàng
 
-          products = []; // Lấy thông tin sản phẩm trong giỏ hàng
+          products = [];
+          totalPrice = 0; // Khởi tạo biến tổng tiền
+          // Lấy thông tin sản phẩm trong giỏ hàng
 
           _iteratorNormalCompletion2 = true;
           _didIteratorError2 = false;
           _iteratorError2 = undefined;
-          _context2.prev = 7;
+          _context2.prev = 10;
           _iterator2 = cart.products[Symbol.iterator]();
 
-        case 9:
+        case 12:
           if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-            _context2.next = 18;
+            _context2.next = 21;
             break;
           }
 
           item = _step2.value;
-          _context2.next = 13;
+          _context2.next = 16;
           return regeneratorRuntime.awrap(ProductModel.findById(item.products_id));
 
-        case 13:
+        case 16:
           product = _context2.sent;
 
           if (product) {
+            productTotal = product.price * item.quantity * (1 - (product.discountPercentage || 0) / 100);
+            totalPrice += productTotal;
             products.push({
               product_id: product._id,
+              title: product.title,
+              // Thêm trường title ở đây
               price: product.price,
               discountPercentage: product.discountPercentage,
-              quantity: item.quantity
+              quantity: item.quantity,
+              thumbnail: product.thumbnail // Thêm trường thumbnail
+
             });
           }
 
-        case 15:
-          _iteratorNormalCompletion2 = true;
-          _context2.next = 9;
-          break;
-
         case 18:
-          _context2.next = 24;
+          _iteratorNormalCompletion2 = true;
+          _context2.next = 12;
           break;
 
-        case 20:
-          _context2.prev = 20;
-          _context2.t0 = _context2["catch"](7);
+        case 21:
+          _context2.next = 27;
+          break;
+
+        case 23:
+          _context2.prev = 23;
+          _context2.t0 = _context2["catch"](10);
           _didIteratorError2 = true;
           _iteratorError2 = _context2.t0;
 
-        case 24:
-          _context2.prev = 24;
-          _context2.prev = 25;
+        case 27:
+          _context2.prev = 27;
+          _context2.prev = 28;
 
           if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
             _iterator2["return"]();
           }
 
-        case 27:
-          _context2.prev = 27;
+        case 30:
+          _context2.prev = 30;
 
           if (!_didIteratorError2) {
-            _context2.next = 30;
+            _context2.next = 33;
             break;
           }
 
           throw _iteratorError2;
 
-        case 30:
+        case 33:
+          return _context2.finish(30);
+
+        case 34:
           return _context2.finish(27);
 
-        case 31:
-          return _context2.finish(24);
-
-        case 32:
-          cart_id = cart._id; // Tạo đơn hàng
+        case 35:
+          cart_id = cart._id; // Tạo đơn hàng, thêm trường totalPrice
 
           order = new OrderModel({
             userInfo: userInfo,
             products: products,
-            cart_id: cart_id
+            cart_id: cart_id,
+            paymentMethod: paymentMethod,
+            totalPrice: totalPrice // Thêm trường totalPrice ở đây
+
           });
-          _context2.next = 36;
+          _context2.next = 39;
           return regeneratorRuntime.awrap(order.save());
 
-        case 36:
-          _context2.next = 38;
+        case 39:
+          _context2.next = 41;
           return regeneratorRuntime.awrap(CartModel.findByIdAndDelete(cart._id));
 
-        case 38:
+        case 41:
           res.clearCookie("cartId");
 
           if (!cart.user_id) {
-            _context2.next = 44;
+            _context2.next = 47;
             break;
           }
 
-          // Tạo giỏ hàng mới cho user
           newCart = new CartModel({
             user_id: cart.user_id,
             products: []
           });
-          _context2.next = 43;
+          _context2.next = 46;
           return regeneratorRuntime.awrap(newCart.save());
 
-        case 43:
+        case 46:
           res.cookie("cartId", newCart._id.toString(), {
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)
           });
 
-        case 44:
+        case 47:
           res.redirect("/checkout/success/".concat(order._id));
-          _context2.next = 51;
+          _context2.next = 54;
           break;
 
-        case 47:
-          _context2.prev = 47;
+        case 50:
+          _context2.prev = 50;
           _context2.t1 = _context2["catch"](0);
           console.error("Lỗi khi tạo đơn hàng:", _context2.t1);
           res.redirect("back");
 
-        case 51:
+        case 54:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[0, 47], [7, 20, 24, 32], [25,, 27, 31]]);
+  }, null, null, [[0, 50], [10, 23, 27, 35], [28,, 30, 34]]);
 }; //[GET] : Thành công !
 
 
 module.exports.success = function _callee3(req, res) {
-  var order_id, order, products, totalOrderPrice, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, item, product, quantity, discountPercentage, newPrice, totalPrice, userInfo;
+  var order_id, order, products, totalOrderPrice, paymentMethod, _iteratorNormalCompletion3, _didIteratorError3, _iteratorError3, _iterator3, _step3, item, product, quantity, discountPercentage, newPrice, totalPrice, userInfo;
 
   return regeneratorRuntime.async(function _callee3$(_context3) {
     while (1) {
@@ -251,23 +268,24 @@ module.exports.success = function _callee3(req, res) {
           order = _context3.sent;
           products = [];
           totalOrderPrice = 0;
+          paymentMethod = order.paymentMethod;
           _iteratorNormalCompletion3 = true;
           _didIteratorError3 = false;
           _iteratorError3 = undefined;
-          _context3.prev = 9;
+          _context3.prev = 10;
           _iterator3 = order.products[Symbol.iterator]();
 
-        case 11:
+        case 12:
           if (_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done) {
-            _context3.next = 20;
+            _context3.next = 21;
             break;
           }
 
           item = _step3.value;
-          _context3.next = 15;
+          _context3.next = 16;
           return regeneratorRuntime.awrap(ProductModel.findById(item.product_id));
 
-        case 15:
+        case 16:
           product = _context3.sent;
 
           if (product) {
@@ -283,58 +301,59 @@ module.exports.success = function _callee3(req, res) {
             products.push(product);
           }
 
-        case 17:
+        case 18:
           _iteratorNormalCompletion3 = true;
-          _context3.next = 11;
+          _context3.next = 12;
           break;
 
-        case 20:
-          _context3.next = 26;
+        case 21:
+          _context3.next = 27;
           break;
 
-        case 22:
-          _context3.prev = 22;
-          _context3.t0 = _context3["catch"](9);
+        case 23:
+          _context3.prev = 23;
+          _context3.t0 = _context3["catch"](10);
           _didIteratorError3 = true;
           _iteratorError3 = _context3.t0;
 
-        case 26:
-          _context3.prev = 26;
+        case 27:
           _context3.prev = 27;
+          _context3.prev = 28;
 
           if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
             _iterator3["return"]();
           }
 
-        case 29:
-          _context3.prev = 29;
+        case 30:
+          _context3.prev = 30;
 
           if (!_didIteratorError3) {
-            _context3.next = 32;
+            _context3.next = 33;
             break;
           }
 
           throw _iteratorError3;
 
-        case 32:
-          return _context3.finish(29);
-
         case 33:
-          return _context3.finish(26);
+          return _context3.finish(30);
 
         case 34:
+          return _context3.finish(27);
+
+        case 35:
           userInfo = order.userInfo;
           res.render('client/pages/order/success', {
             title: "Trang đặt hàng thành công",
             products: products,
             totalOrderPrice: totalOrderPrice,
-            userInfo: userInfo
+            userInfo: userInfo,
+            paymentMethod: paymentMethod
           });
 
-        case 36:
+        case 37:
         case "end":
           return _context3.stop();
       }
     }
-  }, null, null, [[9, 22, 26, 34], [27,, 29, 33]]);
+  }, null, null, [[10, 23, 27, 35], [28,, 30, 34]]);
 };

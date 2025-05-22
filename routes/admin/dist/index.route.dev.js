@@ -26,6 +26,8 @@ var settingsRoutes = require('../../routes/admin/settings.route');
 
 var settingsGeneral = require('../../middleware/admin/settingsGeneral.middleware');
 
+var ordersRoutes = require('../../routes/admin/orders.route');
+
 module.exports = function (app) {
   app.use(settingsGeneral.settingsGeneral);
   app.use(pathAdmin.prefixAdmin + '/dashboard', authMiddleware.authRequire, dashboardRoutes);
@@ -36,4 +38,5 @@ module.exports = function (app) {
   app.use(pathAdmin.prefixAdmin + '/auth', authRoutes);
   app.use(pathAdmin.prefixAdmin + '/my-account', authMiddleware.authRequire, my_accountRoutes);
   app.use(pathAdmin.prefixAdmin + '/settings', authMiddleware.authRequire, settingsRoutes);
+  app.use(pathAdmin.prefixAdmin + '/orders', authMiddleware.authRequire, ordersRoutes);
 };

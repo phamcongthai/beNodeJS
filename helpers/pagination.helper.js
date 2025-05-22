@@ -1,16 +1,14 @@
-const productsModel = require('../models/products.model');
-module.exports.pagination = async (page) => {
-    let pagination = {
-        limit: 4,
+module.exports.pagination = async (Model, page = 1, filter = {}, limit = 4) => {
+    const pagination = {
+        limit,
         pageTotal: 1,
-        skip : 0,
-        currentPage : 1
-    }
-    const totalProducts = await productsModel.countDocuments();
-    pagination.pageTotal = Math.ceil(totalProducts / pagination.limit);
-    if(page){
-        pagination.skip = (page - 1) * pagination.limit;
-        pagination.currentPage = page;
-    }
+        skip: 0,
+        currentPage: page
+    };
+
+    const totalItems = await Model.countDocuments(filter);
+    pagination.pageTotal = Math.ceil(totalItems / limit);
+    pagination.skip = (page - 1) * limit;
+
     return pagination;
-}
+};

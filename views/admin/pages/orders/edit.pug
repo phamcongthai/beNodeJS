@@ -1,0 +1,92 @@
+extends ../../layouts/default
+
+block main
+  .order-edit.container
+    h2.text-warning.mt-4 ✏️ Cập nhật đơn hàng #{order._id}
+    .alert.alert-secondary
+      | Cập nhật trạng thái đơn hàng tại đây.
+
+    form(method="POST", action=`/admin/orders/edit/${order._id}?_method=PATCH`)
+      .mb-4
+        label.fw-bold(for="status") Trạng thái đơn hàng:
+        select.form-select(name="status", id="status", required)
+          option(value="pending" selected=order.status === 'pending') Đang xử lý
+          option(value="shipping" selected=order.status === 'shipping') Đang giao
+          option(value="delivered" selected=order.status === 'delivered') Đã giao
+          option(value="completed" selected=order.status === 'completed') Hoàn thành
+          option(value="cancelled" selected=order.status === 'cancelled') Đã hủy
+
+      button.btn.btn-success.mt-3(type="submit") 💾 Cập nhật
+
+    // Thông tin cá nhân
+    .order-info.mt-5
+      h5 📋 Thông tin cá nhân
+      table.table.table-bordered.mt-2
+        tr
+          th Họ tên
+          td= order.userInfo.fullName
+        tr
+          th Số điện thoại
+          td= order.userInfo.phone
+        tr
+          th Địa chỉ
+          td= order.userInfo.address
+        tr
+          th Phương thức thanh toán
+          td= order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'VNPay (đã thanh toán)'
+
+    // Danh sách sản phẩm
+    .product-list.mt-5
+      h5 🛒 Chi tiết đơn hàng
+      table.table.table-striped.table-hover.product-table
+        thead.table-light
+          tr
+            th Ảnh
+            th Sản phẩm
+            th Đơn giá
+            th Giảm giá
+            th Giá sau giảm
+            th Số lượng
+            th Thành tiền
+        tbody
+          each product in order.products
+            tr
+              td
+                if product.thumbnail
+                  img(src=product.thumbnail, alt=product.title, width="60", height="60", style="object-fit: cover; border-radius: 6px;")
+                else
+                  span.text-muted Không có ảnh
+              td= product.title || "Sản phẩm không rõ"
+              td= product.price.toLocaleString() + ' đ'
+              td= (product.discountPercentage || 0) + '%'
+              - const newPrice = product.price * (1 - (product.discountPercentage || 0) / 100);
+              td= newPrice.toLocaleString() + ' đ'
+              td= product.quantity
+              td= (newPrice * product.quantity).toLocaleString() + ' đ'
+          tr.total-row
+            td(colspan="6", class="text-end fw-bold") Tổng tiền:
+            td.text-danger.fw-bold #{order.totalPrice.toLocaleString()} đ
+
+  style.
+    .order-edit {
+      max-width: 800px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    .order-edit h2 {
+      color: #ffc107;
+      margin-bottom: 20px;
+    }
+    .order-info, .product-table {
+      margin-top: 30px;
+    }
+    .product-table th, .product-table td {
+      vertical-align: middle;
+    }
+    .total-row {
+      font-weight: bold;
+      color: #d9534f;
+    }

@@ -4,46 +4,41 @@ const filterStatusHelper = require('../../helpers/filterStatus.helper');
 const createTreeHelper = require('../../helpers/createTree.helper');
 //[GET] : Lấy ra trang danh mục sản phẩm:
 module.exports.products_category = async (req, res) => {
-    const find = {
-        deleted: false
-    }
-    //Tìm kiếm :
+    const find = { deleted: false };
     const keySearch = req.query.keyword;
+
     if (keySearch) {
-        find.title = searchHelper.search(keySearch)
+        find.title = searchHelper.search(keySearch);
     }
+
     let filterStatus = filterStatusHelper.filterStatus();
     const status = req.query.status;
     if (status) {
-        //Lọc sản phẩm theo status : 
-        find.status = req.query.status;
+        find.status = status;
         filterStatus = filterStatusHelper.filterStatus(status);
     }
-    //Phần sắp xếp :
+
+    const sort = {};
     const sortKey = req.query.sortKey;
     const sortValue = req.query.sortValue;
-    let sort = {
-
-    }
     if (sortKey && sortValue) {
-        sort[sortKey] = sortValue
+        sort[sortKey] = sortValue;
     } else {
-        sort.position = "asc"
+        sort.position = "asc";
     }
+
     const category = await ProductsCategoryModel.find(find).sort(sort);
-
-   
-
-
     const newCategory = createTreeHelper(category);
 
     res.render('admin/pages/products-category/index', {
         title: "Trang danh mục sản phẩm",
         category: newCategory,
-        keySearch: keySearch,
-        filterStatus: filterStatus
-    })
-}
+        keySearch,
+        filterStatus
+    });
+};
+
+
 ////Change multi :
 module.exports.changeMulti = async (req, res) => {
     try {

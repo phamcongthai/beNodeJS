@@ -11,29 +11,23 @@ const {
 
 // [GET] /admin/products
 module.exports.products = async (req, res) => {
-    const find = {
-        deleted: false
-    };
-
-    // Filter status
+    const find = { deleted: false };
     const status = req.query.status;
     let filterStatus = filterStatusHelper.filterStatus();
+
     if (status) {
         find.status = status;
         filterStatus = filterStatusHelper.filterStatus(status);
     }
 
-    // Search by keyword
     const keyword = req.query.keyword;
     if (keyword) {
         find.title = searchHelper.search(keyword);
     }
 
-    // Pagination
     const page = parseInt(req.query.page) || 1;
-    const pagination = await paginationHelper.pagination(page);
+    const pagination = await paginationHelper.pagination(ProductsModel, page, find);
 
-    // Sort
     const sort = {};
     if (req.query.sortKey && req.query.sortValue) {
         sort[req.query.sortKey] = req.query.sortValue;
@@ -51,15 +45,12 @@ module.exports.products = async (req, res) => {
         if (item.createBy?.account_id) {
             item.account = await AccountModel.findOne({
                 deleted: false,
-                _id: item.createBy.account_id,
+                _id: item.createBy.account_id
             }).lean();
         } else {
-            item.account = {
-                fullName: "Không rõ"
-            }; // hoặc null tùy bạn
+            item.account = { fullName: "Không rõ" };
         }
     }
-
 
     res.render('admin/pages/products/index', {
         title: "Trang sản phẩm",

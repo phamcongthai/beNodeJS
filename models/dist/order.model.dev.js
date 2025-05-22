@@ -13,12 +13,24 @@ var orderSchema = new mongoose.Schema({
     phone: String,
     address: String
   },
+  paymentMethod: String,
+  paymentStatus: {
+    type: String,
+    "default": 'unpaid'
+  },
+  status: {
+    type: String,
+    "default": "pending"
+  },
   products: [{
+    title: String,
     product_id: String,
     price: Number,
     discountPercentage: Number,
-    quantity: Number
+    quantity: Number,
+    thumbnail: String
   }],
+  totalPrice: Number,
   cart_id: String,
   //Có cart_id rồi mà vẫn cần products vì khi đặt đơn hàng thành công 
   //thì phải xóa giỏ hàng đi, nên nếu không lưu products thì sẽ không 

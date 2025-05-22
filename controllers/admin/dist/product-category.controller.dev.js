@@ -18,15 +18,14 @@ var createTreeHelper = require('../../helpers/createTree.helper'); //[GET] : L�
 
 
 module.exports.products_category = function _callee(req, res) {
-  var find, keySearch, filterStatus, status, sortKey, sortValue, sort, category, newCategory;
+  var find, keySearch, filterStatus, status, sort, sortKey, sortValue, category, newCategory;
   return regeneratorRuntime.async(function _callee$(_context) {
     while (1) {
       switch (_context.prev = _context.next) {
         case 0:
           find = {
             deleted: false
-          }; //Tìm kiếm :
-
+          };
           keySearch = req.query.keyword;
 
           if (keySearch) {
@@ -37,15 +36,13 @@ module.exports.products_category = function _callee(req, res) {
           status = req.query.status;
 
           if (status) {
-            //Lọc sản phẩm theo status : 
-            find.status = req.query.status;
+            find.status = status;
             filterStatus = filterStatusHelper.filterStatus(status);
-          } //Phần sắp xếp :
+          }
 
-
+          sort = {};
           sortKey = req.query.sortKey;
           sortValue = req.query.sortValue;
-          sort = {};
 
           if (sortKey && sortValue) {
             sort[sortKey] = sortValue;

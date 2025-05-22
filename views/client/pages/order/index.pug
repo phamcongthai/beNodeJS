@@ -2,9 +2,9 @@ extends ../../layouts/default.pug
 include ../../mixin/sweet-alert.pug
 
 block main
-  // Kiểm tra nếu có thông báo swal trong flash
   if (locals.flash && locals.flash.swal)
     +swalAlert(locals.flash.swal.text, locals.flash.swal.icon)
+
   h2 Trang đặt hàng
   .container.my-4
     .row
@@ -55,6 +55,16 @@ block main
               label(for="address") Địa chỉ
               input#address.form-control(type="text", name="address", required=true, placeholder="Nhập địa chỉ")
 
+            .form-group
+              label Phương thức thanh toán
+              .form-check
+                input.form-check-input(type="radio", name="paymentMethod", id="cod", value="cod", checked)
+                label.form-check-label(for="cod") Thanh toán khi nhận hàng (COD)
+
+              .form-check
+                input.form-check-input(type="radio", name="paymentMethod", id="online", value="online")
+                label.form-check-label(for="online") Thanh toán online (giả lập)
+
             button.btn.btn-success.btn-block.mt-3(type="submit") ĐẶT HÀNG
 
     style.
@@ -72,4 +82,9 @@ block main
       input.form-control:focus {
         outline: none;
         box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-check-input {
+        margin-top: 0.3rem;
+        margin-right: 0.5rem;
       }
