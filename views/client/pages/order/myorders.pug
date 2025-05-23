@@ -5,6 +5,10 @@ block main
   +alert-success(5000)
   h1.mb-4 Đơn hàng của bạn
 
+  // SEARCH BOX
+  .mb-3
+    input#search-order.form-control.text-dark(type="text", placeholder="Tìm kiếm theo mã đơn, tên sản phẩm..." value=keywordOrder)
+
   // FILTER BUTTONS
   .btn-group.mb-4.d-flex.flex-wrap.gap-2
     button.btn.btn-outline-secondary.filter-btn(data-status='' btn-order) Tất cả
@@ -28,20 +32,28 @@ block main
             .text-muted.big
               | Trạng thái:
               if order.status === 'completed'
+                i.fa.fa-check-circle.text-success.ml-1
                 span.text-success.ml-1 Hoàn thành
               else if order.status === 'pending'
+                i.fa.fa-hourglass-half.text-dark.ml-1
                 span.text-dark.ml-1 Đơn hàng mới
               else if order.status === 'confirmed'
+                i.fa.fa-check-circle.text-dark.ml-1
                 span.text-dark.ml-1 Đã xác nhận
               else if order.status === 'preparing'
+                i.fa.fa-cogs.text-warning.ml-1
                 span.text-warning.ml-1 Đang chuẩn bị hàng
               else if order.status === 'shipping'
+                i.fa.fa-truck.text-primary.ml-1
                 span.text-primary.ml-1 Đang giao
               else if order.status === 'delivered'
+                i.fa.fa-check-circle.text-primary.ml-1
                 span.text-primary.ml-1 Đã giao
               else if order.status === 'cancelled'
+                i.fa.fa-times-circle.text-danger.ml-1
                 span.text-danger.ml-1 Đã hủy
               else
+                i.fa.fa-question-circle.text-secondary.ml-1
                 span.text-secondary.ml-1 Không rõ
 
           .card-body
@@ -73,7 +85,8 @@ block main
                 each product in order.products
                   tr
                     td: img(src=product.thumbnail, alt="thumb", width="60")
-                    td #{product.title}
+                    td
+                      a(href=`/products/detail/${product.slug}`) #{product.title} 
                     td #{product.quantity}
                     td #{product.price.toLocaleString()}₫
                     td #{(product.price * product.quantity * (1 - product.discountPercentage / 100)).toLocaleString()}₫

@@ -3,83 +3,97 @@ extends ../../layouts/default
 include ../../mixin/flash.pug
 
 block main 
-    +alert-success(5000)
+  +alert-success(5000)
 
-    h1 Quản lý đơn hàng
+  h1 Quản lý đơn hàng
 
-    .card.mb-3
-        .card-body.d-flex.align-items-start.justify-content-between
-            form(action="/admin/orders/change-multi?_method=PATCH" method="POST" id="form-change-multi")
-                input(type="hidden" name="ids" id="selected-ids")
-                .d-flex.align-items-start
-                    .form-group
-                        select(name="type" class="form-control")
-                            option(value="cancel") Hủy đơn hàng
-                            option(value="complete") Hoàn thành
-                            option(value="deleteAll") Xóa tất cả
-                    button(type="submit" class="btn btn-primary ml-2") Áp dụng
+  // FORM Áp dụng thao tác hàng loạt
+  .card.mb-3
+    .card-body.d-flex.align-items-start.justify-content-between
+      form(action="/admin/orders/change-multi?_method=PATCH" method="POST" id="form-change-multi")
+        input(type="hidden" name="ids" id="selected-ids")
+        .d-flex.align-items-start
+          .form-group
+            select(name="type" class="form-control")
+              option(value="cancel") Hủy đơn hàng
+              option(value="complete") Hoàn thành
+              option(value="deleteAll") Xóa tất cả
+          button(type="submit" class="btn btn-primary ml-2") Áp dụng
 
-    table.table.table-hover.table-sm(table-checkall)
-        thead
-            tr
-                th: input(type="checkbox" name="checkall")
-                th Mã
-                th Khách hàng
-                th Trạng thái
-                th Thanh toán
-                th Ngày tạo
-                th Tổng tiền
-                th Hành động
-        tbody
-            each order, index in ordersData
-                tr(class=(order.status === 'cancelled' ? 'bg-danger-subtle' : ''))
-                    td: input(type="checkbox" name="id" id=`${order._id}`)
-                    td #{order.code || `#${index + 1}`}
-                    td #{order.account && order.account.fullName || 'Ẩn danh'}
-                    td
-                        if order.status === 'completed'
-                            span.text-success Hoàn thành
-                        else if order.status === 'pending'
-                            span.text-dark Đơn hàng mới
-                        else if order.status === 'shipping'
-                            span.text-dark Đang giao
-                        else if order.status === 'delivered'
-                            span.text-dark Đã giao
-                        else if order.status === 'cancelled'
-                            span.text-danger Hủy đơn hàng
-                        else if order.status === 'confirmed'
-                            span.text-dark Đã xác nhận 
-                        else if order.status === 'preparing'
-                            span.text-dark Đang chuẩn bị hàng
-                        else
-                            span.text-secondary Không rõ
-                    td
-                        if order.paymentStatus === 'paid'
-                            span.text-success Đã thanh toán
-                        else
-                            span.text-info Chưa thanh toán
-                    td #{moment(order.createdAt).format("DD/MM/YYYY")}
-                    td #{order.totalPrice ? order.totalPrice.toLocaleString() + '₫' : '---'}
-                    td
-                        .d-flex.flex-wrap.gap-2
-                            a.btn.btn-success.btn-sm(href=`/admin/orders/detail/${order._id}`) Chi tiết
-                            br 
-                            a.btn.btn-warning.btn-sm.text-dark(href=`/admin/orders/edit/${order._id}`) Cập nhật
-                            br
-                            button.btn.btn-danger.btn-sm(type="button" button-del id=`${order._id}`) Xóa
+  // TABLE đơn hàng
+  table.table.table-hover.table-sm(table-checkall)
+    thead
+      tr
+        th: input(type="checkbox" name="checkall")
+        th Mã
+        th Khách hàng
+        th Trạng thái
+        th Thanh toán
+        th Ngày tạo
+        th Tổng tiền
+        th Yêu cầu hủy
+        th Hành động
+    tbody
+      each order, index in ordersData
+        tr(class=(order.status === 'cancelled' ? 'bg-danger-subtle' : ''))
+          td: input(type="checkbox" name="id" id=`${order._id}`)
+          td #{order.code || `#${index + 1}`}
+          td #{order.account && order.account.fullName || 'Ẩn danh'}
+          td
+            if order.status === 'completed'
+              span.text-success Hoàn thành
+            else if order.status === 'pending'
+              span.text-dark Đơn hàng mới
+            else if order.status === 'shipping'
+              span.text-dark Đang giao
+            else if order.status === 'delivered'
+              span.text-dark Đã giao
+            else if order.status === 'cancelled'
+              span.text-danger Hủy đơn hàng
+            else if order.status === 'confirmed'
+              span.text-dark Đã xác nhận 
+            else if order.status === 'preparing'
+              span.text-dark Đang chuẩn bị hàng
+            else
+              span.text-secondary Không rõ
+          td
+            if order.paymentStatus === 'paid'
+              span.text-success Đã thanh toán
+            else
+              span.text-info Chưa thanh toán
+          td #{moment(order.createdAt).format("DD/MM/YYYY")}
+          td #{order.totalPrice ? order.totalPrice.toLocaleString() + '₫' : '---'}
+          td
+            if order.cancelRequest
+              span.text-danger.font-weight-bold
+                i.fas.fa-exclamation-circle.mr-1.text-danger
+                | Có
+            else
+              span.text-muted
+                i.fas.fa-check-circle.mr-1.text-success
+                | Không
+          td
+            .d-flex.flex-wrap.gap-2
+              a.btn.btn-success.btn-sm(href=`/admin/orders/detail/${order._id}`) Chi tiết
+              br 
+              a.btn.btn-warning.btn-sm.text-dark(href=`/admin/orders/edit/${order._id}`) Cập nhật
+              br
+              button.btn.btn-danger.btn-sm(type="button" button-del id=`${order._id}`) Xóa
 
-    form#form-change-status(action="" method="POST" data-path="/admin/orders/change-status")
-    form#form-deleteT(action="" method="POST" data-path="/admin/orders/deleteT")
+  // FORMS ẩn cho JS
+  form#form-change-status(action="" method="POST" data-path="/admin/orders/change-status")
+  form#form-deleteT(action="" method="POST" data-path="/admin/orders/deleteT")
 
-    nav
-        ul.pagination
-            if pagination.currentPage > 1
-                li.page-item
-                    button.page-link(button-page=`${pagination.currentPage - 1}`) Trang trước
-            .nav
-                each _, index in Array(pagination.pageTotal)
-                    li(class=`page-item ${pagination.currentPage === index + 1 ? "active" : ""}`)
-                        button.page-link(button-page=`${index + 1}`) #{index + 1}
-            if pagination.currentPage < pagination.pageTotal
-                li.page-item
-                    button.page-link(button-page=`${pagination.currentPage + 1}`) Kế tiếp
+  // PHÂN TRANG
+  nav
+    ul.pagination
+      if pagination.currentPage > 1
+        li.page-item
+          button.page-link(button-page=`${pagination.currentPage - 1}`) Trang trước
+      .nav
+        each _, index in Array(pagination.pageTotal)
+          li(class=`page-item ${pagination.currentPage === index + 1 ? "active" : ""}`)
+            button.page-link(button-page=`${index + 1}`) #{index + 1}
+      if pagination.currentPage < pagination.pageTotal
+        li.page-item
+          button.page-link(button-page=`${pagination.currentPage + 1}`) Kế tiếp

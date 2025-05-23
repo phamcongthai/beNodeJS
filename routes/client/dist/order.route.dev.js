@@ -20,5 +20,7 @@ router.patch('/cancel/:id', auth.authRequire, orderController.cancel); //[PATCH]
 
 router.patch('/undo-cancel/:id', auth.authRequire, orderController.undoCancel); //[PATCH] : Xác nhận đã nhận hàng :
 
-router.patch('/confirm-delivery/:id', auth.authRequire, orderController.confirm);
+router.patch('/confirm-delivery/:id', auth.authRequire, orderController.confirm); //[PATCH] : Yêu cầu hủy đơn khi ở trạng thái đang chuẩn bị :
+
+router.patch('/request-cancel/:id', auth.authRequire, orderController.requestCancel);
 module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.

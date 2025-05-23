@@ -24,7 +24,8 @@ const orderSchema = new mongoose.Schema({
         price: Number,
         discountPercentage: Number,
         quantity: Number,
-        thumbnail : String
+        thumbnail : String,
+        slug : String
     }],
     completedAt :{
         type : Date, 
@@ -33,6 +34,10 @@ const orderSchema = new mongoose.Schema({
     deliveredAt :{
         type : Date, 
         default : null
+    },
+    cancelRequest :{
+        type : Boolean,
+        default : false
     },
     totalPrice : Number,
     cart_id: String, //Có cart_id rồi mà vẫn cần products vì khi đặt đơn hàng thành công 

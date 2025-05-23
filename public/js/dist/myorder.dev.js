@@ -1,7 +1,7 @@
 "use strict";
 
 var btn = document.querySelectorAll('button[btn-order]');
-var url = new URL(window.location.href);
+var url = new URL(window.location.href); //Lọc theo trạng thái :
 
 if (btn) {
   console.log("hehe");
@@ -17,5 +17,24 @@ if (btn) {
 
       window.location.href = url;
     });
+  });
+} //Tìm kiếm :
+
+
+var formSearch = document.querySelector("#search-order");
+
+if (formSearch) {
+  formSearch.addEventListener('keydown', function (event) {
+    if (event.key == 'Enter') {
+      var keyword = formSearch.value;
+
+      if (keyword) {
+        url.searchParams.set("keywordOrder", keyword);
+      } else {
+        url.searchParams["delete"]("keywordOrder");
+      }
+
+      window.location.href = url;
+    }
   });
 }

@@ -1,7 +1,7 @@
 /* ========== Reset & Base Layout ========== */
 * {
   box-sizing: border-box;
-   a:hover{
+  a:hover {
     text-decoration: none;
   }
 }
@@ -142,7 +142,7 @@ form .btn:hover {
   background: #fff;
   border-radius: 12px;
   padding: 15px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  box-shadow: none; /* Bỏ đổ bóng */
   width: calc(20% - 16px);
   transition: all 0.2s ease-in-out;
   position: relative;
@@ -151,7 +151,7 @@ form .btn:hover {
 
 .product-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  box-shadow: none; /* Bỏ đổ bóng khi hover */
 }
 
 .inner-image img {
@@ -189,28 +189,106 @@ form .btn:hover {
 }
 
 /* ========== Product Detail Card ========== */
-.card {
-  background: #fff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+/* ========== Product Detail Page ========== */
+.product-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  padding: 20px 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 
-.card h2 {
-  font-size: 28px;
-  font-weight: bold;
-  color: #d70018; /* dùng màu chủ đạo */
+.product-detail .product-image {
+  flex: 1;
+  text-align: center;
 }
 
-ul.list-unstyled li span.fw-bold {
+.product-detail .product-image img {
+  width: 300px;
+  height: auto;
+  object-fit: contain;
+}
+
+.product-detail .product-info {
+  flex: 2;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.product-detail h1,
+.product-detail h2 {
+  color: #007bff; /* màu xanh FPTShop */
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.product-detail .price-old {
+  color: #999;
+  text-decoration: line-through;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.product-detail .price-new {
+  font-size: 22px;
   color: #d70018;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-input#quantity.form-control {
-  max-width: 100px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.product-detail .stock {
+  color: #28a745;
+  margin-bottom: 10px;
 }
+
+.product-detail input#quantity {
+  width: 80px;
+  margin-bottom: 10px;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.product-detail .btn-add-to-cart {
+  background-color: #d70018;
+  color: white;
+  padding: 10px 20px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.product-detail .btn-add-to-cart:hover {
+  background-color: #b60014;
+}
+
+.product-description {
+  margin-top: 30px;
+  font-size: 16px;
+}
+
+.product-description ul {
+  padding-left: 20px;
+}
+
+.product-description li {
+  margin-bottom: 8px;
+}
+
+/* Bỏ box/card nếu còn */
+.card, .product-detail .card {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+}
+
 
 /* ========== Footer ========== */
 .footer {
@@ -220,7 +298,6 @@ input#quantity.form-control {
   padding: 16px 0;
   font-size: 14px;
 }
-
 
 /* ========== Responsive ========== */
 @media (max-width: 1200px) {
@@ -249,30 +326,30 @@ input#quantity.form-control {
 
 /* Show Alert */
 [showAlert] {
-    position: fixed;
-    top: 70px;
-    right: 15px;
-    z-index: 9999;
-    background-color: #d70018;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 5px;
-    box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 70px;
+  right: 15px;
+  z-index: 9999;
+  background-color: #d70018;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.1);
 }
 
 [showAlert].alert-hidden {
-    animation-name: alert-hidden;
-    animation-duration: 0.55s;
-    animation-fill-mode: both;
+  animation-name: alert-hidden;
+  animation-duration: 0.55s;
+  animation-fill-mode: both;
 }
 
 @keyframes alert-hidden {
-    from {
-        right: 15px;
-    }
-    to {
-        right: -100%;
-        display: none;
-    }
+  from {
+    right: 15px;
+  }
+  to {
+    right: -100%;
+    display: none;
+  }
 }
 /* End Show Alert */

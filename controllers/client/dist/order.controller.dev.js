@@ -151,8 +151,9 @@ module.exports.order = function _callee2(req, res) {
               price: product.price,
               discountPercentage: product.discountPercentage,
               quantity: item.quantity,
-              thumbnail: product.thumbnail // Thêm trường thumbnail
-
+              thumbnail: product.thumbnail,
+              // Thêm trường thumbnail
+              slug: product.slug
             });
           }
 
@@ -357,35 +358,57 @@ module.exports.success = function _callee3(req, res) {
       }
     }
   }, null, null, [[10, 23, 27, 35], [28,, 30, 34]]);
-}; //[GET] : Trang đơn hàng của client :
+}; //[GET]: Lấy ra đơn hàng người dùng
 
 
 module.exports.myOrders = function _callee4(req, res) {
-  var find, status, orders;
+  var find, status, keywordOrder, orders;
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
         case 0:
           find = {
-            user_id: res.locals.user._id
-          };
+            user_id: res.locals.user._id // Lọc theo user_id của người dùng
+
+          }; // Lọc theo trạng thái nếu có
+
           status = req.query.status;
 
           if (status) {
             find.status = status;
-          }
+          } // Lọc theo từ khóa tìm kiếm (ID đơn hàng hoặc tên sản phẩm)
 
-          _context4.next = 5;
+
+          keywordOrder = req.query.keywordOrder;
+
+          if (keywordOrder) {
+            // Kiểm tra xem từ khóa có phải là ObjectId hợp lệ không
+            if (/^[0-9a-fA-F]{24}$/.test(keywordOrder)) {
+              // Nếu là ObjectId hợp lệ, tìm theo _id
+              find._id = keywordOrder;
+            } else {
+              // Nếu không phải ObjectId, tìm theo tên sản phẩm
+              find['products.title'] = {
+                $regex: keywordOrder,
+                $options: 'i'
+              };
+            }
+          } // Tìm kiếm đơn hàng theo điều kiện
+
+
+          _context4.next = 7;
           return regeneratorRuntime.awrap(OrderModel.find(find));
 
-        case 5:
+        case 7:
           orders = _context4.sent;
+          // Render kết quả tìm kiếm
           res.render('client/pages/order/myorders', {
             title: "Trang đơn hàng",
-            orders: orders
+            orders: orders,
+            keywordOrder: keywordOrder
           });
 
-        case 7:
+        case 9:
         case "end":
           return _context4.stop();
       }
@@ -506,4 +529,59 @@ module.exports.confirm = function _callee7(req, res) {
       }
     }
   }, null, null, [[0, 10]]);
+}; //[PATCH] : Yêu cầu hủy khi đang ở trạng thái đang chuẩn bị hàng :
+
+
+module.exports.requestCancel = function _callee8(req, res) {
+  var _order2;
+
+  return regeneratorRuntime.async(function _callee8$(_context8) {
+    while (1) {
+      switch (_context8.prev = _context8.next) {
+        case 0:
+          _context8.prev = 0;
+          _context8.next = 3;
+          return regeneratorRuntime.awrap(OrderModel.findById(req.params.id));
+
+        case 3:
+          _order2 = _context8.sent;
+
+          if (!_order2) {
+            _context8.next = 9;
+            break;
+          }
+
+          if (!(_order2.status === "preparing" && _order2.cancelRequest === false)) {
+            _context8.next = 9;
+            break;
+          }
+
+          _context8.next = 8;
+          return regeneratorRuntime.awrap(OrderModel.updateOne({
+            _id: req.params.id
+          }, {
+            cancelRequest: true
+          }));
+
+        case 8:
+          req.flash('success', "Đã gửi thông báo thành công !");
+
+        case 9:
+          res.redirect("back");
+          _context8.next = 17;
+          break;
+
+        case 12:
+          _context8.prev = 12;
+          _context8.t0 = _context8["catch"](0);
+          console.log(_context8.t0);
+          req.flash('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
+          res.redirect("back");
+
+        case 17:
+        case "end":
+          return _context8.stop();
+      }
+    }
+  }, null, null, [[0, 12]]);
 };

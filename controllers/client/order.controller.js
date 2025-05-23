@@ -50,7 +50,8 @@ module.exports.order = async (req, res) => {
                     price: product.price,
                     discountPercentage: product.discountPercentage,
                     quantity: item.quantity,
-                    thumbnail: product.thumbnail        // Thêm trường thumbnail
+                    thumbnail: product.thumbnail,        // Thêm trường thumbnail
+                    slug: product.slug
                 });
             }
         }
@@ -126,22 +127,41 @@ module.exports.success = async (req, res) => {
         paymentMethod
     });
 };
-//[GET] : Trang đơn hàng của client :
+//[GET]: Lấy ra đơn hàng người dùng
 module.exports.myOrders = async (req, res) => {
     let find = {
-        user_id : res.locals.user._id
+        user_id: res.locals.user._id  // Lọc theo user_id của người dùng
     }
+
+    // Lọc theo trạng thái nếu có
     const status = req.query.status;
-    if(status){
+    if (status) {
         find.status = status;
     }
-    
-    const orders = await OrderModel.find(find)
+
+    // Lọc theo từ khóa tìm kiếm (ID đơn hàng hoặc tên sản phẩm)
+    const keywordOrder = req.query.keywordOrder;
+    if (keywordOrder) {
+        // Kiểm tra xem từ khóa có phải là ObjectId hợp lệ không
+        if (/^[0-9a-fA-F]{24}$/.test(keywordOrder)) {
+            // Nếu là ObjectId hợp lệ, tìm theo _id
+            find._id = keywordOrder;
+        } else {
+            // Nếu không phải ObjectId, tìm theo tên sản phẩm
+            find['products.title'] = { $regex: keywordOrder, $options: 'i' };
+        }
+    }
+
+    // Tìm kiếm đơn hàng theo điều kiện
+    const orders = await OrderModel.find(find);
+
+    // Render kết quả tìm kiếm
     res.render('client/pages/order/myorders', {
-        title : "Trang đơn hàng",
-        orders
-    })
-}
+        title: "Trang đơn hàng",
+        orders,
+        keywordOrder
+    });
+};
 //[PATCH] : Hủy đơn hàng :
 module.exports.cancel = async (req, res) => {
     const order = await OrderModel.findById(req.params.id);
@@ -191,3 +211,25 @@ module.exports.confirm = async (req, res) => {
         res.redirect('back');
     }
 };
+//[PATCH] : Yêu cầu hủy khi đang ở trạng thái đang chuẩn bị hàng :
+module.exports.requestCancel = async (req, res) => {
+    try {
+        const order = await OrderModel.findById(req.params.id);
+        if(order){
+            if(order.status === "preparing" && order.cancelRequest === false){
+                await OrderModel.updateOne(
+                    {_id : req.params.id},
+                    {
+                        cancelRequest : true
+                    }
+                )
+                req.flash('success', "Đã gửi thông báo thành công !");
+            }
+        }
+        res.redirect("back");
+    } catch (error) {
+        console.log(error);
+        req.flash('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
+        res.redirect("back");
+    }
+}
