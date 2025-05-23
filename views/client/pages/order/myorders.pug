@@ -12,6 +12,7 @@ block main
     button.btn.btn-outline-info.filter-btn(data-status='confirmed' btn-order) Đã xác nhận
     button.btn.btn-outline-warning.filter-btn(data-status='preparing' btn-order) Đang chuẩn bị hàng
     button.btn.btn-outline-primary.filter-btn(data-status='shipping' btn-order) Đang giao
+    button.btn.btn-outline-primary.filter-btn(data-status='delivered' btn-order) Đã giao
     button.btn.btn-outline-success.filter-btn(data-status='completed' btn-order) Hoàn thành
     button.btn.btn-outline-danger.filter-btn(data-status='cancelled' btn-order) Đã hủy
 
@@ -36,6 +37,8 @@ block main
                 span.text-warning.ml-1 Đang chuẩn bị hàng
               else if order.status === 'shipping'
                 span.text-primary.ml-1 Đang giao
+              else if order.status === 'delivered'
+                span.text-primary.ml-1 Đã giao
               else if order.status === 'cancelled'
                 span.text-danger.ml-1 Đã hủy
               else
@@ -80,7 +83,6 @@ block main
               | #{order.products.reduce((sum, p) => sum + (p.price * p.quantity * (1 - p.discountPercentage / 100)), 0).toLocaleString()}₫
 
             // HỦY ĐƠN
-            // HỦY ĐƠN
             if order.status === 'pending' || order.status === 'confirmed'
               form(action=`/checkout/cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này không?');")
                 button.btn.btn-sm.btn-outline-danger(type="submit")
@@ -88,11 +90,18 @@ block main
 
             // UNDO HỦY ĐƠN
             if order.status === 'cancelled'
-                form(action=`/checkout/undo-cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Khôi phục lại đơn hàng này?');")
-                  button.btn.btn-sm.btn-outline-secondary(type="submit")
-                    | Khôi phục đơn hàng
-            //Yêu cầu hủy đơn khi ở trạng thái preparing 
+              form(action=`/checkout/undo-cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Khôi phục lại đơn hàng này?');")
+                button.btn.btn-sm.btn-outline-secondary(type="submit")
+                  | Khôi phục đơn hàng
+
+            // YÊU CẦU HỦY KHI ĐANG CHUẨN BỊ
             if order.status === 'preparing'
               form(action=`/checkout/request-cancel/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Bạn muốn yêu cầu hủy đơn hàng này? Admin sẽ xem xét và xác nhận.');")
                 button.btn.btn-sm.btn-outline-warning(type="submit")
                   | Yêu cầu hủy đơn hàng
+
+            // XÁC NHẬN ĐÃ NHẬN HÀNG
+            if order.status === 'delivered'
+              form(action=`/checkout/confirm-delivery/${order._id}?_method=PATCH`, method="POST", onsubmit="return confirm('Bạn đã nhận hàng?');")
+                button.btn.btn-sm.btn-success(type="submit" style="background-color: #28a745; border-color: #28a745; color: white !important;")
+                  | Xác nhận đã nhận hàng

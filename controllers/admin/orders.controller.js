@@ -110,6 +110,11 @@ module.exports.editBE = async (req, res) => {
         // Cập nhật trạng thái đơn hàng
         order.status = status;
 
+        // Nếu trạng thái là 'delivered' thì ghi thời gian giao hàng
+        if (status === 'delivered') {
+            order.deliveredAt = new Date();
+        }
+
         // Nếu trạng thái là 'completed' thì đánh dấu đã thanh toán
         if (status === 'completed') {
             order.paymentStatus = 'paid';

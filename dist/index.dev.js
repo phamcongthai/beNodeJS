@@ -12,6 +12,8 @@ var flash = require('express-flash');
 
 var moment = require("moment");
 
+var cronJob = require('./helpers/cronJob.helper');
+
 var path = require('path'); //Đi kèm với tiny mce
 //Cấu hình slug :
 
@@ -88,7 +90,9 @@ app.get("*", function (req, res) {
   res.render("client/pages/errors/404", {
     pageTitle: "404 Not Found"
   });
-}); // Biến local toàn cục
+}); //Cronjob :
+
+cronJob.cronCheckCompleted(); // Biến local toàn cục
 
 var systemConfig = require('./config/system.config');
 

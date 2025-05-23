@@ -102,7 +102,7 @@ module.exports.checkout = function _callee(req, res) {
 
 
 module.exports.order = function _callee2(req, res) {
-  var userInfo, paymentMethod, cart, products, totalPrice, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, productTotal, cart_id, order, newCart;
+  var userInfo, paymentMethod, cart, products, totalPrice, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, productTotal, cart_id, _order, newCart;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
@@ -198,7 +198,7 @@ module.exports.order = function _callee2(req, res) {
         case 35:
           cart_id = cart._id; // Tạo đơn hàng, thêm trường totalPrice
 
-          order = new OrderModel({
+          _order = new OrderModel({
             user_id: res.locals.user._id,
             userInfo: userInfo,
             products: products,
@@ -208,7 +208,7 @@ module.exports.order = function _callee2(req, res) {
 
           });
           _context2.next = 39;
-          return regeneratorRuntime.awrap(order.save());
+          return regeneratorRuntime.awrap(_order.save());
 
         case 39:
           _context2.next = 41;
@@ -235,7 +235,7 @@ module.exports.order = function _callee2(req, res) {
           });
 
         case 47:
-          res.redirect("/checkout/success/".concat(order._id));
+          res.redirect("/checkout/success/".concat(_order._id));
           _context2.next = 54;
           break;
 
@@ -407,7 +407,7 @@ module.exports.cancel = function _callee5(req, res) {
           order = _context5.sent;
 
           if (!(order.status === "pending")) {
-            _context5.next = 8;
+            _context5.next = 9;
             break;
           }
 
@@ -422,8 +422,9 @@ module.exports.cancel = function _callee5(req, res) {
 
         case 7:
           req.flash("success", "Bạn đã hủy đơn hàng thành công !");
+          res.redirect("back");
 
-        case 8:
+        case 9:
         case "end":
           return _context5.stop();
       }
@@ -459,4 +460,50 @@ module.exports.undoCancel = function _callee6(req, res) {
       }
     }
   });
+}; //[PATCH : Xác nhận đơn hàng :
+
+
+module.exports.confirm = function _callee7(req, res) {
+  return regeneratorRuntime.async(function _callee7$(_context7) {
+    while (1) {
+      switch (_context7.prev = _context7.next) {
+        case 0:
+          _context7.prev = 0;
+
+          if (!(order.status !== 'delivered')) {
+            _context7.next = 4;
+            break;
+          }
+
+          req.flash('error', 'Chỉ có thể xác nhận khi đơn hàng đã được giao.');
+          return _context7.abrupt("return", res.redirect('back'));
+
+        case 4:
+          _context7.next = 6;
+          return regeneratorRuntime.awrap(OrderModel.updateOne({
+            _id: req.params.id
+          }, {
+            status: "completed",
+            completedAt: new Date()
+          }));
+
+        case 6:
+          req.flash('success', 'Xác nhận đã nhận hàng thành công!');
+          res.redirect('back');
+          _context7.next = 15;
+          break;
+
+        case 10:
+          _context7.prev = 10;
+          _context7.t0 = _context7["catch"](0);
+          console.error('Lỗi xác nhận đơn hàng:', _context7.t0);
+          req.flash('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
+          res.redirect('back');
+
+        case 15:
+        case "end":
+          return _context7.stop();
+      }
+    }
+  }, null, null, [[0, 10]]);
 };

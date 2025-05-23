@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
 const flash = require('express-flash');
 const moment = require("moment");
+const cronJob = require('./helpers/cronJob.helper');
 var path = require('path');//Đi kèm với tiny mce
 //Cấu hình slug :
 var slug = require('mongoose-slug-updater');
@@ -73,7 +74,8 @@ app.get("*", (req, res) => {
     pageTitle: "404 Not Found",
   });
 });
-
+//Cronjob :
+cronJob.cronCheckCompleted();
 // Biến local toàn cục
 const systemConfig = require('./config/system.config');
 app.locals.prefixAdmin = systemConfig.prefixAdmin;

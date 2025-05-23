@@ -13,4 +13,6 @@ router.get('/success/:order_id', auth.authRequire, orderController.success);
 router.patch('/cancel/:id', auth.authRequire, orderController.cancel);
 //[PATCH] : Hoàn hủy đơn :
 router.patch('/undo-cancel/:id', auth.authRequire, orderController.undoCancel);
+//[PATCH] : Xác nhận đã nhận hàng :
+router.patch('/confirm-delivery/:id', auth.authRequire, orderController.confirm);
 module.exports = router;// viết như này là để sau này thêm được nhiều route hơn.

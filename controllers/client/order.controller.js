@@ -152,7 +152,7 @@ module.exports.cancel = async (req, res) => {
             prevStatus : order.prevStatus
         })
         req.flash("success", "Bạn đã hủy đơn hàng thành công !");
-        
+        res.redirect("back");
     }
     
 }
@@ -164,3 +164,30 @@ module.exports.undoCancel = async (req, res) => {
     })
     res.redirect("back");
 } 
+//[PATCH : Xác nhận đơn hàng :
+module.exports.confirm = async (req, res) => {
+    try {
+        // Chỉ cho xác nhận nếu đơn hàng đã ở trạng thái "delivered"
+        if (order.status !== 'delivered') {
+            req.flash('error', 'Chỉ có thể xác nhận khi đơn hàng đã được giao.');
+            return res.redirect('back');
+        }
+
+        // Cập nhật trạng thái và thời gian xác nhận
+        await OrderModel.updateOne(
+            { _id: req.params.id },
+            {
+                status: "completed",
+                completedAt: new Date()
+            }
+        );
+
+        req.flash('success', 'Xác nhận đã nhận hàng thành công!');
+        res.redirect('back');
+
+    } catch (err) {
+        console.error('Lỗi xác nhận đơn hàng:', err);
+        req.flash('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
+        res.redirect('back');
+    }
+};

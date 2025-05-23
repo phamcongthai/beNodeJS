@@ -26,6 +26,14 @@ const orderSchema = new mongoose.Schema({
         quantity: Number,
         thumbnail : String
     }],
+    completedAt :{
+        type : Date, 
+        default : null
+    },
+    deliveredAt :{
+        type : Date, 
+        default : null
+    },
     totalPrice : Number,
     cart_id: String, //Có cart_id rồi mà vẫn cần products vì khi đặt đơn hàng thành công 
     //thì phải xóa giỏ hàng đi, nên nếu không lưu products thì sẽ không 

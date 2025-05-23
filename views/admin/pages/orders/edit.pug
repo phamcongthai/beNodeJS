@@ -15,8 +15,19 @@ block main
           option(value="preparing" selected=order.status === 'preparing') Đang chuẩn bị
           option(value="shipping" selected=order.status === 'shipping') Đang giao
           option(value="delivered" selected=order.status === 'delivered') Đã giao
-          option(value="completed" selected=order.status === 'completed') Hoàn thành
           option(value="cancelled" selected=order.status === 'cancelled') Đã hủy
+
+      // ✅ Chỉ hiện nếu là COD và đã giao
+      if order.paymentMethod === 'cod' && order.status === 'delivered'
+        .mb-3
+          div.form-check
+            input.form-check-input(
+              type="checkbox",
+              name="isPaid",
+              id="isPaid",
+              checked=order.paymentStatus === 'paid'
+            )
+            label.form-check-label(for="isPaid") ✅ Xác nhận đã thanh toán
 
       button.btn.btn-success.mt-3(type="submit") 💾 Cập nhật
 
@@ -55,7 +66,13 @@ block main
             tr
               td
                 if product.thumbnail
-                  img(src=product.thumbnail, alt=product.title, width="60", height="60", style="object-fit: cover; border-radius: 6px;")
+                  img(
+                    src=product.thumbnail,
+                    alt=product.title,
+                    width="60",
+                    height="60",
+                    style="object-fit: cover; border-radius: 6px;"
+                  )
                 else
                   span.text-muted Không có ảnh
               td= product.title || "Sản phẩm không rõ"
