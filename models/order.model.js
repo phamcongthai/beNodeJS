@@ -25,7 +25,8 @@ const orderSchema = new mongoose.Schema({
         discountPercentage: Number,
         quantity: Number,
         thumbnail : String,
-        slug : String
+        slug : String,
+        newPrice : Number
     }],
     completedAt :{
         type : Date, 

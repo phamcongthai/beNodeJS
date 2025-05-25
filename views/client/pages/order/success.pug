@@ -13,16 +13,16 @@ block main
       table.table.table-bordered.mt-2
         tr
           th Họ tên
-          td= userInfo.fullName
+          td= order.userInfo.fullName
         tr
           th Số điện thoại
-          td= userInfo.phone
+          td= order.userInfo.phone
         tr
           th Địa chỉ
-          td= userInfo.address
+          td= order.userInfo.address
         tr
           th Phương thức thanh toán
-          td= paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'VNPay (đã thanh toán)'
+          td= order.paymentMethod === 'cod' ? 'Thanh toán khi nhận hàng (COD)' : 'VNPay (đã thanh toán)'
 
     // Danh sách sản phẩm
     .product-list.mt-5
@@ -38,7 +38,7 @@ block main
             th Số lượng
             th Thành tiền
         tbody
-          each product in products
+          each product in order.products
             tr
               td
                 img(src=product.thumbnail, alt=product.title, width="60", height="60", style="object-fit: cover; border-radius: 6px;")
@@ -47,10 +47,10 @@ block main
               td= (product.discountPercentage || 0) + '%'
               td= product.newPrice.toLocaleString() + ' đ'
               td= product.quantity
-              td= product.totalPrice.toLocaleString() + ' đ'
+              td= product.total.toLocaleString() + ' đ'
           tr.total-row
             td(colspan="6", class="text-end fw-bold") Tổng tiền:
-            td.text-danger.fw-bold #{totalOrderPrice.toLocaleString()} đ
+            td.text-danger.fw-bold #{order.totalPrice.toLocaleString()} đ
 
   style.
     .order-success {
