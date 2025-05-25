@@ -19,5 +19,5 @@ router.patch('/confirm-delivery/:id', auth.authRequire, orderController.confirm)
 router.patch('/request-cancel/:id', auth.authRequire, orderController.requestCancel);
 
 //[GET] : Cập nhật đơn hàng khi thanh toán thành công (online) IPN :
-router.get('/vnpay-ipn', auth.authRequire, orderController.vnpayIpn);
+router.get('/vnpay-ipn', orderController.vnpayIpn);
 module.exports = router;// viết như này là để sau này thêm được nhiều route hơn.
