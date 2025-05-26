@@ -1,0 +1,14 @@
+doctype html
+html
+  head
+    title #{title}
+    include ../partials/_head-assets.pug
+  body
+    include ../partials/header.pug
+    .container.mt-4
+      .row
+        .col-md-3
+          include ../partials/sidebar-filters.pug
+        .col-md-9
+          include ../partials/product-list.pug
+    include ../partials/footer.pug

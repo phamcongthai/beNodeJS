@@ -6,19 +6,19 @@ module.exports.index = async (req, res) => {
       deleted: false,
       status: "active",
       isFeatured: true
-    }).limit(5);
+    }).limit(10);
     const NewProducts = await ProductsModel.find({
       deleted: false,
       status: "active",
     }).sort({
       position : -1
-    }).limit(5);
+    }).limit(10);
     const DisProducts = await ProductsModel.find({
       deleted: false,
       status: "active",
     }).sort({
       discountPercentage: -1
-    }).limit(5);
+    }).limit(10);
 
     res.render('client/pages/home/index', {
       pageTitle: 'Trang chủ',

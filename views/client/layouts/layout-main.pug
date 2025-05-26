@@ -1,0 +1,40 @@
+doctype html
+html
+  head
+    title #{title}
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="icon", href="/images/favicon.ico", type="image/x-icon")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="/css/style.css")
+    link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css")
+
+    script(async src="https://www.googletagmanager.com/gtag/js?id=G-SFCS2RLDEJ")
+    script.
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-SFCS2RLDEJ');
+
+  body
+    .page-wrapper
+      include ../../client/partials/header.pug
+
+      .container-fluid.px-2
+        .home-banner-section.d-flex.justify-content-between.py-4
+          include ../../client/partials/banner-sidebar.pug
+          include ../../client/partials/banner-carousel.pug
+          include ../../client/partials/banner-right.pug
+
+      main.container-fluid.px-2
+        block main
+
+      include ../../client/partials/footer.pug
+
+    script(src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/sweetalert2@11")
+    script.
+      $(document).ready(function () {
+        console.log('Page ready.');
+      });
