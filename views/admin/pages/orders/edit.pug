@@ -15,10 +15,11 @@ block main
           option(value="preparing" selected=order.status === 'preparing') Đang chuẩn bị
           option(value="shipping" selected=order.status === 'shipping') Đang giao
           option(value="delivered" selected=order.status === 'delivered') Đã giao
+          option(value="completed" selected=order.status === 'completed') Hoàn thành
           option(value="cancelled" selected=order.status === 'cancelled') Đã hủy
 
       // ✅ Chỉ hiện nếu là COD và đã giao
-      if order.paymentMethod === 'cod' && order.status === 'delivered'
+      if order.paymentMethod === 'cod' && ['delivered', 'completed'].includes(order.status) && order.paymentStatus !== 'paid'
         .mb-3
           div.form-check
             input.form-check-input(

@@ -46,7 +46,9 @@ const productSchema = new mongoose.Schema({
             type : Date,
             default : Date.now
         }
-    }]
+    }],
+    brand_id : String,
+    tags : [String]
 }, {timestamps : true});
 const ProductsModel = mongoose.model('Products', productSchema, 'products');
 

@@ -8,10 +8,12 @@ const createTreeHelper = require('../../helpers/createTree.helper');
 const {
     account
 } = require('./accounts.controller');
-
+const BrandModel = require('../../models/brand.model')
 // [GET] /admin/products
 module.exports.products = async (req, res) => {
-    const find = { deleted: false };
+    const find = {
+        deleted: false
+    };
     const status = req.query.status;
     let filterStatus = filterStatusHelper.filterStatus();
 
@@ -42,13 +44,28 @@ module.exports.products = async (req, res) => {
         .lean();
 
     for (const item of productData) {
+        // ✅ Thêm brand_name vào từng sản phẩm
+        if (item.brand_id) {
+            const brand = await BrandModel.findOne({
+                _id: item.brand_id,
+                deleted: false
+            }).lean();
+
+            item.brand_name = brand?.name || "Không rõ";
+        } else {
+            item.brand_name = "Không rõ";
+        }
+
+        // ✅ Thêm account tạo sản phẩm
         if (item.createBy?.account_id) {
             item.account = await AccountModel.findOne({
                 deleted: false,
                 _id: item.createBy.account_id
             }).lean();
         } else {
-            item.account = { fullName: "Không rõ" };
+            item.account = {
+                fullName: "Không rõ"
+            };
         }
     }
 
@@ -137,41 +154,63 @@ module.exports.deleteT = async (req, res) => {
 
 // [GET] /admin/products/create/:id
 module.exports.createProducts = async (req, res) => {
-    const find = {
-        deleted: false
-    };
-    const category = await ProductsCategoryModel.find(find);
+    try {
+        const categories = await ProductsCategoryModel.find({
+            deleted: false
+        });
+        const brands = await BrandModel.find({
+            deleted: false
+        });
 
-    if (!category || category.length === 0) {
-        return res.status(404).send("Không có danh mục nào.");
+        if (!categories.length) {
+            return res.status(404).send("Không có danh mục nào.");
+        }
+
+        const categoryTree = createTreeHelper(categories);
+
+        res.render("admin/pages/products/createProducts", {
+            title: "Trang tạo mới sản phẩm",
+            category: categoryTree,
+            brands, // truyền danh sách brand xuống pug
+        });
+    } catch (err) {
+        console.error("GET createProducts error:", err);
+        res.redirect("back");
     }
-
-    const newCategory = createTreeHelper(category);
-    res.render('admin/pages/products/createProducts', {
-        title: "Trang tạo mới sản phẩm",
-        category: newCategory,
-    });
 };
 
 // [POST] /admin/products/create/:id
 module.exports.createProductsBE = async (req, res) => {
-    req.body.price = parseInt(req.body.price);
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.stock = parseInt(req.body.stock);
+    try {
+        req.body.price = parseInt(req.body.price);
+        req.body.discountPercentage = parseInt(req.body.discountPercentage);
+        req.body.stock = parseInt(req.body.stock);
 
-    if (!req.body.position) {
-        req.body.position = await ProductsModel.countDocuments() + 1;
-    } else {
-        req.body.position = parseInt(req.body.position);
+        req.body.position = req.body.position ?
+            parseInt(req.body.position) :
+            (await ProductsModel.countDocuments()) + 1;
+
+        // ✅ Tách chuỗi tags thành mảng
+        if (req.body.tags && typeof req.body.tags === "string") {
+            req.body.tags = req.body.tags
+                .split(",")
+                .map((tag) => tag.trim())
+                .filter((tag) => tag);
+        }
+
+        // ✅ Người tạo
+        req.body.createBy = {
+            account_id: res.locals.currentUser._id,
+        };
+
+        const product = new ProductsModel(req.body);
+        await product.save();
+
+        res.redirect("/admin/products");
+    } catch (err) {
+        console.error("POST createProductsBE error:", err);
+        res.redirect("back");
     }
-
-    req.body.createBy = {
-        account_id: res.locals.currentUser._id
-    };
-    
-    const product = new ProductsModel(req.body);
-    await product.save();
-    res.redirect('/admin/products');
 };
 
 // [GET] /admin/products/edit/:id
@@ -187,47 +226,66 @@ module.exports.editProduct = async (req, res) => {
         });
         const newCategory = createTreeHelper(category);
 
+        // Lấy danh sách brand không bị xoá
+        const brands = await BrandModel.find({
+            deleted: false
+        }).lean();
+
         res.render('admin/pages/products/editProducts', {
             title: "Trang chỉnh sửa sản phẩm",
             product,
-            category: newCategory
+            category: newCategory,
+            brands // thêm brands vào
         });
     } catch (error) {
+        console.error(error);
         res.redirect("/admin/products");
     }
 };
-
+// [POST] /admin/products/edit/:id
 // [POST] /admin/products/edit/:id
 module.exports.editProductBE = async (req, res) => {
-  try {
-    req.body.price = parseInt(req.body.price);
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
-    req.body.stock = parseInt(req.body.stock);
-    req.body.position = parseInt(req.body.position);
+    try {
+        req.body.price = parseInt(req.body.price);
+        req.body.discountPercentage = parseInt(req.body.discountPercentage);
+        req.body.stock = parseInt(req.body.stock);
+        req.body.position = parseInt(req.body.position);
 
-    const id = req.params.id;
-    const currentUpdate = {
-      account_id: res.locals.currentUser._id,
-      updateAt: new Date()
-    };
+        // Xử lý tags: tách chuỗi thành mảng
+        if (req.body.tags) {
+            req.body.tags = req.body.tags
+                .split(",")
+                .map(tag => tag.trim())
+                .filter(tag => tag.length > 0);
+        } else {
+            req.body.tags = [];
+        }
 
-    // Tách phần updateBy để push riêng, phần còn lại update bình thường
-    const updateData = { ...req.body };
-    delete updateData.updateBy;
+        const id = req.params.id;
+        const currentUpdate = {
+            account_id: res.locals.currentUser._id,
+            updateAt: new Date()
+        };
 
-    await ProductsModel.updateOne(
-      { _id: id },
-      {
-        $set: updateData,
-        $push: { updateBy: currentUpdate }
-      }
-    );
+        const updateData = {
+            ...req.body
+        };
+        delete updateData.updateBy;
 
-    res.redirect("/admin/products");
-  } catch (error) {
-    console.error(error);
-    res.redirect("back");
-  }
+        await ProductsModel.updateOne({
+            _id: id
+        }, {
+            $set: updateData,
+            $push: {
+                updateBy: currentUpdate
+            }
+        });
+
+        res.redirect("/admin/products");
+    } catch (error) {
+        console.error(error);
+        res.redirect("back");
+    }
 };
 
 // [GET] /admin/products/detail/:id
@@ -237,13 +295,29 @@ module.exports.detailProducts = async (req, res) => {
             deleted: false,
             _id: req.params.id
         };
+
         const product = await ProductsModel.findOne(find);
+
+        if (!product) {
+            return res.redirect("/admin/products");
+        }
+
+        // Lấy brand theo brand_id trong product
+        let brand = null;
+        if (product.brand_id) {
+            brand = await BrandModel.findOne({
+                _id: product.brand_id,
+                deleted: false
+            });
+        }
 
         res.render('admin/pages/products/detailProducts', {
             title: product.title,
-            product
+            product,
+            brand
         });
     } catch (error) {
+        console.error(error);
         res.redirect("/admin/products");
     }
 };

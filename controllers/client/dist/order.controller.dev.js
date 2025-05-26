@@ -109,7 +109,7 @@ module.exports.checkout = function _callee(req, res) {
 
 
 module.exports.order = function _callee2(req, res) {
-  var _req$body, fullName, phone, address, paymentMethod, userInfo, cart, products, totalPrice, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, discountPercentage, newPrice, priceAfterDiscount, _order, newCart, vnpUrl;
+  var _req$body, fullName, phone, address, paymentMethod, userInfo, cart, products, totalPrice, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, item, product, discountPercentage, newPrice, priceAfterDiscount, order, newCart, vnpUrl;
 
   return regeneratorRuntime.async(function _callee2$(_context2) {
     while (1) {
@@ -203,7 +203,7 @@ module.exports.order = function _callee2(req, res) {
 
         case 34:
           // Tạo đơn hàng mới
-          _order = new OrderModel({
+          order = new OrderModel({
             user_id: res.locals.user._id,
             userInfo: userInfo,
             products: products,
@@ -212,7 +212,7 @@ module.exports.order = function _callee2(req, res) {
             totalPrice: totalPrice
           });
           _context2.next = 37;
-          return regeneratorRuntime.awrap(_order.save());
+          return regeneratorRuntime.awrap(order.save());
 
         case 37:
           if (!(paymentMethod === 'cod')) {
@@ -244,11 +244,11 @@ module.exports.order = function _callee2(req, res) {
           });
 
         case 46:
-          return _context2.abrupt("return", res.redirect("/checkout/success/".concat(_order._id)));
+          return _context2.abrupt("return", res.redirect("/checkout/success/".concat(order._id)));
 
         case 47:
           _context2.next = 49;
-          return regeneratorRuntime.awrap(createPayment(Math.round(totalPrice), _order._id.toString(), req.ip || '127.0.0.1'));
+          return regeneratorRuntime.awrap(createPayment(Math.round(totalPrice), order._id.toString(), req.ip || '127.0.0.1'));
 
         case 49:
           vnpUrl = _context2.sent;
@@ -374,8 +374,7 @@ module.exports.success = function _callee3(req, res) {
 
 
 module.exports.vnpayIpn = function _callee4(req, res) {
-  var vnpay, verify, orderId, responseCode, _order2;
-
+  var vnpay, verify, orderId, responseCode, order;
   return regeneratorRuntime.async(function _callee4$(_context4) {
     while (1) {
       switch (_context4.prev = _context4.next) {
@@ -407,9 +406,9 @@ module.exports.vnpayIpn = function _callee4(req, res) {
           return regeneratorRuntime.awrap(OrderModel.findById(orderId));
 
         case 9:
-          _order2 = _context4.sent;
+          order = _context4.sent;
 
-          if (_order2) {
+          if (order) {
             _context4.next = 12;
             break;
           }
@@ -420,7 +419,7 @@ module.exports.vnpayIpn = function _callee4(req, res) {
           }));
 
         case 12:
-          if (!(_order2.paymentStatus === 'paid')) {
+          if (!(order.paymentStatus === 'paid')) {
             _context4.next = 14;
             break;
           }
@@ -436,26 +435,26 @@ module.exports.vnpayIpn = function _callee4(req, res) {
             break;
           }
 
-          _order2.paymentStatus = 'paid'; // Xoá giỏ hàng nếu thanh toán thành công
+          order.paymentStatus = 'paid'; // Xoá giỏ hàng nếu thanh toán thành công
 
-          if (!_order2.cart_id) {
+          if (!order.cart_id) {
             _context4.next = 19;
             break;
           }
 
           _context4.next = 19;
-          return regeneratorRuntime.awrap(CartModel.findByIdAndDelete(_order2.cart_id));
+          return regeneratorRuntime.awrap(CartModel.findByIdAndDelete(order.cart_id));
 
         case 19:
           _context4.next = 22;
           break;
 
         case 21:
-          _order2.paymentStatus = 'fail';
+          order.paymentStatus = 'fail';
 
         case 22:
           _context4.next = 24;
-          return regeneratorRuntime.awrap(_order2.save());
+          return regeneratorRuntime.awrap(order.save());
 
         case 24:
           return _context4.abrupt("return", res.status(200).json({
@@ -607,22 +606,28 @@ module.exports.undoCancel = function _callee7(req, res) {
 
 
 module.exports.confirm = function _callee8(req, res) {
+  var order;
   return regeneratorRuntime.async(function _callee8$(_context8) {
     while (1) {
       switch (_context8.prev = _context8.next) {
         case 0:
-          _context8.prev = 0;
+          _context8.next = 2;
+          return regeneratorRuntime.awrap(OrderModel.findById(req.params.id));
+
+        case 2:
+          order = _context8.sent;
+          _context8.prev = 3;
 
           if (!(order.status !== 'delivered')) {
-            _context8.next = 4;
+            _context8.next = 7;
             break;
           }
 
           req.flash('error', 'Chỉ có thể xác nhận khi đơn hàng đã được giao.');
           return _context8.abrupt("return", res.redirect('back'));
 
-        case 4:
-          _context8.next = 6;
+        case 7:
+          _context8.next = 9;
           return regeneratorRuntime.awrap(OrderModel.updateOne({
             _id: req.params.id
           }, {
@@ -630,31 +635,30 @@ module.exports.confirm = function _callee8(req, res) {
             completedAt: new Date()
           }));
 
-        case 6:
+        case 9:
           req.flash('success', 'Xác nhận đã nhận hàng thành công!');
           res.redirect('back');
-          _context8.next = 15;
+          _context8.next = 18;
           break;
 
-        case 10:
-          _context8.prev = 10;
-          _context8.t0 = _context8["catch"](0);
+        case 13:
+          _context8.prev = 13;
+          _context8.t0 = _context8["catch"](3);
           console.error('Lỗi xác nhận đơn hàng:', _context8.t0);
           req.flash('error', 'Đã xảy ra lỗi. Vui lòng thử lại sau.');
           res.redirect('back');
 
-        case 15:
+        case 18:
         case "end":
           return _context8.stop();
       }
     }
-  }, null, null, [[0, 10]]);
+  }, null, null, [[3, 13]]);
 }; //[PATCH] : Yêu cầu hủy khi đang ở trạng thái đang chuẩn bị hàng :
 
 
 module.exports.requestCancel = function _callee9(req, res) {
-  var _order3;
-
+  var order;
   return regeneratorRuntime.async(function _callee9$(_context9) {
     while (1) {
       switch (_context9.prev = _context9.next) {
@@ -664,14 +668,14 @@ module.exports.requestCancel = function _callee9(req, res) {
           return regeneratorRuntime.awrap(OrderModel.findById(req.params.id));
 
         case 3:
-          _order3 = _context9.sent;
+          order = _context9.sent;
 
-          if (!_order3) {
+          if (!order) {
             _context9.next = 9;
             break;
           }
 
-          if (!(_order3.status === "preparing" && _order3.cancelRequest === false)) {
+          if (!(order.status === "preparing" && order.cancelRequest === false)) {
             _context9.next = 9;
             break;
           }

@@ -254,6 +254,7 @@ module.exports.undoCancel = async (req, res) => {
 }
 //[PATCH : Xác nhận đơn hàng :
 module.exports.confirm = async (req, res) => {
+    const order = await OrderModel.findById(req.params.id);
     try {
         // Chỉ cho xác nhận nếu đơn hàng đã ở trạng thái "delivered"
         if (order.status !== 'delivered') {

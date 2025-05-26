@@ -17,6 +17,19 @@ block main
                 option(value="") -- Chọn danh mục cha --
                 +select-tree(category)
 
+        // ✅ Chọn thương hiệu từ danh sách brand
+        div.form-group
+            label(for="brand_id") Thương hiệu
+            select#brand_id.form-control(name="brand_id" required)
+                option(value="") -- Chọn thương hiệu --
+                each brand in brands
+                    option(value=brand._id)= brand.name
+
+        // ✅ Tags
+        div.form-group
+            label(for="tags") Tags
+            input#tags.form-control(type="text" name="tags" placeholder="Các tag cách nhau bởi dấu phẩy")
+
         // ✅ Sản phẩm nổi bật: Có / Không
         div.form-group
             label Sản phẩm nổi bật

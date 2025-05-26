@@ -404,3 +404,38 @@ if(btnDeleleCategory){
         })
     })
 }
+
+//Thương hiệu :
+const createBtnBrand = document.querySelector('button[createBtnBrand]');
+if(createBtnBrand){
+    createBtnBrand.addEventListener("click", (event)=>{
+         window.location.href = `/admin/brands/create`;
+    })
+}
+const buttondetailBrand = document.querySelectorAll('button[button-detailBrand]');
+if(buttondetailBrand){
+    buttondetailBrand.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+            const id = item.getAttribute("id")
+            window.location.href = `/admin/brands/detail/${id}`;
+        })
+    })
+}
+const buttoneditBrand = document.querySelectorAll('button[button-editBrand]');
+if(buttoneditBrand){
+    buttoneditBrand.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+            const id = item.getAttribute("id")
+            window.location.href = `/admin/brands/edit/${id}`;
+        })
+    })
+}
+const buttondelBrand = document.querySelectorAll('button[button-delBrand]');
+if(buttondelBrand){
+    buttondelBrand.forEach((item)=>{
+        item.addEventListener("click", (event)=>{
+            const id = item.getAttribute("id")
+            window.location.href = `/admin/brands/delete/${id}`;
+        })
+    })
+}

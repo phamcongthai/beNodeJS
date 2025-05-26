@@ -17,7 +17,28 @@ block main
                 option(value="") -- Chọn danh mục cha --
                 +select-tree-edit(category, 1, product.category_id)
 
-        // ✅ Sản phẩm nổi bật: Có / Không
+        // ✅ Thương hiệu
+        div.form-group
+            label(for="brand_id") Thương hiệu
+            select#brand_id.form-control(name="brand_id")
+                option(value="") -- Chọn thương hiệu --
+                each brand in brands
+                    option(
+                        value=brand._id
+                        selected=(product.brand_id && product.brand_id.toString() === brand._id.toString())
+                    ) #{brand.name}
+
+        // ✅ Trường tags
+        div.form-group
+            label(for="tags") Tags
+            input#tags.form-control(
+                type="text"
+                name="tags"
+                value=(product.tags && Array.isArray(product.tags) ? product.tags.join(', ') : '')
+                placeholder="Ví dụ: laptop, gaming, văn phòng"
+            )
+
+        // ✅ Sản phẩm nổi bật
         div.form-group
             label Sản phẩm nổi bật
             div.form-check

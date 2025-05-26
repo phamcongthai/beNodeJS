@@ -6,13 +6,13 @@ var OrderModel = require('../models/order.model');
 
 module.exports.cronCheckCompleted = function () {
   cron.schedule('* * * * *', function _callee() {
-    var orders, now, threeMinutes, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, order, deliveredAt;
+    var orders, now, twoDays, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, order, deliveredAt;
 
     return regeneratorRuntime.async(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            console.log('⏰ Cron job kiểm tra đơn hàng đã giao (test 3 phút)...');
+            console.log('⏰ Cron job kiểm tra đơn hàng đã giao (test 2 ngày)...');
             _context.prev = 1;
             _context.next = 4;
             return regeneratorRuntime.awrap(OrderModel.find({
@@ -22,7 +22,7 @@ module.exports.cronCheckCompleted = function () {
           case 4:
             orders = _context.sent;
             now = new Date();
-            threeMinutes = 3 * 60 * 1000; // 3 phút
+            twoDays = 48 * 60 * 60 * 1000; // 2 ngày
 
             _iteratorNormalCompletion = true;
             _didIteratorError = false;
@@ -48,7 +48,7 @@ module.exports.cronCheckCompleted = function () {
           case 16:
             deliveredAt = new Date(order.deliveredAt);
 
-            if (!(now - deliveredAt >= threeMinutes)) {
+            if (!(now - deliveredAt >= twoDays)) {
               _context.next = 23;
               break;
             }
@@ -59,7 +59,7 @@ module.exports.cronCheckCompleted = function () {
             return regeneratorRuntime.awrap(order.save());
 
           case 22:
-            console.log("\u2705 \u0110\u01A1n h\xE0ng ".concat(order._id, " \u0111\xE3 t\u1EF1 chuy\u1EC3n sang 'completed' sau 3 ph\xFAt"));
+            console.log("\u2705 \u0110\u01A1n h\xE0ng ".concat(order._id, " \u0111\xE3 t\u1EF1 chuy\u1EC3n sang 'completed' sau 2 ng\xE0y"));
 
           case 23:
             _iteratorNormalCompletion = true;

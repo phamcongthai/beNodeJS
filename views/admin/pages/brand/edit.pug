@@ -1,0 +1,34 @@
+extends ../../layouts/default.pug
+include ../../mixin/flash.pug
+
+block main
+    h1.mb-4 Chỉnh sửa thương hiệu
+    +alert-error(5000)
+
+    form#form-edit-brand(action=`/admin/brands/edit/${brand._id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+        div.form-group
+            label(for="name") Tên thương hiệu
+            input#name.form-control(type="text" name="name" value=brand.name required)
+
+        div.form-group
+            label(for="description") Mô tả
+            textarea#description.form-control(name="description" rows="5") #{brand.description}
+
+        div.form-group
+            label(for="logo") Logo
+            input#logo.form-control(type="file" name="logo" accept="image/*" input-upload-img)
+            if brand.logo
+                img(src=brand.logo alt="logo" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+
+        div.form-group
+            label Trạng thái
+            div.form-check
+                input#active.form-check-input(type="radio" name="status" value="active" checked=brand.status === "active")
+                label.form-check-label(for="active") Hoạt động
+            div.form-check
+                input#inactive.form-check-input(type="radio" name="status" value="inactive" checked=brand.status === "inactive")
+                label.form-check-label(for="inactive") Dừng hoạt động
+
+        button.btn.btn-primary(type="submit") Lưu
+
+    script(src="/admin/js/script.js")

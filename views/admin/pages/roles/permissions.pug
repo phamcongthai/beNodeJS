@@ -19,6 +19,7 @@ block main
         each item in roles
           td.text-center
             input(type="text", value=item.id, readonly)
+
     if(currentRole.permissions.includes("permission_edit"))
         // Nhóm: Danh mục sản phẩm
         tr
@@ -98,6 +99,47 @@ block main
           each item in roles
             td.text-center
               if item.permissions.includes("products_delete")
+                input(type="checkbox", checked)
+              else
+                input(type="checkbox")
+
+        // Nhóm: Thương hiệu sản phẩm (các quyền mới)
+        tr
+          td(colspan="4")
+            strong Thương hiệu sản phẩm
+
+        tr(data-name="brand_view")
+          td Xem
+          each item in roles
+            td.text-center
+              if item.permissions.includes("brand_view")
+                input(type="checkbox", checked)
+              else
+                input(type="checkbox")
+
+        tr(data-name="brand_create")
+          td Thêm mới
+          each item in roles
+            td.text-center
+              if item.permissions.includes("brand_create")
+                input(type="checkbox", checked)
+              else
+                input(type="checkbox")
+
+        tr(data-name="brand_edit")
+          td Chỉnh sửa
+          each item in roles
+            td.text-center
+              if item.permissions.includes("brand_edit")
+                input(type="checkbox", checked)
+              else
+                input(type="checkbox")
+
+        tr(data-name="brand_delete")
+          td Xóa
+          each item in roles
+            td.text-center
+              if item.permissions.includes("brand_delete")
                 input(type="checkbox", checked)
               else
                 input(type="checkbox")
@@ -197,6 +239,7 @@ block main
                 input(type="checkbox", checked)
               else
                 input(type="checkbox")
+
         tr(data-name="permission_edit")
           td Chỉnh sửa
           each item in roles
@@ -205,11 +248,11 @@ block main
                 input(type="checkbox", checked)
               else
                 input(type="checkbox")
-        //Nhóm cài đặt chung   
+
+        //Nhóm cài đặt chung
         tr
           td(colspan="4")
-            strong Phân quyền
-
+            strong Cài đặt chung
         tr(data-name="settings_view")
           td Xem
           each item in roles
@@ -218,8 +261,10 @@ block main
                 input(type="checkbox", checked)
               else
                 input(type="checkbox")
+
     else 
       h1 Bạn không có quyền chỉnh sửa !
+
     // form nằm dưới cùng trang
     form#form-change-permissions(method="POST", action=`${prefixAdmin}/roles/permissions?_method=PATCH`)
       input(type="hidden", name="permissions", input-result)

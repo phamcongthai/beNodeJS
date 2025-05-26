@@ -451,4 +451,46 @@ if (btnDeleleCategory) {
       window.location.href = "/admin/products-category/delete/".concat(id);
     });
   });
+} //Thương hiệu :
+
+
+var createBtnBrand = document.querySelector('button[createBtnBrand]');
+
+if (createBtnBrand) {
+  createBtnBrand.addEventListener("click", function (event) {
+    window.location.href = "/admin/brands/create";
+  });
+}
+
+var buttondetailBrand = document.querySelectorAll('button[button-detailBrand]');
+
+if (buttondetailBrand) {
+  buttondetailBrand.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/brands/detail/".concat(id);
+    });
+  });
+}
+
+var buttoneditBrand = document.querySelectorAll('button[button-editBrand]');
+
+if (buttoneditBrand) {
+  buttoneditBrand.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/brands/edit/".concat(id);
+    });
+  });
+}
+
+var buttondelBrand = document.querySelectorAll('button[button-delBrand]');
+
+if (buttondelBrand) {
+  buttondelBrand.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/brands/delete/".concat(id);
+    });
+  });
 }

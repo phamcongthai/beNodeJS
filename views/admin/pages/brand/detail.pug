@@ -1,0 +1,36 @@
+extends ../../layouts/default.pug
+
+block main
+    if (brand.name)
+        h1.mb-4= brand.name
+
+    if (brand.logo)
+        div.mb-4
+            img(src=brand.logo, alt=brand.name, style="width: 150px")
+
+    if (brand.status)
+        div.mb-4
+            span Trạng thái:
+            if (brand.status == "active")
+                span.badge.badge-success.ml-2 Hoạt động
+            else
+                span.badge.badge-danger.ml-2 Dừng hoạt động
+
+    if (brand.description)
+        div.mb-4
+            h5 Mô tả:
+            div !{brand.description}
+
+    if (brand.createBy && brand.createBy.account_id)
+        div.mb-4
+            span Người tạo:
+            b.ml-2= brand.createBy.account_id
+
+    if (brand.createdAt)
+        div.mb-4
+            span Ngày tạo:
+            b.ml-2= new Date(brand.createdAt).toLocaleString()
+
+    button.btn.btn-warning.btn-sm.ml-1(id=brand._id data-action="edit") Chỉnh sửa
+
+    script(src="/admin/js/script.js")

@@ -1,10 +1,10 @@
 extends ../../layouts/default
 
-//-Nhúng file mixin :
+//- Nhúng file mixin
 include ../../mixin/flash.pug
 
 block main 
-    //- Nhúng mixin vào đây nhé !
+    //- Nhúng mixin alert thành công
     +alert-success(5000)
 
     h1 Trang sản phẩm
@@ -71,6 +71,7 @@ block main
                 th STT
                 th Hình ảnh
                 th Tiêu đề
+                th Thương hiệu
                 th Giá
                 th Vị trí
                 th Trạng thái
@@ -89,6 +90,7 @@ block main
                         else
                             span Không có ảnh
                     td= item.title
+                    td= item.brand_name || "Không rõ"
                     td= item.price
                     td
                         input(
