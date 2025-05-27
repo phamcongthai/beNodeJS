@@ -15,7 +15,7 @@ module.exports.index = function _callee(req, res) {
             deleted: false,
             status: "active",
             isFeatured: true
-          }).limit(10));
+          }).limit(8));
 
         case 3:
           FeaturedProducts = _context.sent;
@@ -25,7 +25,7 @@ module.exports.index = function _callee(req, res) {
             status: "active"
           }).sort({
             position: -1
-          }).limit(10));
+          }).limit(8));
 
         case 6:
           NewProducts = _context.sent;
@@ -35,7 +35,7 @@ module.exports.index = function _callee(req, res) {
             status: "active"
           }).sort({
             discountPercentage: -1
-          }).limit(10));
+          }).limit(8));
 
         case 9:
           DisProducts = _context.sent;

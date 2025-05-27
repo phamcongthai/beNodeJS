@@ -1,12 +1,53 @@
-//- Carousel chính giữa
 .carousel-box
-  p Carousel Chính
+  .carousel.slide#mainCarousel(data-ride="carousel")
+    .carousel-inner
+      - let first = true
+      each ad in ads
+        if ad.position === "homepage_main_carousel"
+          .carousel-item(class=first ? 'active' : '')
+            - first = false
+            a(href=ad.targetUrl, target="_blank")
+              .img-wrapper
+                img.banner-img(src=ad.image, alt="Banner")
+
+    // Controls
+    a.carousel-control-prev(href="#mainCarousel" role="button" data-slide="prev")
+      span.carousel-control-prev-icon(aria-hidden="true")
+      span.sr-only Previous
+    a.carousel-control-next(href="#mainCarousel" role="button" data-slide="next")
+      span.carousel-control-next-icon(aria-hidden="true")
+      span.sr-only Next
+
 style.
   .carousel-box {
     flex-grow: 1;
-    margin: 0 15px;
-    background-color: #d9edf7;
-    padding: 20px;
     border-radius: 10px;
-    height : 390px;
+    height: 325px; /* set cứng */
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .carousel-inner,
+  .carousel-item,
+  .img-wrapper,
+  .banner-img {
+    height: 100%;
+    width: 100%;
+  }
+
+  .img-wrapper {
+    overflow: hidden;
+    border-radius: 10px;
+  }
+
+  .banner-img {
+    object-fit: cover; /* hình không bị méo, cắt đúng khung */
+    display: block;
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-size: 50% 50%;
+    width: 30px;
+    height: 30px;
   }

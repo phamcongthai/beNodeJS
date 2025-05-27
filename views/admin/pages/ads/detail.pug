@@ -1,0 +1,56 @@
+extends ../../layouts/default.pug
+
+block main
+    if (ads.title)
+        h1.mb-4= ads.title
+
+    if (ads.image)
+        div.mb-4
+            img(src=ads.image, alt=ads.title, style="width: 150px")
+
+    if (ads.status)
+        div.mb-4
+            span Trạng thái:
+            if (ads.status == "active")
+                span.badge.badge-success.ml-2 Hoạt động
+            else
+                span.badge.badge-danger.ml-2 Dừng hoạt động
+
+    if (ads.description)
+        div.mb-4
+            h5 Mô tả:
+            div !{ads.description}
+
+    if (ads.targetUrl)
+        div.mb-4
+            span Liên kết đích:
+            a.ml-2(href=ads.targetUrl target="_blank")= ads.targetUrl
+
+    if (ads.position)
+        div.mb-4
+            span Vị trí hiển thị:
+            b.ml-2= ads.position
+
+    if (ads.startDate)
+        div.mb-4
+            span Ngày bắt đầu:
+            b.ml-2= new Date(ads.startDate).toLocaleString()
+
+    if (ads.endDate)
+        div.mb-4
+            span Ngày kết thúc:
+            b.ml-2= new Date(ads.endDate).toLocaleString()
+
+    if (ads.createBy && ads.createBy.account_id)
+        div.mb-4
+            span Người tạo:
+            b.ml-2= ads.createBy.account_id
+
+    if (ads.createdAt)
+        div.mb-4
+            span Ngày tạo:
+            b.ml-2= new Date(ads.createdAt).toLocaleString()
+
+    button.btn.btn-warning.btn-sm.ml-1(id=ads._id data-action="edit") Chỉnh sửa
+
+    script(src="/admin/js/script.js")

@@ -1,3 +1,4 @@
+//- Mixin cũ giữ nguyên
 mixin menu-tree(items)
   ul
     each item in items
@@ -5,3 +6,14 @@ mixin menu-tree(items)
         a(href=`/products/${item.slug}`)= item.title
         if item.children && item.children.length > 0
           +menu-tree(item.children)
+
+//- Mixin mới: chỉ in ra cấp 2 và các con
+mixin menu-level2-tree(items, rootIds)
+  ul
+    each item in items
+      //- Lọc ra những mục có parent_id thuộc rootIds
+      if rootIds.includes(item.parent_id)
+        li
+          a(href=`/products/${item.slug}`)= item.title
+          if item.children && item.children.length > 0
+            +menu-tree(item.children)

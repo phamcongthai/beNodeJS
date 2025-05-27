@@ -47,67 +47,6 @@ header.navbar {
 }
 
 /* ========== Sub Menu ========== */
-.sub-menu {
-  position: relative;
-  z-index: 999;
-}
-
-.sub-menu > ul {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  background: #fff; /* trắng */
-  min-width: 180px;
-  display: none;
-  border-radius: 6px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.sub-menu:hover > ul {
-  display: block;
-}
-
-.sub-menu > ul > li,
-.sub-menu ul li ul > li {
-  border-bottom: 1px solid #eee;
-}
-
-.sub-menu > ul > li a,
-.sub-menu ul li ul > li a {
-  display: block;
-  padding: 10px;
-  text-decoration: none;
-  color: #333;
-  width: 100%;
-  transition: background-color 0.2s;
-}
-
-.sub-menu > ul > li a:hover,
-.sub-menu ul li ul > li a:hover {
-  background-color: #ffe6e6; /* đỏ rất nhạt khi hover */
-}
-
-/* Submenu cấp 2 */
-.sub-menu ul li ul {
-  position: absolute;
-  top: 20px;
-  right: 100%;
-  background-color: #fff;
-  min-width: 180px;
-  display: none;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-.sub-menu ul li:hover > ul {
-  display: block;
-}
 
 /* ========== Search Form ========== */
 form .form-control {
@@ -353,3 +292,6 @@ form .btn:hover {
   }
 }
 /* End Show Alert */
+header.navbar {
+  box-shadow: none !important;
+}

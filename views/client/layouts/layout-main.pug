@@ -20,13 +20,16 @@ html
     .page-wrapper
       include ../../client/partials/header.pug
 
-      .container-fluid.px-2
-        .home-banner-section.d-flex.justify-content-between.py-4
-          include ../../client/partials/banner-sidebar.pug
-          include ../../client/partials/banner-carousel.pug
-          include ../../client/partials/banner-right.pug
+      .container(style="max-width: 1300px; margin: 0 auto; padding-left: 20px; padding-right: 20px;")
+        .home-banner-section.row.d-flex.justify-content-between.align-items-stretch.py-4
+          .col-md-2.banner-sidebar
+            include ../../client/partials/banner-sidebar.pug
+          .col-md-7.banner-carousel
+            include ../../client/partials/banner-carousel.pug
+          .col-md-3.banner-right
+            include ../../client/partials/banner-right.pug
 
-      main.container-fluid.px-2
+      main.container(style="max-width: 1300px; margin: 0 auto; padding-left: 20px; padding-right: 20px;")
         block main
 
       include ../../client/partials/footer.pug

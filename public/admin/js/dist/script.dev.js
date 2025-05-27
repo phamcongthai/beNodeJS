@@ -490,7 +490,57 @@ if (buttondelBrand) {
   buttondelBrand.forEach(function (item) {
     item.addEventListener("click", function (event) {
       var id = item.getAttribute("id");
-      window.location.href = "/admin/brands/delete/".concat(id);
+      var confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa thương hiệu này?");
+
+      if (confirmDelete) {
+        window.location.href = "/admin/brands/delete/".concat(id);
+      }
+    });
+  });
+} //Quảng cáo :
+
+
+var createBtnAds = document.querySelector('button[createBtnAds]');
+
+if (createBtnAds) {
+  createBtnAds.addEventListener("click", function (event) {
+    window.location.href = "/admin/ads/create";
+  });
+}
+
+var buttondetailAds = document.querySelectorAll('button[button-detailAds]');
+
+if (buttondetailAds) {
+  buttondetailAds.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/ads/detail/".concat(id);
+    });
+  });
+}
+
+var buttoneditAds = document.querySelectorAll('button[button-editAds]');
+
+if (buttoneditAds) {
+  buttoneditAds.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/ads/edit/".concat(id);
+    });
+  });
+}
+
+var buttondelAds = document.querySelectorAll('button[button-delAds]');
+
+if (buttondelAds) {
+  buttondelAds.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      var confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa quảng cáo này?");
+
+      if (confirmDelete) {
+        window.location.href = "/admin/ads/delete/".concat(id);
+      }
     });
   });
 }

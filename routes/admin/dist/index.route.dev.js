@@ -30,6 +30,8 @@ var ordersRoutes = require('../../routes/admin/orders.route');
 
 var brandRoutes = require('../../routes/admin/brand.route');
 
+var adsRoutes = require('../../routes/admin/ads.route');
+
 module.exports = function (app) {
   app.use(settingsGeneral.settingsGeneral);
   app.use(pathAdmin.prefixAdmin + '/dashboard', authMiddleware.authRequire, dashboardRoutes);
@@ -42,4 +44,5 @@ module.exports = function (app) {
   app.use(pathAdmin.prefixAdmin + '/settings', authMiddleware.authRequire, settingsRoutes);
   app.use(pathAdmin.prefixAdmin + '/orders', authMiddleware.authRequire, ordersRoutes);
   app.use(pathAdmin.prefixAdmin + '/brands', authMiddleware.authRequire, brandRoutes);
+  app.use(pathAdmin.prefixAdmin + '/ads', authMiddleware.authRequire, adsRoutes);
 };
