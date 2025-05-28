@@ -1,12 +1,143 @@
 .sidebar-box
-  p Sidebar Danh mục
-  //- Thêm nội dung sidebar ở đây
+  - let leftBannerShown = false
+  each ad in ads
+    if ad.position === 'homepage_left_banner' && !leftBannerShown
+      a(href=ad.targetUrl, target="_self")
+        .img-wrapper.diagonal-shake
+          img.left-img(src=ad.image, alt=ad.title)
+      - leftBannerShown = true
+
+  // Đồng hồ đếm ngược
+  .countdown-box
+    p.countdown-title will end in:
+    .countdown
+      .countdown-item
+        span#hours 00
+        span.label Hours
+      .countdown-item
+        span#minutes 00
+        span.label Minutes
+      .countdown-item
+        span#seconds 00
+        span.label Seconds
 
 style.
   .sidebar-box {
     width: 100%;
-    background-color: #f2f2f2;
+    background-color: white;
+    border-radius: 10px;
+    height: auto;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding-bottom: 15px;
+  }
+
+  .img-wrapper {
+    overflow: hidden;
     border-radius: 10px;
     height: 303px;
-    box-sizing: border-box;
   }
+
+  .left-img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+  }
+
+  .left-img:hover {
+    transform: scale(1.02);
+  }
+
+  /* Hiệu ứng lắc chéo */
+  @keyframes diagonalShake {
+    0%, 100% {
+      transform: translate(0, 0);
+    }
+    20% {
+      transform: translate(-4px, -4px);
+    }
+    40% {
+      transform: translate(4px, 4px);
+    }
+    60% {
+      transform: translate(-4px, 4px);
+    }
+    80% {
+      transform: translate(4px, -4px);
+    }
+  }
+
+  .diagonal-shake {
+    animation: diagonalShake 1s infinite ease-in-out;
+  }
+
+  /* Countdown style */
+  .countdown-box {
+    text-align: center;
+    color: #000;
+    margin-top: 15px;
+  }
+
+  .countdown-title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .countdown {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .countdown-item {
+    background: white;
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: #ff6a00;
+    font-weight: bold;
+    font-size: 24px;
+    min-width: 60px;
+  }
+
+  .countdown-item .label {
+    display: block;
+    font-size: 12px;
+    font-weight: normal;
+    color: black;
+  }
+
+script.
+  function startCountdown(endTime) {
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = endTime - now;
+
+      if (distance < 0) {
+        clearInterval(interval);
+        document.getElementById("hours").innerText = "00";
+        document.getElementById("minutes").innerText = "00";
+        document.getElementById("seconds").innerText = "00";
+        return;
+      }
+
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+
+      document.getElementById("hours").innerText = String(hours).padStart(2, "0");
+      document.getElementById("minutes").innerText = String(minutes).padStart(2, "0");
+      document.getElementById("seconds").innerText = String(seconds).padStart(2, "0");
+    }
+
+    updateCountdown(); // gọi lần đầu
+    const interval = setInterval(updateCountdown, 1000);
+  }
+
+  // Cài đặt thời gian kết thúc (ví dụ: cuối ngày hôm nay)
+  const now = new Date();
+  const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).getTime();
+  startCountdown(endOfDay);

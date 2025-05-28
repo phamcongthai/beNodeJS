@@ -2,7 +2,7 @@
   - let count = 0
   each ad in ads
     if ad.position === 'homepage_right_banner' && count < 2
-      a(href=ad.targetUrl, target="_blank")
+      a(href=ad.targetUrl, target="_self")
         .img-wrapper
           img.right-img(src=ad.image, alt=ad.title)
       - count++

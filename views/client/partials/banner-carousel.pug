@@ -6,7 +6,7 @@
         if ad.position === "homepage_main_carousel"
           .carousel-item(class=first ? 'active' : '')
             - first = false
-            a(href=ad.targetUrl, target="_blank")
+            a(href=ad.targetUrl, target="_self")
               .img-wrapper
                 img.banner-img(src=ad.image, alt="Banner")
 
