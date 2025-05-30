@@ -1,197 +1,90 @@
-include ../mixin/select-tree.pug
+include ../mixin/select-tree.pug 
 
-header.navbar.navbar-expand-lg.bg-dark.py-3.shadow
-  .container-fluid
-    .d-flex.w-100.align-items-center.justify-content-between.flex-wrap
-
-      // Left: Logo
+header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
+  .container-fluid.d-flex.justify-content-between(style="gap: 20px")
+    // Khối 1: Logo - chiếm 1 phần
+    .d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 1; align-self: flex-start; justify-content: center;")
       a.navbar-brand.d-flex.align-items-center.gap-2(href="/")
-        img(src=settingsGeneralData.logo, alt="logo", width="50", height="50")
-        span.text-light.fw-bold.fs-4 #{settingsGeneralData.websiteName}
+        img(src=settingsGeneralData.logo, alt="logo", width="40", height="40")
+        span.text-light.fw-bold.fs-5 #{settingsGeneralData.websiteName}
 
-      // Center: Danh mục + Search
-      .d-flex.flex-grow-1.mx-3.align-items-center.gap-2
-        // Danh mục sản phẩm (đặt trong ul.navbar-nav để font size đồng nhất)
-        ul.navbar-nav.mb-0
-          li.nav-item.sub-menu
-            a.nav-link.text-light(href="/products")
-              i.fas.fa-bars.me-1
-              | Danh mục 
-            if categories && categories.length > 0
-              +menu-tree(categories)
+    // Khối 2: Tìm kiếm + Danh mục + Tag - chiếm 2 phần
+    .d-flex.flex-column(style="flex: 2; align-self: center; gap: 10px;")
+      .d-flex.gap-3
+        .nav-item.sub-menu
+          a.nav-link.text-light.d-flex.align-items-center(href="/products")
+            i.fas.fa-bars.me-1
+            | Danh mục
+          if categories && categories.length > 0
+            +menu-tree(categories)
 
-        // Tìm kiếm
         form.d-flex.flex-grow-1(action="/search", method="GET")
-          .input-group
+          .input-group.w-100.gap-2
             input.form-control.bg-secondary.text-white.border-0(
               type="text", 
               name="keyword", 
               placeholder="Nhập từ khóa...", 
               value=keyword
             )
-            button.btn.btn-outline-light(type="submit")
+            button.btn.btn-danger(type="submit")
               i.fas.fa-search.me-1
               | Tìm
+      if tags && tags.length > 0
+        .tags-container.d-flex.flex-wrap.gap-2.justify-content-center
+          each tag in tags.slice(0, 6)
+            a.tag-pill(href=`/search?tag=${encodeURIComponent(tag)}`)= tag
 
-      // Right: Nav menu
+    // Khối 3: Menu bên phải - chiếm 1 phần
+    .menu-right-wrapper.d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 1; align-self: flex-start; justify-content: center;")
       ul.navbar-nav.d-flex.flex-row.gap-3.mb-0
+        li.nav-item.position-relative.account-wrapper
+          a.nav-link.text-light.account-icon.d-flex.align-items-center(href="#")
+            i.fas.fa-user-circle.fs-4
+          ul.account-menu.shadow
+            if user
+              li
+                a(href="/user/profile")
+                  i.fas.fa-id-badge.me-2
+                  | Thông tin tài khoản
+              li
+                a(href="/checkout/myorder")
+                  i.fas.fa-receipt.me-2
+                  | Đơn hàng của tôi
+              li
+                a(href="/user/logout")
+                  i.fas.fa-sign-out-alt.me-2
+                  | Đăng xuất
+            else
+              li
+                a(href="/user/login")
+                  i.fas.fa-sign-in-alt.me-2
+                  | Đăng nhập
+              li
+                a(href="/user/register")
+                  i.fas.fa-user-plus.me-2
+                  | Đăng ký
         li.nav-item
-          a.nav-link.text-light(href="/")
-            i.fas.fa-home.me-1
-            | Trang chủ
-
-        li.nav-item
-          a.nav-link.text-light(href="/cart")
+          a.nav-link.text-light.d-flex.align-items-center(href="/cart")
             i.fas.fa-shopping-cart.me-1
             | Giỏ hàng (#{miniCart ? total : 0})
-
-        li.nav-item
-          a#chat-button(href="/chat", title="Chat hỗ trợ")
-            i.fas.fa-comments
-
-        if user
-          li.nav-item.position-relative.account-wrapper
-            a.nav-link.text-light.account-icon(href="#", title="Tài khoản")
-              i.fas.fa-user-circle.fs-5.me-1
-            ul.account-menu.shadow
-              li
-                a(href="/user/profile") 
-                  i.fas.fa-id-badge.me-2
-                  |  Thông tin tài khoản
-              li
-                a(href="/checkout/myorder") 
-                  i.fas.fa-receipt.me-2
-                  |  Đơn hàng của tôi
-              li
-                a(href="/user/logout") 
-                  i.fas.fa-sign-out-alt.me-2
-                  |  Đăng xuất
-        else
-          li.nav-item
-            a.nav-link.text-light(href="/user/login")
-              i.fas.fa-sign-in-alt.me-1
-              | Đăng nhập
-          li.nav-item
-            a.nav-link.text-light(href="/user/register")
-              i.fas.fa-user-plus.me-1
-              | Đăng ký
 
 // Font Awesome
 link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
 
-// CSS gốc + bổ sung duy nhất phần submenu cấp 2 đổ phải
+// CSS nội tuyến
 style.
   .navbar {
-    background-color: #1c1c1e !important;
+    background-color: #0A0907 !important;
+    min-height: 112px;
   }
-
-  .form-control::placeholder {
-    color: #ccc;
+  .navbar-brand {
+    padding-top: 0 !important;
   }
-
-  .form-control:focus {
-    box-shadow: none;
-    border-color: #555;
-    color: #fff;
-  }
-
-  .nav-link {
-    padding: 8px 12px;
-    transition: background-color 0.3s ease;
-    border-radius: 6px;
-  }
-
-  .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
-  }
-
-  .btn-outline-light {
-    border-color: #fff;
-    color: #fff;
-  }
-
-  .btn-outline-light:hover {
-    background-color: #fff;
-    color: #000;
-  }
-
-  .input-group .form-control {
-    background-color: #2c2c2e;
-    border: none;
-    color: #fff;
-  }
-
-  .account-wrapper {
-    position: relative;
-  }
-
-  .account-icon i {
-    font-size: 1.9rem;
-  }
-
-  .account-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 0;
-    background-color: white;
-    border-radius: 6px;
-    min-width: 200px;
-    z-index: 1000;
-    padding: 0.5rem 0;
-  }
-
-  .account-wrapper:hover .account-menu {
-    display: block;
-  }
-
-  .account-menu li {
-    list-style: none;
-  }
-
-  .account-menu a {
-    display: block;
-    padding: 10px 15px;
-    color: #000;
-    text-decoration: none;
-  }
-
-  .account-menu a:hover {
-    background-color: #f1f1f1;
-  }
-
-  #chat-button {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 999;
-    background-color: #007bff;
-    color: #fff;
-    padding: 14px 16px;
-    border-radius: 50%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-  }
-
-  #chat-button:hover {
-    background-color: #0056b3;
-    text-decoration: none;
-  }
-
-  #chat-button i {
-    font-size: 20px;
-  }
-
-  /* ========== Sub Menu ========== */
-  .sub-menu {
+  .nav-item.sub-menu {
     position: relative;
     z-index: 999;
   }
-
-  .sub-menu > ul {
+  .nav-item.sub-menu > ul {
     position: absolute;
     top: 100%;
     left: 0;
@@ -204,18 +97,15 @@ style.
     border-radius: 6px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
   }
-
-  .sub-menu:hover > ul {
+  .nav-item.sub-menu:hover > ul {
     display: block;
   }
-
-  .sub-menu > ul > li,
-  .sub-menu ul li ul > li {
+  .nav-item.sub-menu > ul > li,
+  .nav-item.sub-menu ul li ul > li {
     border-bottom: 1px solid #eee;
   }
-
-  .sub-menu > ul > li a,
-  .sub-menu ul li ul > li a {
+  .nav-item.sub-menu > ul > li a,
+  .nav-item.sub-menu ul li ul > li a {
     display: block;
     padding: 10px;
     text-decoration: none;
@@ -223,14 +113,11 @@ style.
     width: 100%;
     transition: background-color 0.2s;
   }
-
-  .sub-menu > ul > li a:hover,
-  .sub-menu ul li ul > li a:hover {
+  .nav-item.sub-menu > ul > li a:hover,
+  .nav-item.sub-menu ul li ul > li a:hover {
     background-color: #ffe6e6;
   }
-
-  /* Submenu cấp 2 đổ sang phải */
-  .sub-menu ul li ul {
+  .nav-item.sub-menu ul li ul {
     position: absolute;
     top: 18px;
     left: 100%;
@@ -243,7 +130,92 @@ style.
     border-radius: 6px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   }
-
-  .sub-menu ul li:hover > ul {
+  .nav-item.sub-menu ul li:hover > ul {
     display: block;
+  }
+  .search-container {
+    max-width: 600px;
+    width: 100%;
+  }
+  .input-group .form-control {
+    background-color: #6c757d;
+    border: none;
+    color: #fff;
+  }
+  .btn-danger {
+    background-color: #e50019;
+    border-color: #e50019;
+    white-space: nowrap;
+  }
+  .btn-danger:hover {
+    background-color: #cc0016;
+    border-color: #cc0016;
+  }
+  .menu-right-wrapper {
+    gap: 20px !important;
+  }
+  .nav-link {
+    padding: 8px 12px;
+    transition: background-color 0.3s ease;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+  .tags-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+  .tags-container .tag-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 50px;
+    font-size: 12px !important;
+    text-decoration: none;
+    transition: background-color 0.3s;
+  }
+  .tags-container .tag-pill:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+  }
+  .account-wrapper {
+    position: relative;
+  }
+  .account-icon i {
+    font-size: 1.8rem;
+  }
+  .account-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    border-radius: 6px;
+    min-width: 200px;
+    z-index: 1000;
+    padding: 0.5rem 0;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  .account-wrapper:hover .account-menu {
+    display: block;
+  }
+  .account-menu li {
+    list-style: none;
+  }
+  .account-menu a {
+    display: block;
+    padding: 10px 15px;
+    color: #000;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .account-menu a:hover {
+    background-color: #f1f1f1;
   }

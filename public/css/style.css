@@ -26,26 +26,6 @@ main {
   padding: 20px 15px;
 }
 
-/* ========== Header ========== */
-header.navbar {
-  background: #d70018; /* đỏ FPT Shop */
-  padding: 10px 20px;
-}
-
-.navbar-brand img {
-  max-height: 50px;
-}
-
-.navbar-nav .nav-link {
-  color: #fff !important;
-  font-weight: 500;
-  margin: 0 10px;
-}
-
-.navbar-nav .nav-link:hover {
-  color: #ffcccb !important; /* đỏ nhạt */
-}
-
 /* ========== Sub Menu ========== */
 
 /* ========== Search Form ========== */
@@ -292,6 +272,3 @@ form .btn:hover {
   }
 }
 /* End Show Alert */
-header.navbar {
-  box-shadow: none !important;
-}
