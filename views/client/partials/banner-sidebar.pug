@@ -3,7 +3,7 @@
   each ad in ads
     if ad.position === 'homepage_left_banner' && !leftBannerShown
       a(href=ad.targetUrl, target="_self")
-        .img-wrapper.diagonal-shake
+        .img-wrapper
           img.left-img(src=ad.image, alt=ad.title)
       - leftBannerShown = true
 
@@ -49,29 +49,6 @@ style.
 
   .left-img:hover {
     transform: scale(1.02);
-  }
-
-  /* Hiệu ứng lắc chéo */
-  @keyframes diagonalShake {
-    0%, 100% {
-      transform: translate(0, 0);
-    }
-    20% {
-      transform: translate(-4px, -4px);
-    }
-    40% {
-      transform: translate(4px, 4px);
-    }
-    60% {
-      transform: translate(-4px, 4px);
-    }
-    80% {
-      transform: translate(4px, -4px);
-    }
-  }
-
-  .diagonal-shake {
-    animation: diagonalShake 1s infinite ease-in-out;
   }
 
   /* Countdown style */

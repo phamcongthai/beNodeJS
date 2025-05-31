@@ -1,19 +1,19 @@
-include ../mixin/select-tree.pug 
+include ../mixin/select-tree.pug
 
 header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
   .container-fluid.d-flex.justify-content-between(style="gap: 20px")
-    // Khối 1: Logo - chiếm 1 phần
-    .d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 1; align-self: flex-start; justify-content: center;")
+    // Khối 1: Logo
+    .d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 0.8; align-self: flex-start; justify-content: center;")
       a.navbar-brand.d-flex.align-items-center.gap-2(href="/")
-        img(src=settingsGeneralData.logo, alt="logo", width="40", height="40")
-        span.text-light.fw-bold.fs-5 #{settingsGeneralData.websiteName}
+        img(src=settingsGeneralData.logo, alt="logo", width="150", height="50")
 
-    // Khối 2: Tìm kiếm + Danh mục + Tag - chiếm 2 phần
+
+    // Khối 2: Tìm kiếm + Danh mục + Tag
     .d-flex.flex-column(style="flex: 2; align-self: center; gap: 10px;")
       .d-flex.gap-3
-        .nav-item.sub-menu
-          a.nav-link.text-light.d-flex.align-items-center(href="/products")
-            i.fas.fa-bars.me-1
+        .nav-item.sub-menu.me-2
+          a.nav-link.text-white.d-flex.align-items-center.px-3.py-2.rounded-pill(href="/products", style="gap: 6px; background-color: rgba(0,0,0,0.7);")
+            i.fas.fa-bars
             | Danh mục
           if categories && categories.length > 0
             +menu-tree(categories)
@@ -32,14 +32,14 @@ header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
       if tags && tags.length > 0
         .tags-container.d-flex.flex-wrap.gap-2.justify-content-center
           each tag in tags.slice(0, 6)
-            a.tag-pill(href=`/search?tag=${encodeURIComponent(tag)}`)= tag
+            a.tag-pill(href=`/search?keyword=${tag}`)= tag
 
-    // Khối 3: Menu bên phải - chiếm 1 phần
-    .menu-right-wrapper.d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 1; align-self: flex-start; justify-content: center;")
+    // Khối 3: Menu bên phải
+    .menu-right-wrapper.d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 0.8; align-self: flex-start; justify-content: center;")
       ul.navbar-nav.d-flex.flex-row.gap-3.mb-0
         li.nav-item.position-relative.account-wrapper
-          a.nav-link.text-light.account-icon.d-flex.align-items-center(href="#")
-            i.fas.fa-user-circle.fs-4
+          a.nav-link.text-white.d-flex.align-items-center.justify-content-center.rounded-circle(style="width: 40px; height: 40px; background-color: rgba(0,0,0,0.7); margin-right: 15px;")
+            i.fas.fa-user
           ul.account-menu.shadow
             if user
               li
@@ -64,17 +64,17 @@ header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
                   i.fas.fa-user-plus.me-2
                   | Đăng ký
         li.nav-item
-          a.nav-link.text-light.d-flex.align-items-center(href="/cart")
-            i.fas.fa-shopping-cart.me-1
+          a.nav-link.text-white.bg-black.d-flex.align-items-center.px-3.py-2.rounded-pill(href="/cart", style="gap: 6px; background-color: black !important;")
+            i.fas.fa-shopping-cart
             | Giỏ hàng (#{miniCart ? total : 0})
 
 // Font Awesome
 link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
 
-// CSS nội tuyến
+// CSS nội tuyến (tone đỏ FPT, nền đen cho nút danh mục & người dùng, giỏ hàng nền đen, hover nền đậm hơn)
 style.
   .navbar {
-    background-color: #0A0907 !important;
+    background: #C02511!important;
     min-height: 112px;
   }
   .navbar-brand {
@@ -83,6 +83,7 @@ style.
   .nav-item.sub-menu {
     position: relative;
     z-index: 999;
+    margin-right: 15px;
   }
   .nav-item.sub-menu > ul {
     position: absolute;
@@ -133,26 +134,20 @@ style.
   .nav-item.sub-menu ul li:hover > ul {
     display: block;
   }
-  .search-container {
-    max-width: 600px;
-    width: 100%;
-  }
   .input-group .form-control {
-    background-color: #6c757d;
+    background-color: #f5b5b5;
     border: none;
-    color: #fff;
+    color: #000;
   }
   .btn-danger {
-    background-color: #e50019;
-    border-color: #e50019;
+    background-color: #ff0000;
+    border-color: #ff0000;
     white-space: nowrap;
+    height: 38px;
   }
   .btn-danger:hover {
-    background-color: #cc0016;
-    border-color: #cc0016;
-  }
-  .menu-right-wrapper {
-    gap: 20px !important;
+    background-color: #cc0000;
+    border-color: #cc0000;
   }
   .nav-link {
     padding: 8px 12px;
@@ -160,35 +155,36 @@ style.
     border-radius: 6px;
     white-space: nowrap;
   }
-  .nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: #fff;
+  /* Danh mục & Người dùng nền đen mờ mặc định */
+  .nav-item.sub-menu > a.nav-link,
+  .account-wrapper > a.nav-link {
+    background-color: rgba(0, 0, 0, 0.7) !important;
   }
-  .tags-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-start;
+  /* Hover nền đen đậm hơn */
+  .nav-item.sub-menu > a.nav-link:hover,
+  .account-wrapper > a.nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    color: #fff !important;
+  }
+  .nav-link.bg-black {
+    background-color: black !important;
+  }
+  .nav-link.bg-black:hover {
+    background-color: #111 !important;
   }
   .tags-container .tag-pill {
-    display: inline-block;
     padding: 4px 10px;
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 0, 0, 0.2);
     color: #fff;
     border-radius: 50px;
-    font-size: 12px !important;
+    font-size: 12px;
     text-decoration: none;
-    transition: background-color 0.3s;
   }
   .tags-container .tag-pill:hover {
-    background-color: rgba(255, 255, 255, 0.3);
-    color: #fff;
+    background-color: rgba(255, 0, 0, 0.4);
   }
   .account-wrapper {
     position: relative;
-  }
-  .account-icon i {
-    font-size: 1.8rem;
   }
   .account-menu {
     display: none;
@@ -206,16 +202,12 @@ style.
   .account-wrapper:hover .account-menu {
     display: block;
   }
-  .account-menu li {
-    list-style: none;
-  }
   .account-menu a {
     display: block;
     padding: 10px 15px;
     color: #000;
     text-decoration: none;
-    white-space: nowrap;
   }
   .account-menu a:hover {
-    background-color: #f1f1f1;
+    background-color: #ffe6e6;
   }

@@ -4,6 +4,12 @@
   a:hover {
     text-decoration: none;
   }
+  .input-group .form-control {
+    background-color: #ffffff !important;
+    border: none;
+    color: #000 !important;
+}
+
 }
 
 html, body {

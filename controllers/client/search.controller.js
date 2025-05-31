@@ -3,16 +3,21 @@ const ProductsModel = require('../../models/products.model');
 
 module.exports.search = async (req, res) => {
     const keyword = req.query.keyword;
-
-    // Nếu keyword trống, chuyển hướng về trang tìm kiếm không có keyword
+    
     if (!keyword || keyword.trim() === "") {
-        return res.redirect('back'); // Đổi '/search' thành route gốc phù hợp nếu cần
+        return res.redirect('back');
     }
+
+    // Tạo regex từ keyword (giống searchHelper)
+    const searchRegex = searchHelper.search(keyword);
 
     const productData = await ProductsModel.find({
         deleted: false,
         status: "active",
-        title: searchHelper.search(keyword)
+        $or: [
+            { title: searchRegex },
+            { tags: searchRegex } // tags là mảng, dùng regex để kiểm tra từng phần tử
+        ]
     });
 
     res.render("client/pages/search/index", {
