@@ -1,25 +1,31 @@
 mixin products-grid(data, name)
   h1 #{name}
-  .product-container
-    each item in data
-      - const discountedPrice = item.price * (1 - item.discountPercentage / 100)
-      - const formattedOldPrice = item.price.toLocaleString('vi-VN')
-      - const formattedNewPrice = discountedPrice.toLocaleString('vi-VN')
 
-      a.product-item(href=`/products/detail/${item.slug}`, style="text-decoration: none; color: inherit; display: block;")
-        .inner-image
-          if item.isFeatured
-            .featured-tag 🔥 Nổi bật
-          img(src=item.thumbnail, alt="img")
-        
-        .inner-content
-          h3.inner-title #{item.title}
-          
-          .inner-price
-            span.inner-price-old #{formattedOldPrice}đ
-            span.inner-price-new #{formattedNewPrice}đ
-          
-          .inner-discount -#{item.discountPercentage}%
+  .swiper.product-container
+    .swiper-wrapper
+      each item in data
+        - const discountedPrice = item.price * (1 - item.discountPercentage / 100)
+        - const formattedOldPrice = item.price.toLocaleString('vi-VN')
+        - const formattedNewPrice = discountedPrice.toLocaleString('vi-VN')
+
+        .swiper-slide
+          a.product-item(href=`/products/detail/${item.slug}`)
+            .inner-image
+              if item.isFeatured
+                .featured-tag 🔥 Nổi bật
+              img(src=item.thumbnail, alt="img")
+            
+            .inner-content
+              h3.inner-title #{item.title}
+              .inner-price
+                span.inner-price-old #{formattedOldPrice}đ
+                span.inner-price-new #{formattedNewPrice}đ
+              .inner-discount -#{item.discountPercentage}%
+
+    .product-carousel-button-prev
+    .product-carousel-button-next
+
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css")
 
   style.
     h1 {
@@ -34,11 +40,14 @@ mixin products-grid(data, name)
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    .product-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      justify-content : space-between;
+    .swiper.product-container {
+      padding-bottom: 40px;
+      position: relative;
+    }
+
+    .swiper.product-container .swiper-slide {
+      width: 240px; /* ✅ Chỉ định rõ */
+      flex-shrink: 0;
     }
 
     .product-item {
@@ -49,19 +58,14 @@ mixin products-grid(data, name)
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       position: relative;
       display: block;
-      width: 250px;
+      width: 100%;
+      text-decoration: none;
+      color: inherit;
     }
 
     .product-item:hover {
       transform: translateY(-4px);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .inner-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin: 8px 0;
-      line-height: 1.3;
     }
 
     .inner-image {
@@ -95,6 +99,13 @@ mixin products-grid(data, name)
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
+    .inner-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 8px 0;
+      line-height: 1.3;
+    }
+
     .inner-price {
       display: flex;
       align-items: center;
@@ -119,3 +130,64 @@ mixin products-grid(data, name)
       font-weight: 600;
       margin-top: 4px;
     }
+
+    .product-carousel-button-prev,
+    .product-carousel-button-next {
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      z-index: 10;
+      width: 40px;
+      height: 40px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #333;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .swiper.product-container:hover .product-carousel-button-prev,
+    .swiper.product-container:hover .product-carousel-button-next {
+      opacity: 1;
+    }
+
+    .product-carousel-button-prev {
+      left: 10px;
+    }
+
+    .product-carousel-button-next {
+      right: 10px;
+    }
+
+    .product-carousel-button-prev::after {
+      content: '<';
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .product-carousel-button-next::after {
+      content: '>';
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+  script(src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js")
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+      new Swiper('.product-container', {
+        slidesPerView: 'auto',
+        slidesPerGroup: 1,
+        spaceBetween: 20,
+        loop: false,
+        centeredSlides: false,
+        navigation: {
+          nextEl: '.product-carousel-button-next',
+          prevEl: '.product-carousel-button-prev',
+        }
+      });
+    });

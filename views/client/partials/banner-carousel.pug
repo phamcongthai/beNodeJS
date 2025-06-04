@@ -1,34 +1,28 @@
 .carousel-box
-  .carousel.slide#mainCarousel(data-ride="carousel")
-    .carousel-inner
-      - let first = true
+  .swiper#mainCarousel
+    .swiper-wrapper
       each ad in ads
         if ad.position === "homepage_main_carousel"
-          .carousel-item(class=first ? 'active' : '')
-            - first = false
+          .swiper-slide
             a(href=ad.targetUrl, target="_self")
               .img-wrapper
                 img.banner-img(src=ad.image, alt="Banner")
 
-    // Controls
-    a.carousel-control-prev(href="#mainCarousel" role="button" data-slide="prev")
-      span.carousel-control-prev-icon(aria-hidden="true")
-      span.sr-only Previous
-    a.carousel-control-next(href="#mainCarousel" role="button" data-slide="next")
-      span.carousel-control-next-icon(aria-hidden="true")
-      span.sr-only Next
+    .banner-carousel-button-prev
+    .banner-carousel-button-next
 
 style.
   .carousel-box {
     flex-grow: 1;
     border-radius: 10px;
-    height: 345px; /* set cứng */
+    height: 345px;
     max-width: 100%;
     overflow: hidden;
+    position: relative;
   }
 
-  .carousel-inner,
-  .carousel-item,
+  .swiper,
+  .swiper-slide,
   .img-wrapper,
   .banner-img {
     height: 100%;
@@ -41,13 +35,66 @@ style.
   }
 
   .banner-img {
-    object-fit: cover; /* hình không bị méo, cắt đúng khung */
+    object-fit: cover;
     display: block;
   }
 
-  .carousel-control-prev-icon,
-  .carousel-control-next-icon {
-    background-size: 50% 50%;
-    width: 30px;
-    height: 30px;
+  .banner-carousel-button-prev,
+  .banner-carousel-button-next {
+    position: absolute;
+    top: 50% !important;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #333;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
+
+  .carousel-box:hover .banner-carousel-button-prev,
+  .carousel-box:hover .banner-carousel-button-next {
+    opacity: 1;
+  }
+
+  .banner-carousel-button-prev {
+    left: 10px;
+  }
+
+  .banner-carousel-button-next {
+    right: 10px;
+  }
+
+  .banner-carousel-button-prev::after {
+    content: '<';
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  .banner-carousel-button-next::after {
+    content: '>';
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+script.
+  document.addEventListener('DOMContentLoaded', function () {
+    new Swiper('#mainCarousel', {
+      loop: true,
+      navigation: {
+        nextEl: '.banner-carousel-button-next',
+        prevEl: '.banner-carousel-button-prev',
+      },
+      autoplay: {
+        delay: 3000,
+        disableOnInteraction: false,
+      }
+    });
+  });

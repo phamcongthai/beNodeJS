@@ -36,6 +36,7 @@
     "socket.io": "^4.8.1",
     "streamifier": "^0.1.1",
     "sweetalert": "^2.1.2",
+    "swiper": "^11.2.8",
     "tinymce": "^7.7.2",
     "vnpay": "^2.2.0"
   },
