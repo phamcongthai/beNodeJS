@@ -5,7 +5,6 @@ block main
 
   .container.mt-4.position-relative
     .row
-      // Bộ lọc
       .col-md-3
         .card.shadow-sm.bg-white.p-3(style="border-radius: 12px;")
           .filter-wrapper
@@ -18,7 +17,7 @@ block main
                   ul.brand-list
                     each brand, index in data.brandList
                       li.brand-item(style=(index >= brandLimit ? "display:none;" : "")) 
-                        button.btn.btn-outline-secondary.btn-sm(type="button")= brand
+                        button.btn.btn-outline-secondary.btn-sm.btn-brand.btn-brand-js(type="button", data-brand=brand)= brand
                   if data.brandList.length > brandLimit
                     button.btn.btn-link.btn-sm#toggleBrandBtn(type="button") Xem thêm
                 else
@@ -27,35 +26,38 @@ block main
                 h6.mt-3.mb-2 Mức giá
                 form
                   .form-check
-                    input.form-check-input(type="radio", name="price", checked)
+                    input.form-check-input(type="radio", name="price", value="", checked)
                     label.form-check-label Tất cả
-                  each price in ['Dưới 2 triệu', 'Từ 2 - 4 triệu', 'Từ 4 - 7 triệu', 'Từ 7 - 13 triệu', 'Từ 13 - 20 triệu', 'Trên 20 triệu']
-                    .form-check
-                      input.form-check-input(type="radio", name="price")
-                      label.form-check-label= price
+                  if data.priceRanges && data.priceRanges.length
+                    each price in data.priceRanges
+                      .form-check
+                        input.form-check-input(type="radio", name="price", value=`${price.min}-${price.max}`)
+                        label.form-check-label= price.label
+                  else
+                    p.text-muted Không có mức giá
 
                   small.d-block.mt-2 Hoặc nhập khoảng giá:
                   .d-flex.gap-2.mt-1
                     input.form-control.form-control-sm(type="text", placeholder="Từ...")
                     input.form-control.form-control-sm(type="text", placeholder="Đến...")
 
-      // Vùng sản phẩm
       .col-md-9
         .card.shadow-sm.bg-white.p-3(style="border-radius: 12px;")
           .row#girdProducts(style="flex-wrap: wrap; margin-left: -7.5px; margin-right: -7.5px;")
             if data.products.length
               each product, index in data.products
                 .col.product-item(data-index=index, style="flex: 0 0 calc(33.33% - 15px); max-width: calc(33.33% - 15px); margin: 7.5px;")
-                  .card.shadow-sm(style="height: 300px; border-radius: 12px; display: flex; flex-direction: column;")
-                    if product.thumbnail
-                      img.card-img-top(src=product.thumbnail, alt=product.title, style="height: 165px; object-fit: cover; border-radius: 12px 12px 0 0;")
-                    .card-body.text-center(style="flex-grow: 1; padding: 0.75rem 1rem;")
-                      h6(style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;")= product.title
-                      del.text-muted(style="font-size: 0.85rem;")= product.price.toLocaleString() + 'đ'
-                      if product.discountPercentage
-                        - const discounted = Math.round(product.price * (1 - product.discountPercentage / 100));
-                        p.text-danger.mb-1(style="font-weight: bold; font-size: 1rem;")= discounted.toLocaleString() + 'đ'
-                        p.text-success(style="font-size: 0.85rem;") -#{product.discountPercentage}%
+                  a(href=`/products/detail/${product.slug}`, style="text-decoration: none;")
+                    .card.shadow-sm(style="height: 300px; border-radius: 12px; display: flex; flex-direction: column;")
+                      if product.thumbnail
+                        img.card-img-top(src=product.thumbnail, alt=product.title, style="height: 165px; object-fit: cover; border-radius: 12px 12px 0 0;")
+                      .card-body.text-center(style="flex-grow: 1; padding: 0.75rem 1rem;")
+                        h6(style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;")= product.title
+                        del.text-muted(style="font-size: 0.85rem;")= product.price.toLocaleString() + 'đ'
+                        if product.discountPercentage
+                          - const discounted = Math.round(product.price * (1 - product.discountPercentage / 100));
+                          p.text-danger.mb-1(style="font-weight: bold; font-size: 1rem;")= discounted.toLocaleString() + 'đ'
+                          p.text-success(style="font-size: 0.85rem;") -#{product.discountPercentage}%
 
             else
               .col
@@ -92,14 +94,8 @@ block main
       position: fixed !important;
       top: 0;
       z-index: 101;
-    }
-
-    .filter-card.stick-end {
-      position: absolute !important;
-      z-index: 100;
-      left: 0 !important;
-      right: 0 !important;
-      transform: translateY(var(--stick-end-top));
+      left: 0;
+      right: 0;
     }
 
     .card {
@@ -161,7 +157,7 @@ block main
         const left = filterWrapper.getBoundingClientRect().left;
         const width = filterWrapper.offsetWidth;
         const currentTop = window.scrollY + filterWrapper.getBoundingClientRect().top;
-        const targetOffset = bottomRect.top + window.scrollY - filterCard.offsetHeight - currentTop - 54; // Trừ đi 50px
+        const targetOffset = bottomRect.top + window.scrollY - filterCard.offsetHeight - currentTop - 54;
 
         filterCard.classList.remove('sticky', 'stick-end');
         filterCard.style.left = '';
@@ -189,7 +185,6 @@ block main
       window.addEventListener('resize', checkSticky);
       checkSticky();
 
-      // Toggle brand
       const toggleBtn = document.getElementById('toggleBrandBtn');
       if (toggleBtn) {
         const brandItems = document.querySelectorAll('.brand-item');
@@ -207,7 +202,6 @@ block main
         });
       }
 
-      // Load more
       const items = document.querySelectorAll('.product-item');
       const loadBtn = document.getElementById('loadMoreBtn');
       let visible = 15;
@@ -228,5 +222,55 @@ block main
         visible += 15;
         showItems();
         checkSticky();
+      });
+
+      // Tích hợp JS xử lý brand + price
+      const btn_brand = document.querySelectorAll('.btn-brand-js');
+      const priceCheckboxes = document.querySelectorAll("input[name='price']");
+      let selectedBrand = new URLSearchParams(window.location.search).get('brand');
+      let selectedPrice = new URLSearchParams(window.location.search).get('price');
+
+      if (selectedBrand) {
+        document.querySelectorAll(`.btn-brand-js[data-brand="${selectedBrand}"]`).forEach(btn => {
+          btn.classList.add('active');
+        });
+      }
+
+      if (selectedPrice) {
+        document.querySelectorAll(`input[name='price'][value='${selectedPrice}']`).forEach(checkbox => {
+          checkbox.checked = true;
+        });
+      }
+
+      // Handle Brand Filter
+      btn_brand.forEach((item) => {
+        item.addEventListener("click", () => {
+          selectedBrand = item.getAttribute("data-brand");
+          const basePath = window.location.pathname;
+          const url = new URL(window.location.href);
+          url.searchParams.set('brand', selectedBrand);
+          if (selectedPrice) {
+            url.searchParams.set('price', selectedPrice);
+          } else {
+            url.searchParams.delete('price');
+          }
+          window.location.href = `${basePath}?${url.searchParams.toString()}`;
+        });
+      });
+
+      // Handle Price Filter
+      priceCheckboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          selectedPrice = checkbox.value;
+          const basePath = window.location.pathname;
+          const url = new URL(window.location.href);
+          url.searchParams.set('price', selectedPrice);
+          if (selectedBrand) {
+            url.searchParams.set('brand', selectedBrand);
+          } else {
+            url.searchParams.delete('brand');
+          }
+          window.location.href = `${basePath}?${url.searchParams.toString()}`;
+        });
       });
     });

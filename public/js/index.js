@@ -23,3 +23,28 @@ if(inputQuantity){
         })
     })
 }
+const btn_brand = document.querySelectorAll("btn-brand");
+const priceCheckboxes = document.querySelectorAll("input[name='price']");
+
+if (btn_brand) {
+    btn_brand.forEach((item) => {
+        item.addEventListener("click", (event) => {
+            const selectedBrand = item.getAttribute("data-brand");
+            let selectedPrice = "";
+
+            priceCheckboxes.forEach((checkbox) => {
+                if (checkbox.checked) {
+                    selectedPrice = checkbox.value;
+                }
+            });
+
+            // Tạo URL với query
+            let url = `/products?brand=${encodeURIComponent(selectedBrand)}`;
+            if (selectedPrice) {
+                url += `&price=${selectedPrice}`;
+            }
+
+            window.location.href = url;
+        });
+    });
+}
