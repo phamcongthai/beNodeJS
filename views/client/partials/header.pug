@@ -5,7 +5,7 @@ header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
     // Khối 1: Logo
     .d-flex.flex-column.flex-md-row.align-self-start.gap-3(style="flex: 0.8; align-self: flex-start; justify-content: center;")
       a.navbar-brand.d-flex.align-items-center.gap-2(href="/")
-        img(src=settingsGeneralData.logo, alt="logo", width="150", height="50")
+        img(src=settingsGeneralData.logo, alt="logo", width="150", height="75")
 
 
     // Khối 2: Tìm kiếm + Danh mục + Tag
@@ -74,7 +74,7 @@ link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome
 // CSS nội tuyến (tone đỏ FPT, nền đen cho nút danh mục & người dùng, giỏ hàng nền đen, hover nền đậm hơn)
 style.
   .navbar {
-    background: #C02511!important;
+     background: #CB1C22 !important;
     min-height: 112px;
   }
   .navbar-brand {
@@ -104,6 +104,9 @@ style.
   .nav-item.sub-menu > ul > li,
   .nav-item.sub-menu ul li ul > li {
     border-bottom: 1px solid #eee;
+  }
+  .shadow {
+    box-shadow: none !important;
   }
   .nav-item.sub-menu > ul > li a,
   .nav-item.sub-menu ul li ul > li a {

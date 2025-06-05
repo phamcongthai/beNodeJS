@@ -1,0 +1,103 @@
+extends ../../layouts/default
+
+block main
+  .container.mt-4
+    .row
+      // BÊN TRÁI: BỘ LỌC
+      .col-md-3
+        .card
+          .card-header.bg-light.font-weight-bold Bộ lọc tìm kiếm
+          .card-body
+            h6.mb-2 Thương hiệu
+            .mb-3
+              if data.brandList.length
+                each brand in data.brandList
+                  button.btn.btn-outline-secondary.btn-sm.me-1.mb-1= brand
+              else
+                p.text-muted Không có dữ liệu
+
+            h6.mt-3.mb-2 Mức giá
+            form
+              .form-check
+                input.form-check-input(type="radio", name="price", checked)
+                label.form-check-label Tất cả
+              .form-check
+                input.form-check-input(type="radio", name="price")
+                label.form-check-label Dưới 2 triệu
+              .form-check
+                input.form-check-input(type="radio", name="price")
+                label.form-check-label Từ 2 - 4 triệu
+              .form-check
+                input.form-check-input(type="radio", name="price")
+                label.form-check-label Từ 4 - 7 triệu
+              .form-check
+                input.form-check-input(type="radio", name="price")
+                label.form-check-label Từ 7 - 13 triệu
+              .form-check
+                input.form-check-input(type="radio", name="price")
+                label.form-check-label Từ 13 - 20 triệu
+              .form-check
+                input.form-check-input(type="radio", name="price")
+                label.form-check-label Trên 20 triệu
+
+              small.d-block.mt-2 Hoặc nhập khoảng giá:
+              .d-flex.gap-2.mt-1
+                input.form-control.form-control-sm(type="text", placeholder="Từ...")
+                input.form-control.form-control-sm(type="text", placeholder="Đến...")
+
+      // BÊN PHẢI: DANH SÁCH SẢN PHẨM
+      .col-md-9
+        .row.row-cols-1.row-cols-md-2.row-cols-lg-3.g-4
+          each product in data.products
+            .col
+              .card.h-100.shadow-sm
+                if product.thumbnail
+                  img.card-img-top(src=product.thumbnail, alt=product.title)
+                .card-body
+                  h5.card-title #{product.title}
+                  if product.brandName
+                    p.text-secondary.mb-1 Thương hiệu: #{product.brandName}
+                  if product.description
+                    .card-text !{product.description}
+                  .text-muted Giá gốc:
+                    del #{product.price.toLocaleString()}đ
+                  if product.discountPercentage
+                    - const discounted = Math.round(product.price * (1 - product.discountPercentage / 100));
+                    p.text-danger.mb-1 Giảm: #{product.discountPercentage}%
+                    strong.text-success Giá còn: #{discounted.toLocaleString()}đ
+                .card-footer.text-muted
+                  span Kho: #{product.stock} | Trạng thái: #{product.status}
+
+  // CSS NỘI TUYẾN
+  style.
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .card-text {
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    .card-img-top {
+      height: 180px;
+      object-fit: cover;
+    }
+    .card-footer {
+      font-size: 0.85rem;
+    }
+    .form-check-label {
+      margin-left: 0.3rem;
+    }
+    .form-check {
+      margin-bottom: 0.4rem;
+    }
+    .btn-outline-secondary {
+      margin-right: 0.3rem;
+      margin-bottom: 0.3rem;
+    }
+    .card {
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: scale(1.01);
+    }

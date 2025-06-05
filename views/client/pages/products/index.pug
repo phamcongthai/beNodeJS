@@ -1,4 +1,232 @@
 extends ../../layouts/default
-include ../../mixin/products-grid
-block main  
-    +products-grid(productData, title)
+
+block main
+  .ad-box-top
+
+  .container.mt-4.position-relative
+    .row
+      // Bộ lọc
+      .col-md-3
+        .card.shadow-sm.bg-white.p-3(style="border-radius: 12px;")
+          .filter-wrapper
+            .filter-card
+              .card-header.bg-light.font-weight-bold(style="border-radius: 8px 8px 0 0;") Bộ lọc tìm kiếm
+              .card-body
+                h6.mb-2 Thương hiệu
+                if data.brandList.length
+                  - const brandLimit = 5;
+                  ul.brand-list
+                    each brand, index in data.brandList
+                      li.brand-item(style=(index >= brandLimit ? "display:none;" : "")) 
+                        button.btn.btn-outline-secondary.btn-sm(type="button")= brand
+                  if data.brandList.length > brandLimit
+                    button.btn.btn-link.btn-sm#toggleBrandBtn(type="button") Xem thêm
+                else
+                  p.text-muted Không có dữ liệu
+
+                h6.mt-3.mb-2 Mức giá
+                form
+                  .form-check
+                    input.form-check-input(type="radio", name="price", checked)
+                    label.form-check-label Tất cả
+                  each price in ['Dưới 2 triệu', 'Từ 2 - 4 triệu', 'Từ 4 - 7 triệu', 'Từ 7 - 13 triệu', 'Từ 13 - 20 triệu', 'Trên 20 triệu']
+                    .form-check
+                      input.form-check-input(type="radio", name="price")
+                      label.form-check-label= price
+
+                  small.d-block.mt-2 Hoặc nhập khoảng giá:
+                  .d-flex.gap-2.mt-1
+                    input.form-control.form-control-sm(type="text", placeholder="Từ...")
+                    input.form-control.form-control-sm(type="text", placeholder="Đến...")
+
+      // Vùng sản phẩm
+      .col-md-9
+        .card.shadow-sm.bg-white.p-3(style="border-radius: 12px;")
+          .row#girdProducts(style="flex-wrap: wrap; margin-left: -7.5px; margin-right: -7.5px;")
+            if data.products.length
+              each product, index in data.products
+                .col.product-item(data-index=index, style="flex: 0 0 calc(33.33% - 15px); max-width: calc(33.33% - 15px); margin: 7.5px;")
+                  .card.shadow-sm(style="height: 300px; border-radius: 12px; display: flex; flex-direction: column;")
+                    if product.thumbnail
+                      img.card-img-top(src=product.thumbnail, alt=product.title, style="height: 165px; object-fit: cover; border-radius: 12px 12px 0 0;")
+                    .card-body.text-center(style="flex-grow: 1; padding: 0.75rem 1rem;")
+                      h6(style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;")= product.title
+                      del.text-muted(style="font-size: 0.85rem;")= product.price.toLocaleString() + 'đ'
+                      if product.discountPercentage
+                        - const discounted = Math.round(product.price * (1 - product.discountPercentage / 100));
+                        p.text-danger.mb-1(style="font-weight: bold; font-size: 1rem;")= discounted.toLocaleString() + 'đ'
+                        p.text-success(style="font-size: 0.85rem;") -#{product.discountPercentage}%
+
+            else
+              .col
+                p.text-muted Không có sản phẩm nào
+
+          .text-center.mt-4
+            button#loadMoreBtn.btn.btn-light(style="border: 1px solid #000; color: #000;") Xem thêm
+
+  .ad-box-bottom
+
+  style.
+    .ad-box-top,
+    .ad-box-bottom {
+      height: 50px;
+      background: white;
+      margin: 0 15px 20px;
+      border-radius: 12px;
+    }
+
+    .filter-wrapper {
+      position: relative;
+    }
+
+    .filter-card {
+      border: 2px solid #ccc;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      background: #fff;
+      z-index: 100;
+      transition: top 0.2s ease;
+    }
+
+    .filter-card.sticky {
+      position: fixed !important;
+      top: 0;
+      z-index: 101;
+    }
+
+    .filter-card.stick-end {
+      position: absolute !important;
+      z-index: 100;
+      left: 0 !important;
+      right: 0 !important;
+      transform: translateY(var(--stick-end-top));
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      transition: none;
+    }
+
+    .brand-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+      padding-left: 0;
+      margin-bottom: 0;
+      list-style: none;
+    }
+
+    .form-check-label {
+      margin-left: 0.3rem;
+    }
+
+    .form-check {
+      margin-bottom: 0.4rem;
+    }
+
+    .btn-outline-secondary {
+      margin: 0;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    #toggleBrandBtn {
+      padding: 0;
+      margin-top: 5px;
+      font-size: 0.9rem;
+    }
+
+    .product-item {
+      margin-bottom: 15px;
+      display: none;
+    }
+
+    .product-item.show {
+      display: flex;
+    }
+
+  script.
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterCard = document.querySelector('.filter-card');
+      const filterWrapper = document.querySelector('.filter-wrapper');
+      const bottomBox = document.querySelector('.ad-box-bottom');
+
+      const checkSticky = () => {
+        const filterRect = filterWrapper.getBoundingClientRect();
+        const bottomRect = bottomBox.getBoundingClientRect();
+        const contentBottom = document.querySelector('#girdProducts').getBoundingClientRect().bottom;
+        const offsetTop = 0;
+
+        const left = filterWrapper.getBoundingClientRect().left;
+        const width = filterWrapper.offsetWidth;
+        const currentTop = window.scrollY + filterWrapper.getBoundingClientRect().top;
+        const targetOffset = bottomRect.top + window.scrollY - filterCard.offsetHeight - currentTop - 54; // Trừ đi 50px
+
+        filterCard.classList.remove('sticky', 'stick-end');
+        filterCard.style.left = '';
+        filterCard.style.width = '';
+        filterCard.style.removeProperty('--stick-end-top');
+
+        if (
+          filterRect.top <= offsetTop &&
+          contentBottom > filterCard.offsetHeight + offsetTop &&
+          bottomRect.top > filterCard.offsetHeight + offsetTop
+        ) {
+          filterCard.classList.add('sticky');
+          filterCard.style.left = `${left}px`;
+          filterCard.style.width = `${width}px`;
+        } else if (
+          filterRect.top <= offsetTop &&
+          (contentBottom <= filterCard.offsetHeight + offsetTop || bottomRect.top <= filterCard.offsetHeight + offsetTop)
+        ) {
+          filterCard.classList.add('stick-end');
+          filterCard.style.setProperty('--stick-end-top', `${targetOffset}px`);
+        }
+      };
+
+      window.addEventListener('scroll', checkSticky);
+      window.addEventListener('resize', checkSticky);
+      checkSticky();
+
+      // Toggle brand
+      const toggleBtn = document.getElementById('toggleBrandBtn');
+      if (toggleBtn) {
+        const brandItems = document.querySelectorAll('.brand-item');
+        let expanded = false;
+        const brandLimit = 5;
+
+        toggleBtn.addEventListener('click', () => {
+          expanded = !expanded;
+          brandItems.forEach((item, index) => {
+            if (index >= brandLimit) {
+              item.style.display = expanded ? 'list-item' : 'none';
+            }
+          });
+          toggleBtn.textContent = expanded ? 'Thu gọn' : 'Xem thêm';
+        });
+      }
+
+      // Load more
+      const items = document.querySelectorAll('.product-item');
+      const loadBtn = document.getElementById('loadMoreBtn');
+      let visible = 15;
+
+      const showItems = () => {
+        items.forEach((item, index) => {
+          item.classList.toggle('show', index < visible);
+        });
+
+        if (visible >= items.length) {
+          loadBtn.style.display = 'none';
+        }
+      };
+
+      showItems();
+
+      loadBtn.addEventListener('click', () => {
+        visible += 15;
+        showItems();
+        checkSticky();
+      });
+    });
