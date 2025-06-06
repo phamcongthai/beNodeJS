@@ -23,7 +23,7 @@ block main
           | Thanh toán online
 
       // SẢN PHẨM
-      .bg-white.border.rounded-4.p-4.mb-4(style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 12px;")
+      .bg-white.border.rounded-4.p-4.mb-4(style="box-shadow: none;")
         .row
           .col-md-6.position-relative
             if (images.length > 0)
@@ -31,15 +31,16 @@ block main
                 src=images[0],
                 alt=product.title,
                 class="img-fluid rounded-4 border w-100 mb-3 drift-trigger",
-                style="cursor: zoom-in; border-radius: 12px;",
-                data-zoom=images[0]
+                data-zoom=images[0],
+                style="cursor: zoom-in; border-radius: 12px;"
               )
+              // Tạo vùng chứa zoom pane, có kích thước rõ ràng và bo góc
+              div#zoomPane(style="width: 150px; height: 150px; border-radius: 12px; overflow: hidden; border: 1px solid #ccc; position: absolute; top: 0; right: -160px; z-index: 9999;")
             else
-              img#mainImage(
+              img(
                 src="/images/no-image.png",
                 alt="No Image",
-                class="img-fluid rounded-4 border w-100 mb-3",
-                style="border-radius: 12px;"
+                class="img-fluid rounded-4 border w-100 mb-3"
               )
             if (images.length > 1)
               .d-flex.flex-wrap.gap-2
@@ -49,11 +50,11 @@ block main
                     data-index=index,
                     alt="Ảnh phụ",
                     class="img-thumbnail rounded-3",
-                    style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 12px;"
+                    style="width: 60px; height: 60px; object-fit: cover; cursor: pointer;"
                   )
 
           .col-md-6
-            .bg-white.border.rounded-4.p-4(style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 12px;")
+            .bg-white.border.rounded-4.p-4(style="box-shadow: none;")
               if (product.title)
                 h2.mb-3.text-primary #{product.title}
 
@@ -65,7 +66,7 @@ block main
               if (product.discountPercentage)
                 p.mb-2
                   span.fw-bold Giảm giá:
-                  | #{product.discountPercentage}% 
+                  | #{product.discountPercentage}%
                 p.mb-2
                   span.fw-bold.text-danger Giá khuyến mãi:
                   | #{formattedDiscountedPrice}đ
@@ -75,12 +76,11 @@ block main
                   span.fw-bold Còn lại:
                   | #{product.stock} sản phẩm
 
-              form(method="POST", action=`/cart/add/${product._id}`)
+              form(method="POST", action=`/cart/add/${product._id}`) 
                 input(type="hidden", name="quantity", value="1")
                 button.btn.btn-outline-success.rounded-3(type="submit")
                   | THÊM VÀO GIỎ HÀNG
 
-              // Thêm thông tin về quà tặng và mô tả vào đây
               p.fw-bold.text-success.mb-2 🎁 BẠN SẼ NHẬN ĐƯỢC
               ul.mb-3
                 li 1x Túi đeo lưng / Balo laptop
@@ -91,11 +91,10 @@ block main
                 h5.mb-3.text-secondary 📝 Mô tả sản phẩm
                 p.lead !{product.description}
 
-      // BÌNH LUẬN & ĐÁNH GIÁ
-      .bg-white.border.rounded-4.p-4(style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 12px;")
+      // BÌNH LUẬN
+      .bg-white.border.rounded-4.p-4(style="box-shadow: none;")
         h5.mb-4.text-primary ⭐ Đánh giá & Bình luận
 
-        // FORM BÌNH LUẬN
         form(method="POST", action=`/comment/add/${product.slug}`)
           .mb-3
             label(for="comment") Bình luận của bạn:
@@ -117,7 +116,6 @@ block main
 
           button.btn.btn-primary(type="submit") Gửi bình luận
 
-        // DANH SÁCH BÌNH LUẬN
         if comments && comments.length > 0
           each cmt in comments
             .comment-item.d-flex.align-items-start.gap-3.mt-4.pt-3.pb-3.border-bottom
@@ -128,7 +126,7 @@ block main
                 .d-flex.justify-content-between.align-items-center.mb-1
                   .fw-bold #{cmt.fullName || 'Người dùng'}
                   span.text-muted.fs-sm
-                    - const createdAt = new Date(cmt.create_at);
+                    - const createdAt = new Date(cmt.createdAt);
                     - const now = new Date();
                     - const daysAgo = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
                     = isNaN(daysAgo) ? 'Vừa xong' : `${daysAgo} ngày trước`
@@ -144,24 +142,45 @@ block main
         else
           p.text-muted.mt-3 Chưa có bình luận nào.
 
-  // SCRIPT ZOOM DRIFT
+  // === JS ===
   script.
-    const productImages = !{JSON.stringify(images)};
+    document.addEventListener('DOMContentLoaded', function () {
+      const productImages = !{JSON.stringify(images)};
+      const mainImage = document.querySelector("#mainImage");
+      const thumbnails = document.querySelectorAll(".thumbnail-img");
+      const zoomPane = document.querySelector('#zoomPane');
 
-  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/drift-zoom/dist/drift-basic.min.css")
-  script(src="https://cdn.jsdelivr.net/npm/drift-zoom/dist/Drift.min.js")
+      // Khởi tạo drift lần đầu với inlinePane: true
+      let driftZoom = new Drift(mainImage, {
+        paneContainer: zoomPane,
+        inlinePane: true,
+        containInline: true,
+        hoverBoundingBox: true
+      });
 
+      thumbnails.forEach((thumb, index) => {
+        thumb.addEventListener("click", () => {
+          const newSrc = productImages[index];
+          mainImage.src = newSrc;
+          mainImage.setAttribute('data-zoom', newSrc);
+
+          // Hủy drift cũ và tạo lại với inlinePane: true để zoom pane vẫn nằm trong #zoomPane
+          driftZoom.destroy();
+          driftZoom = new Drift(mainImage, {
+            paneContainer: zoomPane,
+            inlinePane: true,
+            containInline: true,
+            hoverBoundingBox: true
+          });
+        });
+      });
+    });
+
+  // === CSS ===
   style.
-    .drift-zoom-pane {
-      width: 150px !important;
-      height: 150px !important;
-      border-radius: 6px;
-      overflow: hidden;
-      z-index: 9999;
-    }
-
     .comment-item {
       border-color: #eee;
+      border-radius: 12px !important;
     }
 
     .avatar {
@@ -184,5 +203,26 @@ block main
       line-height: 1.5;
     }
 
-  // CSS THƯ VIỆN SAO
+    .drift-zoom-pane {
+      width: 150px !important;
+      height: 150px !important;
+      border-radius: 50% !important;
+      border: none !important;
+      box-shadow: none !important;
+      z-index: 9999 !important;
+    }
+    #zoomPane{
+      display : none;
+      border-radius: 12px;
+    }
+
+    /* Mọi phần tử có border bo tròn 12px */
+    .border {
+      border-radius: 12px !important;
+    }
+
+  // === THƯ VIỆN ===
   link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/starability/starability-all.min.css")
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js")
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/drift-zoom/dist/drift-basic.min.css")
+  script(src="https://cdn.jsdelivr.net/npm/drift-zoom/dist/Drift.min.js")
