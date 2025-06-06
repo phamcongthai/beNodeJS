@@ -95,6 +95,42 @@ block main
       .bg-white.border.rounded-4.p-4(style="box-shadow: none;")
         h5.mb-4.text-primary ⭐ Đánh giá & Bình luận
 
+        // BIỂU ĐỒ ĐÁNH GIÁ
+        .rating-summary.mb-4
+          .row
+            .col-md-6
+              .d-flex.align-items-center.gap-3
+                .rating-average
+                  - let totalRating = 0
+                  - let totalComments = comments ? comments.length : 0
+                  - if (comments && comments.length > 0)
+                    - totalRating = comments.reduce((sum, cmt) => sum + cmt.rating, 0) / comments.length
+                  .rating-number #{totalRating.toFixed(1)}
+                  .rating-stars.mb-2
+                    - for (let i = 1; i <= 5; i++)
+                      if i <= Math.round(totalRating)
+                        i.fas.fa-star.text-warning
+                      else
+                        i.far.fa-star.text-warning
+                  .rating-count #{totalComments} lượt đánh giá
+            .col-md-6
+              .rating-breakdown
+                - let ratingCounts = [0, 0, 0, 0, 0] // index 0 = 1 star, index 4 = 5 stars
+                - if (comments && comments.length > 0)
+                  - comments.forEach(cmt => { if (cmt.rating >= 1 && cmt.rating <= 5) ratingCounts[cmt.rating - 1]++ })
+                
+                each count, index in ratingCounts.reverse()
+                  - let starLevel = 5 - index
+                  - let percentage = totalComments > 0 ? (count / totalComments * 100) : 0
+                  .rating-row.d-flex.align-items-center.gap-2.mb-2
+                    .rating-label #{starLevel}
+                    i.fas.fa-star.text-warning
+                    .progress.flex-grow-1(style="height: 8px;")
+                      .progress-bar.bg-danger(style=`width: ${percentage}%`)
+                    .rating-count #{count}
+        
+        hr.mb-4
+
         form(method="POST", action=`/comment/add/${product.slug}`)
           .mb-3
             label(for="comment") Bình luận của bạn:
@@ -102,7 +138,7 @@ block main
 
           .mb-3
             label(for="rating") Đánh giá:
-            .starability-basic
+            .starability-basic.d-flex.align-items-center(style="gap: 5px")
               input(type="radio", id="rate5", name="rating", value="5")
               label(for="rate5") 5 sao
               input(type="radio", id="rate4", name="rating", value="4")
@@ -114,7 +150,9 @@ block main
               input(type="radio", id="rate1", name="rating", value="1")
               label(for="rate1") 1 sao
 
-          button.btn.btn-primary(type="submit") Gửi bình luận
+
+          button.btn(type="submit", style="background-color: black; color: white; border-radius: 999px; border: none; padding: 10px 20px;") Gửi bình luận
+
 
         if comments && comments.length > 0
           each cmt in comments
@@ -219,6 +257,64 @@ block main
     /* Mọi phần tử có border bo tròn 12px */
     .border {
       border-radius: 12px !important;
+    }
+
+    /* CSS cho phần biểu đồ đánh giá */
+    .rating-summary {
+      background-color: #f8f9fa;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #e9ecef;
+    }
+
+    .rating-average {
+      text-align: center;
+    }
+
+    .rating-number {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #dc3545;
+      line-height: 1;
+    }
+
+    .rating-stars {
+      font-size: 1.2rem;
+    }
+
+    .rating-count {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .rating-breakdown {
+      padding-left: 20px;
+    }
+
+    .rating-row {
+      font-size: 0.9rem;
+    }
+
+    .rating-label {
+      width: 10px;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .progress {
+      background-color: #e9ecef;
+      border-radius: 10px;
+    }
+
+    .progress-bar {
+      border-radius: 10px;
+    }
+
+    .rating-row .rating-count {
+      width: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #6c757d;
     }
 
   // === THƯ VIỆN ===
