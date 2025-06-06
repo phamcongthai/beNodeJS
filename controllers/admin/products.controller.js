@@ -245,48 +245,64 @@ module.exports.editProduct = async (req, res) => {
 // [POST] /admin/products/edit/:id
 // [POST] /admin/products/edit/:id
 module.exports.editProductBE = async (req, res) => {
-    try {
-        req.body.price = parseInt(req.body.price);
-        req.body.discountPercentage = parseInt(req.body.discountPercentage);
-        req.body.stock = parseInt(req.body.stock);
-        req.body.position = parseInt(req.body.position);
+  try {
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
+    req.body.position = parseInt(req.body.position);
 
-        // Xử lý tags: tách chuỗi thành mảng
-        if (req.body.tags) {
-            req.body.tags = req.body.tags
-                .split(",")
-                .map(tag => tag.trim())
-                .filter(tag => tag.length > 0);
-        } else {
-            req.body.tags = [];
-        }
-
-        const id = req.params.id;
-        const currentUpdate = {
-            account_id: res.locals.currentUser._id,
-            updateAt: new Date()
-        };
-
-        const updateData = {
-            ...req.body
-        };
-        delete updateData.updateBy;
-
-        await ProductsModel.updateOne({
-            _id: id
-        }, {
-            $set: updateData,
-            $push: {
-                updateBy: currentUpdate
-            }
-        });
-
-        res.redirect("/admin/products");
-    } catch (error) {
-        console.error(error);
-        res.redirect("back");
+    if (req.body.tags) {
+      req.body.tags = req.body.tags
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
+    } else {
+      req.body.tags = [];
     }
+
+    const id = req.params.id;
+    const currentUpdate = {
+      account_id: res.locals.currentUser._id,
+      updateAt: new Date(),
+    };
+
+    // Lấy dữ liệu update từ req.body
+    const updateData = {
+      ...req.body,
+    };
+    delete updateData.updateBy;
+
+    // Lấy ảnh mới upload (nếu có)
+    const newThumbnails = req.body['thumbnail[]'];
+
+    if (newThumbnails && Array.isArray(newThumbnails)) {
+      // Lấy product hiện tại để lấy thumbnail cũ
+      const product = await ProductsModel.findById(id).lean();
+
+      if (product && Array.isArray(product.thumbnail)) {
+        // Nối mảng ảnh cũ với ảnh mới
+        updateData.thumbnail = [...product.thumbnail, ...newThumbnails];
+      } else {
+        // Nếu chưa có thumbnail cũ thì lấy luôn ảnh mới
+        updateData.thumbnail = newThumbnails;
+      }
+    }
+
+    await ProductsModel.updateOne(
+      { _id: id },
+      {
+        $set: updateData,
+        $push: { updateBy: currentUpdate },
+      }
+    );
+
+    res.redirect("/admin/products");
+  } catch (error) {
+    console.error(error);
+    res.redirect("back");
+  }
 };
+
 
 // [GET] /admin/products/detail/:id
 module.exports.detailProducts = async (req, res) => {

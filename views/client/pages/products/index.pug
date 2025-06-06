@@ -49,8 +49,8 @@ block main
                 .col.product-item(data-index=index, style="flex: 0 0 calc(33.33% - 15px); max-width: calc(33.33% - 15px); margin: 7.5px;")
                   a(href=`/products/detail/${product.slug}`, style="text-decoration: none;")
                     .card.shadow-sm(style="height: 300px; border-radius: 12px; display: flex; flex-direction: column;")
-                      if product.thumbnail
-                        img.card-img-top(src=product.thumbnail, alt=product.title, style="height: 165px; object-fit: cover; border-radius: 12px 12px 0 0;")
+                      if product.thumbnail && Array.isArray(product.thumbnail) && product.thumbnail.length
+                        img.card-img-top(src=product.thumbnail[0], alt=product.title, style="height: 165px; object-fit: cover; border-radius: 12px 12px 0 0;")
                       .card-body.text-center(style="flex-grow: 1; padding: 0.75rem 1rem;")
                         h6(style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;")= product.title
                         del.text-muted(style="font-size: 0.85rem;")= product.price.toLocaleString() + 'đ'

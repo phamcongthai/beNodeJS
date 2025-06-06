@@ -14,7 +14,10 @@ var upload = multer(); //
 var validateProducts = require('../../validates/admin/products.validate'); //
 
 
-var uploadClould = require('../../middleware/admin/uploadClould.middleware');
+var uploadClould = require('../../middleware/admin/uploadClould.middleware'); //
+
+
+var uploadMultilClould = require("../../middleware/admin/uploadMultiImg.middleware");
 
 router.get('/', productController.products);
 router.patch('/change-status/:status/:id', productController.changeStatus);
@@ -24,8 +27,16 @@ router["delete"]('/deleteT/:id', productController.deleteT); //Tạo mới sản
 router.get('/create', productController.createProducts);
 router.post('/create', upload.single('thumbnail'), uploadClould.uploadToClould, validateProducts.validateCreateProducts, productController.createProductsBE); //Chỉnh sửa sản phẩm.
 
-router.get('/edit/:id', productController.editProduct);
-router.patch('/edit/:id', upload.single('thumbnail'), uploadClould.uploadToClould, validateProducts.validateCreateProducts, productController.editProductBE);
+router.get('/edit/:id', productController.editProduct); // router.patch(
+//   '/edit/:id',
+//   upload.single('thumbnail'),
+//   uploadClould.uploadToClould,
+//   validateProducts.validateCreateProducts,
+//   productController.editProductBE);
+
+router.patch('/edit/:id', upload.array('thumbnail[]'), // multer nhận nhiều ảnh trong field 'thumbnail'
+uploadMultilClould.uploadMultipleToCloud, // middleware upload mảng ảnh lên Cloudinary
+validateProducts.validateCreateProducts, productController.editProductBE);
 module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.
 //Chi tiết sản phẩm :
 

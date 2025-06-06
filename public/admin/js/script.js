@@ -480,3 +480,77 @@ if (buttondelAds) {
         });
     });
 }
+// public/admin/js/script.js
+document.addEventListener("DOMContentLoaded", () => {
+  const multiImgInput = document.querySelector("[input-upload-img-multi]");
+  const previewContainer = document.querySelector("#preview-multiple-images");
+
+  if (multiImgInput && previewContainer) {
+    // Mảng lưu các file đã chọn (File objects)
+    let filesArray = [];
+
+    // Hàm render ảnh + nút xóa
+    function renderPreview() {
+      previewContainer.innerHTML = "";
+      filesArray.forEach((file, index) => {
+        if (file.type.startsWith("image/")) {
+          const wrapper = document.createElement("div");
+          wrapper.style.position = "relative";
+          wrapper.style.display = "inline-block";
+          wrapper.style.marginRight = "10px";
+
+          const img = document.createElement("img");
+          img.src = URL.createObjectURL(file);
+          img.style.width = "100px";
+          img.style.height = "100px";
+          img.style.objectFit = "cover";
+          img.style.borderRadius = "5px";
+          wrapper.appendChild(img);
+
+          // Nút xóa ảnh
+          const btnRemove = document.createElement("button");
+          btnRemove.textContent = "×";
+          btnRemove.type = "button";
+          btnRemove.style.position = "absolute";
+          btnRemove.style.top = "2px";
+          btnRemove.style.right = "2px";
+          btnRemove.style.background = "rgba(0,0,0,0.5)";
+          btnRemove.style.color = "white";
+          btnRemove.style.border = "none";
+          btnRemove.style.borderRadius = "50%";
+          btnRemove.style.width = "20px";
+          btnRemove.style.height = "20px";
+          btnRemove.style.cursor = "pointer";
+          btnRemove.addEventListener("click", () => {
+            filesArray.splice(index, 1);
+            renderPreview();
+            updateInputFiles();
+          });
+          wrapper.appendChild(btnRemove);
+
+          previewContainer.appendChild(wrapper);
+        }
+      });
+    }
+
+    // Cập nhật lại file list của input (không thể gán trực tiếp, tạo DataTransfer)
+    function updateInputFiles() {
+      const dataTransfer = new DataTransfer();
+      filesArray.forEach(file => dataTransfer.items.add(file));
+      multiImgInput.files = dataTransfer.files;
+    }
+
+    multiImgInput.addEventListener("change", (event) => {
+      // Thêm các file mới vào mảng
+      const selectedFiles = Array.from(event.target.files);
+      filesArray = filesArray.concat(selectedFiles);
+      renderPreview();
+
+      // Reset input để có thể chọn lại ảnh nếu muốn
+      multiImgInput.value = "";
+      updateInputFiles();
+    });
+
+    // Nếu muốn, có thể load ảnh có sẵn từ server (product.thumbnail) vào đây (không thể xóa client-side)
+  }
+});

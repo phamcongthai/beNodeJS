@@ -4,81 +4,137 @@ include ../../mixin/flash.pug
 block main
   +alert-success(5000)
   +alert-error(5000)
+
   - const formattedPrice = product.price?.toLocaleString('vi-VN')
   - const discountedPrice = product.price * (1 - product.discountPercentage / 100)
   - const formattedDiscountedPrice = discountedPrice?.toLocaleString('vi-VN')
+  - const images = product.thumbnail || []
 
   .container.my-5
     .row.justify-content-center
-      .col-lg-8
-        .card.shadow-lg.rounded-3
-          .card-body
-            .row
-              .col-md-4.mb-3
-                if (product.thumbnail)
-                  img(src=product.thumbnail, alt=product.title, class="img-fluid rounded")
-                else
-                  img(src="/images/no-image.png", alt="No Image", class="img-fluid rounded")
+      .col-lg-10
 
-              .col-md-8
+        // VÙNG ẢNH + THÔNG TIN
+        .bg-white.border.rounded-4.p-4.mb-4(style="border-radius: 1rem !important;")
+          .row
+            // VÙNG ẢNH
+            .col-md-6
+              if (images.length > 0)
+                img#mainImage(src=images[0], alt=product.title, class="img-fluid rounded-4 border w-100 mb-3", style="border-radius: 1rem !important; cursor: zoom-in;")
+              else
+                img#mainImage(src="/images/no-image.png", alt="No Image", class="img-fluid rounded-4 border w-100 mb-3", style="border-radius: 1rem !important; cursor: zoom-in;")
+
+              if (images.length > 1)
+                .d-flex.flex-wrap.gap-2
+                  each imgUrl, index in images
+                    img.thumbnail-img(src=imgUrl, data-index=index, alt="Ảnh phụ", class="img-thumbnail rounded-3", style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 0.75rem !important;")
+
+              // LightGallery container (ẩn, dùng để tạo lightbox)
+              #lightGallery(style="display: none")
+
+            // VÙNG THÔNG TIN
+            .col-md-6
+              .bg-white.border.rounded-4.p-4(style="border-radius: 1rem !important;")
                 if (product.title)
                   h2.mb-3.text-primary #{product.title}
 
-                ul.list-unstyled
-                  if (product.price)
-                    li.mb-2
-                      span.fw-bold Giá gốc: 
-                      | #{formattedPrice}đ
+                if (product.price)
+                  p.mb-2
+                    span.fw-bold Giá gốc:
+                    del.text-muted.ms-2 #{formattedPrice}đ
 
-                  if (product.discountPercentage)
-                    li.mb-2
-                      span.fw-bold Giảm giá: 
-                      | #{product.discountPercentage}%
+                if (product.discountPercentage)
+                  p.mb-2
+                    span.fw-bold Giảm giá:
+                    | #{product.discountPercentage}%
 
-                    li.mb-2
-                      span.fw-bold Giá sau giảm: 
-                      | #{formattedDiscountedPrice}đ
-                  
-                  if (product.stock)
-                    li.mb-2
-                      span.fw-bold Còn lại: 
-                      | #{product.stock}
+                  p.mb-2
+                    span.fw-bold.text-danger Giá khuyến mãi:
+                    | #{formattedDiscountedPrice}đ
 
-                form(method="POST", action=`/cart/add/${product.id}`)
-                  .mb-3
-                    label.form-label(for="quantity") Số lượng:
-                    input#quantity.form-control(
-                      type="number",
-                      name="quantity",
-                      value="1",
-                      min="1",
-                      max=product.stock,
-                      required,
-                      style="color: black;"
-                    )
+                if (product.stock)
+                  p.mb-3
+                    span.fw-bold Còn lại:
+                    | #{product.stock} sản phẩm
 
-                  button.btn.btn-success(type="submit") Thêm vào giỏ hàng
+                form(method="POST", action=`/cart/add/${product._id}`)
+                  input(type="hidden", name="quantity", value="1")
+                  button.btn.btn-outline-success.rounded-3(type="submit", style="border-radius: 1rem !important;") THÊM VÀO GIỎ HÀNG
 
-            if (product.description)
-              hr
-              h5.mt-4.mb-2.text-secondary Mô tả sản phẩm
-              p.lead !{product.description}
+        // VÙNG QUÀ TẶNG
+        .bg-white.border.rounded-4.p-4.mb-4(style="border-radius: 1rem !important;")
+          h5.fw-bold.text-success 🎁 BẠN SẼ NHẬN ĐƯỢC
+          ul.mb-0
+            li 1x Túi đeo lưng/ Balo laptop 15.6 inch
+            li 1x Bộ chia/ Hub USB-C 5 in 1 hỗ trợ 4K
+            li 1x Mã ưu đãi dán màn hình
 
-            // ĐÁNH GIÁ & BÌNH LUẬN (cố định, không lặp)
-            hr
-            h5.mt-5.mb-3.text-primary Đánh giá & Bình luận
+        // VÙNG MÔ TẢ
+        if (product.description)
+          .bg-white.border.rounded-4.p-4.mb-4(style="border-radius: 1rem !important;")
+            h5.mb-3.text-secondary 📝 Mô tả sản phẩm
+            p.lead !{product.description}
 
-            .mb-3
-              strong Nguyễn Văn A
-              span.ms-2.text-warning ★★★★★
-              p.mb-1.mt-1 Sản phẩm rất tốt, giao hàng nhanh!
+        // VÙNG ĐÁNH GIÁ
+        .bg-white.border.rounded-4.p-4(style="border-radius: 1rem !important;")
+          h5.mb-4.text-primary ⭐ Đánh giá & Bình luận
 
-            .mb-3
-              strong Trần Thị B
-              span.ms-2.text-warning ★★★★☆
-              p.mb-1.mt-1 Sản phẩm ổn so với giá tiền.
+          .mb-3
+            strong Nguyễn Văn A
+            span.ms-2.text-warning ★★★★★
+            p.mb-1.mt-1 Sản phẩm rất tốt, giao hàng nhanh!
 
-            .mb-3
-              strong Lê C
-              span.ms-2.text-warning ★★★☆☆
-              p.mb-1.mt-1 Bình thường, không có gì đặc biệt.
+          .mb-3
+            strong Trần Thị B
+            span.ms-2.text-warning ★★★★☆
+            p.mb-1.mt-1 Sản phẩm ổn so với giá tiền.
+
+          .mb-3
+            strong Lê C
+            span.ms-2.text-warning ★★★☆☆
+            p.mb-1.mt-1 Bình thường, không có gì đặc biệt.
+
+  // Đưa biến ảnh xuống JS
+  script.
+    const productImages = !{JSON.stringify(images)};
+
+  // LightGallery CSS + JS
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css")
+  script(src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/lightgallery.min.js")
+
+  // LightGallery khởi tạo & xử lý thumbnail
+  script.
+    document.addEventListener('DOMContentLoaded', function () {
+      const mainImage = document.getElementById('mainImage');
+      const thumbnails = document.querySelectorAll('.thumbnail-img');
+      const lightboxContainer = document.getElementById('lightGallery');
+
+      thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', () => {
+          const src = thumbnail.getAttribute('src');
+          if (mainImage) {
+            mainImage.setAttribute('src', src);
+          }
+        });
+      });
+
+      if (mainImage && lightboxContainer && productImages.length > 0) {
+        mainImage.addEventListener('click', () => {
+          lightboxContainer.innerHTML = '';
+          
+          productImages.forEach(img => {
+            const a = document.createElement('a');
+            a.href = img;
+            a.dataset.subHtml = "";
+            lightboxContainer.appendChild(a);
+          });
+
+          // Kích hoạt LightGallery và cho phép zoom ảnh
+          lightGallery(lightboxContainer, {
+            dynamic: true,
+            dynamicEl: productImages.map(img => ({ src: img })),
+            zoom: true // Kích hoạt zoom
+          });
+        });
+      }
+    });

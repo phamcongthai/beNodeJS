@@ -24,9 +24,12 @@ block main
             | Còn lại: 
             b= product.stock
 
-    if (product.thumbnail)
+    if (product.thumbnail && product.thumbnail.length > 0)
         div.mb-4
-            img(src=product.thumbnail style="width: 100px; border-radius: 5px;")
+            img(src=product.thumbnail[0] style="width: 100px; border-radius: 5px;")
+    else
+        div.mb-4
+            span Không có ảnh
 
     if (product.status)
         div.mb-4

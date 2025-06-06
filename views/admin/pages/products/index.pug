@@ -85,8 +85,8 @@ block main
                         input(type="checkbox" id=`${item._id}` name='id')
                     td= index + 1
                     td
-                        if item.thumbnail
-                            img(src=item.thumbnail, alt=item.title, width="100px", height="auto")
+                        if item.thumbnail && item.thumbnail.length > 0
+                            img(src=item.thumbnail[0], alt=item.title, width="100px", height="auto")
                         else
                             span Không có ảnh
                     td= item.title

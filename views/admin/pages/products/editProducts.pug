@@ -3,95 +3,110 @@ include ../../mixin/flash.pug
 include ../../mixin/select.pug
 
 block main
-    h1.mb-4 Chỉnh sửa sản phẩm
-    +alert-error(5000)
+  h1.mb-4 Chỉnh sửa sản phẩm
+  +alert-error(5000)
 
-    form#form-edit-product(action=`/admin/products/edit/${product.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
-        div.form-group
-            label(for="title") Tiêu đề
-            input#title.form-control(type="text" name="title" value=product.title required)
+  form#form-edit-product(action=`/admin/products/edit/${product.id}?_method=PATCH` method="POST" enctype="multipart/form-data")
+    div.form-group
+      label(for="title") Tiêu đề
+      input#title.form-control(type="text" name="title" value=product.title required)
 
-        div.form-group
-            label(for="category_id") Danh mục cha
-            select#parent_id.form-control(name="category_id")
-                option(value="") -- Chọn danh mục cha --
-                +select-tree-edit(category, 1, product.category_id)
+    div.form-group
+      label(for="category_id") Danh mục cha
+      select#parent_id.form-control(name="category_id")
+        option(value="") -- Chọn danh mục cha --
+        +select-tree-edit(category, 1, product.category_id)
 
-        // ✅ Thương hiệu
-        div.form-group
-            label(for="brand_id") Thương hiệu
-            select#brand_id.form-control(name="brand_id")
-                option(value="") -- Chọn thương hiệu --
-                each brand in brands
-                    option(
-                        value=brand._id
-                        selected=(product.brand_id && product.brand_id.toString() === brand._id.toString())
-                    ) #{brand.name}
+    div.form-group
+      label(for="brand_id") Thương hiệu
+      select#brand_id.form-control(name="brand_id")
+        option(value="") -- Chọn thương hiệu --
+        each brand in brands
+          option(
+            value=brand._id
+            selected=(product.brand_id && product.brand_id.toString() === brand._id.toString())
+          ) #{brand.name}
 
-        // ✅ Trường tags
-        div.form-group
-            label(for="tags") Tags
-            input#tags.form-control(
-                type="text"
-                name="tags"
-                value=(product.tags && Array.isArray(product.tags) ? product.tags.join(', ') : '')
-                placeholder="Ví dụ: laptop, gaming, văn phòng"
-            )
+    div.form-group
+      label(for="tags") Tags
+      input#tags.form-control(
+        type="text"
+        name="tags"
+        value=(product.tags && Array.isArray(product.tags) ? product.tags.join(', ') : '')
+        placeholder="Ví dụ: laptop, gaming, văn phòng"
+      )
 
-        // ✅ Sản phẩm nổi bật
-        div.form-group
-            label Sản phẩm nổi bật
-            div.form-check
-                input#featured-yes.form-check-input(
-                    type="radio" 
-                    name="isFeatured" 
-                    value="true" 
-                    checked=product.isFeatured === true || product.isFeatured === "true"
-                )
-                label.form-check-label(for="featured-yes") Có
-            div.form-check
-                input#featured-no.form-check-input(
-                    type="radio" 
-                    name="isFeatured" 
-                    value="false" 
-                    checked=product.isFeatured === false || product.isFeatured === "false"
-                )
-                label.form-check-label(for="featured-no") Không
+    div.form-group
+      label Sản phẩm nổi bật
+      div.form-check
+        input#featured-yes.form-check-input(
+          type="radio"
+          name="isFeatured"
+          value="true"
+          checked=product.isFeatured === true || product.isFeatured === "true"
+        )
+        label.form-check-label(for="featured-yes") Có
+      div.form-check
+        input#featured-no.form-check-input(
+          type="radio"
+          name="isFeatured"
+          value="false"
+          checked=product.isFeatured === false || product.isFeatured === "false"
+        )
+        label.form-check-label(for="featured-no") Không
 
-        div.form-group
-            label(for="desc") Mô tả
-            textarea#desc.form-control(name="description" rows="5") #{product.description}
+    div.form-group
+      label(for="desc") Mô tả
+      textarea#desc.form-control(name="description" rows="5") #{product.description}
 
-        div.form-group
-            label(for="price") Giá
-            input#price.form-control(type="number" name="price" value=product.price min="0")
+    div.form-group
+      label(for="price") Giá
+      input#price.form-control(type="number" name="price" value=product.price min="0")
 
-        div.form-group
-            label(for="discount") % Giảm giá
-            input#discount.form-control(type="number" name="discountPercentage" value=product.discountPercentage min="0")
+    div.form-group
+      label(for="discount") % Giảm giá
+      input#discount.form-control(type="number" name="discountPercentage" value=product.discountPercentage min="0")
 
-        div.form-group
-            label(for="stock") Số lượng
-            input#stock.form-control(type="number" name="stock" value=product.stock min="0")
+    div.form-group
+      label(for="stock") Số lượng
+      input#stock.form-control(type="number" name="stock" value=product.stock min="0")
 
-        div.form-group
-            label(for="image") Ảnh
-            input#thumbnail.form-control(type="file" name="thumbnail" accept="image/*" input-upload-img)
-            img(src=product.thumbnail alt="img" img-upload style="width: 100px; height: 100px; border-radius: 5px;")
+    // ✅ Upload nhiều ảnh: thumbnail[]
+    div.form-group
+      label(for="thumbnail") Ảnh sản phẩm (chọn nhiều ảnh)
+      input#thumbnail.form-control(
+        type="file"
+        name="thumbnail[]"
+        accept="image/*"
+        multiple
+        input-upload-img-multi
+      )
+      div#preview-multiple-images.mt-2
 
-        div.form-group
-            label(for="position") Vị trí
-            input#position.form-control(type="number" name="position" value=product.position placeholder="Tự động tăng" min="1")
+      if product.thumbnail && Array.isArray(product.thumbnail)
+        div.mt-2
+          p Ảnh đã có:
+          each url, index in product.thumbnail
+            div(style="position: relative; display: inline-block; margin-right: 10px;")
+              img(
+                src=url
+                style="width: 100px; height: 100px; object-fit: cover; border-radius: 5px;"
+              )
+              // Có thể thêm nút xóa ảnh hiện có (yêu cầu API riêng) ở đây
 
-        div.form-group
-            label Trạng thái
-            div.form-check
-                input#active.form-check-input(type="radio" name="status" value="active" checked=product.status === "active")
-                label.form-check-label(for="active") Hoạt động
-            div.form-check
-                input#inactive.form-check-input(type="radio" name="status" value="inactive" checked=product.status === "inactive")
-                label.form-check-label(for="inactive") Dừng hoạt động
+    div.form-group
+      label(for="position") Vị trí
+      input#position.form-control(type="number" name="position" value=product.position placeholder="Tự động tăng" min="1")
 
-        button.btn.btn-primary(type="submit") Lưu
+    div.form-group
+      label Trạng thái
+      div.form-check
+        input#active.form-check-input(type="radio" name="status" value="active" checked=product.status === "active")
+        label.form-check-label(for="active") Hoạt động
+      div.form-check
+        input#inactive.form-check-input(type="radio" name="status" value="inactive" checked=product.status === "inactive")
+        label.form-check-label(for="inactive") Dừng hoạt động
 
-    script(src="/admin/js/script.js")
+    button.btn.btn-primary(type="submit") Lưu
+
+  script(src="/admin/js/script.js")
