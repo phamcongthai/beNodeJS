@@ -1,6 +1,7 @@
 const ProductsModel = require('../../models/products.model');
 const CategoryModel = require('../../models/products-category.model');
 const BrandModel = require('../../models/brand.model');
+const UserModel = require('../../models/user.model');
 //[GET] : Sản phẩm : 
 module.exports.products = async (req, res) => {
   try {
@@ -84,27 +85,51 @@ module.exports.products = async (req, res) => {
     res.status(500).send('Lỗi tải trang sản phẩm');
   }
 };
+//Chi tiết sản phẩm : 
 
-
-//Chi tiết sản phẩm :
 module.exports.productsDetail = async (req, res) => {
-    try {
-        //Tìm sản phẩm đó :
-        const find = {
-            deleted: false,
-            slug: req.params.slug
-        }
-        const product = await ProductsModel.findOne(find); //Dùng find thì nó trả về 1 mảng, findOne thì trả về 1 obj thôi.
+  try {
+    const find = {
+      deleted: false,
+      slug: req.params.slug
+    };
+    const product = await ProductsModel.findOne(find);
 
-        res.render("client/pages/products/detailProducts", {
-            pageTitle: product.title,
-            product: product
-        })
-    } catch (error) {
-        res.redirect("/products");
+    if (!product) return res.redirect('/products');
 
+    let enrichedComments = [];
+
+    if (product.comments && product.comments.length > 0) {
+      const userIds = product.comments.map(c => c.user_id);
+      const users = await UserModel.find({ _id: { $in: userIds }, deleted: false })
+        .select('_id fullName avatar');
+
+      const userMap = {};
+      users.forEach(user => {
+        userMap[user._id.toString()] = user;
+      });
+
+      enrichedComments = product.comments.map(comment => {
+        const user = userMap[comment.user_id] || {};
+        return {
+          ...comment._doc,
+          fullName: user.fullName || 'Người dùng ẩn danh',
+          avatar: user.avatar || '/images/default-avatar.png'
+        };
+      });
     }
-}
+
+    res.render('client/pages/products/detailProducts', {
+      pageTitle: product.title,
+      product,
+      comments: enrichedComments
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.redirect('/products');
+  }
+};
 //Danh mục :
 module.exports.productsCategory = async (req, res) => {
   const slugCategory = req.params.slug;

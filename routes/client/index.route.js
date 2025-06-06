@@ -13,6 +13,7 @@ const auth = require('../../middleware/client/authRequire.middleware');
 const settingsGeneral = require('../../middleware/admin/settingsGeneral.middleware');
 const chatRoutes = require('../../routes/client/chat.route');
 const adsMiddleware = require('../../middleware/client/ads.middleware');
+const commentRoutes = require('../../routes/client/comment.route');
 module.exports = (app) => {
     app.use(categorySubmenu.categorySubmenu);// Chỉ dùng cách gọi 1 lần như này bên client
     app.use(cartMiddleware.cart);
@@ -25,4 +26,5 @@ module.exports = (app) => {
     app.use('/checkout', orderRoutes);
     app.use('/user', userRoutes);
     app.use('/chat', chatRoutes);
+    app.use('/comment', commentRoutes);
 }

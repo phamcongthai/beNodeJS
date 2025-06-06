@@ -28,10 +28,10 @@ var productSchema = new mongoose.Schema({
   position: Number,
   slug: {
     type: String,
-    //Kiểu slug  
+    // Kiểu slug  
     slug: "title",
-    //Thuộc tính muốn dùng làm slug , ở đây là title
-    unique: true //Là duy nhất
+    // Thuộc tính muốn dùng làm slug, ở đây là title
+    unique: true // Là duy nhất
 
   },
   isFeatured: Boolean,
@@ -57,7 +57,32 @@ var productSchema = new mongoose.Schema({
     }
   }],
   brand_id: String,
-  tags: [String]
+  tags: [String],
+  comments: [{
+    user_id: {
+      type: String,
+      required: true
+    },
+    role: {
+      type: String,
+      "enum": ['user', 'admin'],
+      required: true
+    },
+    comment: {
+      type: String,
+      required: true
+    },
+    rating: {
+      type: Number,
+      min: 1,
+      max: 5,
+      required: true
+    },
+    create_at: {
+      type: Date,
+      "default": Date.now
+    }
+  }]
 }, {
   timestamps: true
 });

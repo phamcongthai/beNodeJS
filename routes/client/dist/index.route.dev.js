@@ -30,6 +30,8 @@ var chatRoutes = require('../../routes/client/chat.route');
 
 var adsMiddleware = require('../../middleware/client/ads.middleware');
 
+var commentRoutes = require('../../routes/client/comment.route');
+
 module.exports = function (app) {
   app.use(categorySubmenu.categorySubmenu); // Chỉ dùng cách gọi 1 lần như này bên client
 
@@ -43,4 +45,5 @@ module.exports = function (app) {
   app.use('/checkout', orderRoutes);
   app.use('/user', userRoutes);
   app.use('/chat', chatRoutes);
+  app.use('/comment', commentRoutes);
 };

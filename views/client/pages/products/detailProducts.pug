@@ -10,131 +10,179 @@ block main
   - const formattedDiscountedPrice = discountedPrice?.toLocaleString('vi-VN')
   - const images = product.thumbnail || []
 
-  .container.my-5
-    .row.justify-content-center
-      .col-lg-10
+  .row.justify-content-center
+    .col-lg-10()
 
-        // VÙNG ẢNH + THÔNG TIN
-        .bg-white.border.rounded-4.p-4.mb-4(style="border-radius: 1rem !important;")
-          .row
-            // VÙNG ẢNH
-            .col-md-6
-              if (images.length > 0)
-                img#mainImage(src=images[0], alt=product.title, class="img-fluid rounded-4 border w-100 mb-3", style="border-radius: 1rem !important; cursor: zoom-in;")
-              else
-                img#mainImage(src="/images/no-image.png", alt="No Image", class="img-fluid rounded-4 border w-100 mb-3", style="border-radius: 1rem !important; cursor: zoom-in;")
+      // LABEL GIAO HÀNG
+      div(style="display: flex; gap: 12px; margin-bottom: 1.5rem;")
+        span(style="background-color: #dc3545; color: white; border-radius: 50px; padding: 6px 12px; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center;")
+          i(class="fas fa-truck-fast", style="margin-right: 8px;")
+          | Miễn phí giao hàng
+        span(style="background-color: #dc3545; color: white; border-radius: 50px; padding: 6px 12px; font-weight: 500; font-size: 0.9rem; display: inline-flex; align-items: center;")
+          i(class="fas fa-cart-shopping", style="margin-right: 8px;")
+          | Thanh toán online
 
-              if (images.length > 1)
-                .d-flex.flex-wrap.gap-2
-                  each imgUrl, index in images
-                    img.thumbnail-img(src=imgUrl, data-index=index, alt="Ảnh phụ", class="img-thumbnail rounded-3", style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 0.75rem !important;")
+      // SẢN PHẨM
+      .bg-white.border.rounded-4.p-4.mb-4(style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 12px;")
+        .row
+          .col-md-6.position-relative
+            if (images.length > 0)
+              img#mainImage(
+                src=images[0],
+                alt=product.title,
+                class="img-fluid rounded-4 border w-100 mb-3 drift-trigger",
+                style="cursor: zoom-in; border-radius: 12px;",
+                data-zoom=images[0]
+              )
+            else
+              img#mainImage(
+                src="/images/no-image.png",
+                alt="No Image",
+                class="img-fluid rounded-4 border w-100 mb-3",
+                style="border-radius: 12px;"
+              )
+            if (images.length > 1)
+              .d-flex.flex-wrap.gap-2
+                each imgUrl, index in images
+                  img.thumbnail-img(
+                    src=imgUrl,
+                    data-index=index,
+                    alt="Ảnh phụ",
+                    class="img-thumbnail rounded-3",
+                    style="width: 60px; height: 60px; object-fit: cover; cursor: pointer; border-radius: 12px;"
+                  )
 
-              // LightGallery container (ẩn, dùng để tạo lightbox)
-              #lightGallery(style="display: none")
+          .col-md-6
+            .bg-white.border.rounded-4.p-4(style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 12px;")
+              if (product.title)
+                h2.mb-3.text-primary #{product.title}
 
-            // VÙNG THÔNG TIN
-            .col-md-6
-              .bg-white.border.rounded-4.p-4(style="border-radius: 1rem !important;")
-                if (product.title)
-                  h2.mb-3.text-primary #{product.title}
+              if (product.price)
+                p.mb-2
+                  span.fw-bold Giá gốc:
+                  del.text-muted.ms-2 #{formattedPrice}đ
 
-                if (product.price)
-                  p.mb-2
-                    span.fw-bold Giá gốc:
-                    del.text-muted.ms-2 #{formattedPrice}đ
+              if (product.discountPercentage)
+                p.mb-2
+                  span.fw-bold Giảm giá:
+                  | #{product.discountPercentage}% 
+                p.mb-2
+                  span.fw-bold.text-danger Giá khuyến mãi:
+                  | #{formattedDiscountedPrice}đ
 
-                if (product.discountPercentage)
-                  p.mb-2
-                    span.fw-bold Giảm giá:
-                    | #{product.discountPercentage}%
+              if (product.stock)
+                p.mb-3
+                  span.fw-bold Còn lại:
+                  | #{product.stock} sản phẩm
 
-                  p.mb-2
-                    span.fw-bold.text-danger Giá khuyến mãi:
-                    | #{formattedDiscountedPrice}đ
+              form(method="POST", action=`/cart/add/${product._id}`)
+                input(type="hidden", name="quantity", value="1")
+                button.btn.btn-outline-success.rounded-3(type="submit")
+                  | THÊM VÀO GIỎ HÀNG
 
-                if (product.stock)
-                  p.mb-3
-                    span.fw-bold Còn lại:
-                    | #{product.stock} sản phẩm
+              // Thêm thông tin về quà tặng và mô tả vào đây
+              p.fw-bold.text-success.mb-2 🎁 BẠN SẼ NHẬN ĐƯỢC
+              ul.mb-3
+                li 1x Túi đeo lưng / Balo laptop
+                li 1x Bộ chia USB-C 5in1
+                li 1x Mã ưu đãi dán màn hình
 
-                form(method="POST", action=`/cart/add/${product._id}`)
-                  input(type="hidden", name="quantity", value="1")
-                  button.btn.btn-outline-success.rounded-3(type="submit", style="border-radius: 1rem !important;") THÊM VÀO GIỎ HÀNG
+              if (product.description)
+                h5.mb-3.text-secondary 📝 Mô tả sản phẩm
+                p.lead !{product.description}
 
-        // VÙNG QUÀ TẶNG
-        .bg-white.border.rounded-4.p-4.mb-4(style="border-radius: 1rem !important;")
-          h5.fw-bold.text-success 🎁 BẠN SẼ NHẬN ĐƯỢC
-          ul.mb-0
-            li 1x Túi đeo lưng/ Balo laptop 15.6 inch
-            li 1x Bộ chia/ Hub USB-C 5 in 1 hỗ trợ 4K
-            li 1x Mã ưu đãi dán màn hình
+      // BÌNH LUẬN & ĐÁNH GIÁ
+      .bg-white.border.rounded-4.p-4(style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 12px;")
+        h5.mb-4.text-primary ⭐ Đánh giá & Bình luận
 
-        // VÙNG MÔ TẢ
-        if (product.description)
-          .bg-white.border.rounded-4.p-4.mb-4(style="border-radius: 1rem !important;")
-            h5.mb-3.text-secondary 📝 Mô tả sản phẩm
-            p.lead !{product.description}
-
-        // VÙNG ĐÁNH GIÁ
-        .bg-white.border.rounded-4.p-4(style="border-radius: 1rem !important;")
-          h5.mb-4.text-primary ⭐ Đánh giá & Bình luận
+        // FORM BÌNH LUẬN
+        form(method="POST", action=`/comment/add/${product.slug}`)
+          .mb-3
+            label(for="comment") Bình luận của bạn:
+            textarea.form-control(name="comment", rows="3", required placeholder="Nhập bình luận...")
 
           .mb-3
-            strong Nguyễn Văn A
-            span.ms-2.text-warning ★★★★★
-            p.mb-1.mt-1 Sản phẩm rất tốt, giao hàng nhanh!
+            label(for="rating") Đánh giá:
+            .starability-basic
+              input(type="radio", id="rate5", name="rating", value="5")
+              label(for="rate5") 5 sao
+              input(type="radio", id="rate4", name="rating", value="4")
+              label(for="rate4") 4 sao
+              input(type="radio", id="rate3", name="rating", value="3")
+              label(for="rate3") 3 sao
+              input(type="radio", id="rate2", name="rating", value="2")
+              label(for="rate2") 2 sao
+              input(type="radio", id="rate1", name="rating", value="1")
+              label(for="rate1") 1 sao
 
-          .mb-3
-            strong Trần Thị B
-            span.ms-2.text-warning ★★★★☆
-            p.mb-1.mt-1 Sản phẩm ổn so với giá tiền.
+          button.btn.btn-primary(type="submit") Gửi bình luận
 
-          .mb-3
-            strong Lê C
-            span.ms-2.text-warning ★★★☆☆
-            p.mb-1.mt-1 Bình thường, không có gì đặc biệt.
+        // DANH SÁCH BÌNH LUẬN
+        if comments && comments.length > 0
+          each cmt in comments
+            .comment-item.d-flex.align-items-start.gap-3.mt-4.pt-3.pb-3.border-bottom
+              .avatar.rounded-circle.text-white.fw-bold.d-flex.justify-content-center.align-items-center
+                = (cmt.fullName || 'N')[0].toUpperCase()
 
-  // Đưa biến ảnh xuống JS
+              .comment-body.w-100
+                .d-flex.justify-content-between.align-items-center.mb-1
+                  .fw-bold #{cmt.fullName || 'Người dùng'}
+                  span.text-muted.fs-sm
+                    - const createdAt = new Date(cmt.create_at);
+                    - const now = new Date();
+                    - const daysAgo = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+                    = isNaN(daysAgo) ? 'Vừa xong' : `${daysAgo} ngày trước`
+
+                .rating.mb-2
+                  - for (let i = 1; i <= 5; i++)
+                    if i <= cmt.rating
+                      i.fas.fa-star.text-warning.me-1
+                    else
+                      i.far.fa-star.text-warning.me-1
+
+                p.mb-0= cmt.comment
+        else
+          p.text-muted.mt-3 Chưa có bình luận nào.
+
+  // SCRIPT ZOOM DRIFT
   script.
     const productImages = !{JSON.stringify(images)};
 
-  // LightGallery CSS + JS
-  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/css/lightgallery-bundle.min.css")
-  script(src="https://cdn.jsdelivr.net/npm/lightgallery@2.7.1/lightgallery.min.js")
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/drift-zoom/dist/drift-basic.min.css")
+  script(src="https://cdn.jsdelivr.net/npm/drift-zoom/dist/Drift.min.js")
 
-  // LightGallery khởi tạo & xử lý thumbnail
-  script.
-    document.addEventListener('DOMContentLoaded', function () {
-      const mainImage = document.getElementById('mainImage');
-      const thumbnails = document.querySelectorAll('.thumbnail-img');
-      const lightboxContainer = document.getElementById('lightGallery');
+  style.
+    .drift-zoom-pane {
+      width: 150px !important;
+      height: 150px !important;
+      border-radius: 6px;
+      overflow: hidden;
+      z-index: 9999;
+    }
 
-      thumbnails.forEach(thumbnail => {
-        thumbnail.addEventListener('click', () => {
-          const src = thumbnail.getAttribute('src');
-          if (mainImage) {
-            mainImage.setAttribute('src', src);
-          }
-        });
-      });
+    .comment-item {
+      border-color: #eee;
+    }
 
-      if (mainImage && lightboxContainer && productImages.length > 0) {
-        mainImage.addEventListener('click', () => {
-          lightboxContainer.innerHTML = '';
-          
-          productImages.forEach(img => {
-            const a = document.createElement('a');
-            a.href = img;
-            a.dataset.subHtml = "";
-            lightboxContainer.appendChild(a);
-          });
+    .avatar {
+      background-color: #6c757d;
+      width: 45px;
+      height: 45px;
+      font-size: 1rem;
+      border-radius: 50%;
+    }
 
-          // Kích hoạt LightGallery và cho phép zoom ảnh
-          lightGallery(lightboxContainer, {
-            dynamic: true,
-            dynamicEl: productImages.map(img => ({ src: img })),
-            zoom: true // Kích hoạt zoom
-          });
-        });
-      }
-    });
+    .fs-sm {
+      font-size: 0.875rem;
+    }
+
+    .rating i {
+      font-size: 1rem;
+    }
+
+    .comment-body p {
+      line-height: 1.5;
+    }
+
+  // CSS THƯ VIỆN SAO
+  link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/starability/starability-all.min.css")
