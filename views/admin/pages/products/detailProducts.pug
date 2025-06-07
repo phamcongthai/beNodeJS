@@ -1,58 +1,104 @@
 extends ../../layouts/default.pug
 
 block main
-    if (product.title)
-        h1.mb-4= product.title
+  if product.title
+    h1.mb-4.text-primary= product.title
 
-    if (brand && brand.name)
-        div.mb-4
-            span Thương hiệu: 
-            b= brand.name
+  // Thông tin sản phẩm dưới dạng grid 2 cột nhỏ gọn
+  .row.mb-4
+    .col-md-6
+      if product.thumbnail && product.thumbnail.length > 0
+        img(src=product.thumbnail[0], alt=product.title, style="width:100%; max-width:300px; border-radius:8px;")
+      else
+        div.text-muted Không có ảnh
 
-    if (product.price)
-        div.mb-4 
-            | Giá: 
-            b= product.price.toLocaleString() + " VNĐ"
+    .col-md-6
+      dl.row
+        dt.col-sm-4 Thương hiệu:
+        dd.col-sm-8= brand && brand.name ? brand.name : 'Không rõ'
 
-    if (product.discountPercentage)
-        div.mb-4 
-            | Giảm giá: 
-            b= product.discountPercentage + "%"
+        dt.col-sm-4 Giá:
+        dd.col-sm-8.text-danger.font-weight-bold= product.price.toLocaleString() + ' VNĐ'
 
-    if (product.stock)
-        div.mb-4 
-            | Còn lại: 
-            b= product.stock
+        dt.col-sm-4 Giảm giá:
+        dd.col-sm-8.text-success= product.discountPercentage ? product.discountPercentage + '%' : '0%'
 
-    if (product.thumbnail && product.thumbnail.length > 0)
-        div.mb-4
-            img(src=product.thumbnail[0] style="width: 100px; border-radius: 5px;")
-    else
-        div.mb-4
-            span Không có ảnh
+        dt.col-sm-4 Còn lại:
+        dd.col-sm-8= product.stock
 
-    if (product.status)
-        div.mb-4
-            span Trạng thái: 
-            if (product.status === "active")
-                span.badge.badge-success Hoạt động
-            else
-                span.badge.badge-danger Dừng hoạt động
+        dt.col-sm-4 Trạng thái:
+        dd.col-sm-8
+          if product.status === 'active'
+            span.badge.badge-success Hoạt động
+          else
+            span.badge.badge-danger Dừng hoạt động
 
-    if (product.position)
-        div.mb-4 
-            | Vị trí: 
-            b= product.position
+        dt.col-sm-4 Vị trí:
+        dd.col-sm-8= product.position || 'Không xác định'
 
-    if (product.tags && product.tags.length > 0)
-        div.mb-4
-            | Tags: 
+        dt.col-sm-4 Tags:
+        dd.col-sm-8
+          if product.tags && product.tags.length > 0
             each tag in product.tags
-                span.badge.badge-info.mr-1= tag
+              span.badge.badge-info.mr-1= tag
+          else
+            span.text-muted Không có tags
 
-    if (product.description)
-        div.mb-4 !{product.description}
+  if product.description
+    .mb-4
+      h5 Mô tả sản phẩm
+      div(style="white-space: pre-wrap") !{product.description}
 
-    button.btn.btn-warning.btn-sm.ml-1(id=`${product.id}` class="button-edit") Chỉnh sửa
+  button.btn.btn-warning.btn-sm.mb-4.ml-1(id=`${product.id}` class="button-edit") Chỉnh sửa
 
-    script(src="/admin/js/script.js")
+  hr
+
+  // Phần bình luận
+  h3.mb-3 Bình luận
+
+  if product.comments && product.comments.length > 0
+    each comment in product.comments.filter(c => !c.parent_id)
+      .comment-block.mb-4.p-3.border.rounded(style="background:#fefefe;")
+        .d-flex.justify-content-between.mb-2
+          b.text-secondary= comment.role === 'admin' ? 'Quản trị viên' : 'Khách hàng'
+          small.text-muted= new Date(comment.create_at).toLocaleString()
+
+        p.mb-1= comment.comment
+
+        if comment.rating
+          p.mb-2
+            | Đánh giá: 
+            b.text-warning= comment.rating + " / 5"
+
+        // Reply hiển thị thụt vào
+        each reply in product.comments.filter(c => c.parent_id && c.parent_id.toString() === comment._id.toString())
+          .reply-block.ml-4.mt-3.p-3.border.rounded(style="background:#f0f8ff; border-left: 5px solid #007bff;")
+            .d-flex.justify-content-between.mb-2
+              b.text-primary= reply.role === 'admin' ? 'Quản trị viên' : 'Khách hàng'
+              small.text-muted= new Date(reply.create_at).toLocaleString()
+            p.mb-0= reply.comment
+
+        // Nút trả lời cho admin
+        if currentUser && currentRole.title === 'Quyền quản trị viên'
+          button.btn.btn-sm.btn-outline-primary.mt-3(type="button", onclick=`toggleReplyForm('${comment._id}')`) Trả lời
+
+          form.reply-form.mt-3(style="display:none;", method="POST", action=`/admin/comment/add/${product._id}`)
+            input(type="hidden", name="parent_id", value=comment._id)
+            div.form-group
+              textarea.form-control(name="comment", rows="3", placeholder="Viết câu trả lời...") 
+            div.form-group.mt-2
+              button.btn.btn-primary.btn-sm(type="submit") Gửi trả lời
+  else
+    p.text-muted Chưa có bình luận nào.
+
+  script.
+    function toggleReplyForm(commentId) {
+      const forms = document.querySelectorAll('form.reply-form');
+      forms.forEach(f => {
+        if(f.querySelector('input[name="parent_id"]').value === commentId) {
+          f.style.display = (f.style.display === 'none' || f.style.display === '') ? 'block' : 'none';
+        } else {
+          f.style.display = 'none'; // Ẩn form khác nếu mở form này
+        }
+      });
+    }

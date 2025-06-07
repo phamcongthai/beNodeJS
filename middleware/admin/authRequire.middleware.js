@@ -16,6 +16,8 @@ module.exports.authRequire = async (req, res, next) => {
         }).select("title permissions")
         
         res.locals.currentRole = role;
+      
+        
         next();
     }
     }

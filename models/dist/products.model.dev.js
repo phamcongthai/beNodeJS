@@ -59,6 +59,10 @@ var productSchema = new mongoose.Schema({
   brand_id: String,
   tags: [String],
   comments: [{
+    _id: {
+      type: mongoose.Schema.Types.ObjectId,
+      auto: true
+    },
     user_id: {
       type: String,
       required: true
@@ -76,7 +80,14 @@ var productSchema = new mongoose.Schema({
       type: Number,
       min: 1,
       max: 5,
-      required: true
+      // Chỉ bắt buộc nếu là comment gốc
+      required: function required() {
+        return this.parent_id === null;
+      }
+    },
+    parent_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      "default": null
     },
     create_at: {
       type: Date,

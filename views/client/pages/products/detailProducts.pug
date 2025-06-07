@@ -34,7 +34,6 @@ block main
                 data-zoom=images[0],
                 style="cursor: zoom-in; border-radius: 12px;"
               )
-              // Tạo vùng chứa zoom pane, có kích thước rõ ràng và bo góc
               div#zoomPane(style="width: 150px; height: 150px; border-radius: 12px; overflow: hidden; border: 1px solid #ccc; position: absolute; top: 0; right: -160px; z-index: 9999;")
             else
               img(
@@ -115,10 +114,9 @@ block main
                   .rating-count #{totalComments} lượt đánh giá
             .col-md-6
               .rating-breakdown
-                - let ratingCounts = [0, 0, 0, 0, 0] // index 0 = 1 star, index 4 = 5 stars
+                - let ratingCounts = [0, 0, 0, 0, 0]
                 - if (comments && comments.length > 0)
                   - comments.forEach(cmt => { if (cmt.rating >= 1 && cmt.rating <= 5) ratingCounts[cmt.rating - 1]++ })
-                
                 each count, index in ratingCounts.reverse()
                   - let starLevel = 5 - index
                   - let percentage = totalComments > 0 ? (count / totalComments * 100) : 0
@@ -150,33 +148,44 @@ block main
               input(type="radio", id="rate1", name="rating", value="1")
               label(for="rate1") 1 sao
 
-
           button.btn(type="submit", style="background-color: black; color: white; border-radius: 999px; border: none; padding: 10px 20px;") Gửi bình luận
-
 
         if comments && comments.length > 0
           each cmt in comments
-            .comment-item.d-flex.align-items-start.gap-3.mt-4.pt-3.pb-3.border-bottom
-              .avatar.rounded-circle.text-white.fw-bold.d-flex.justify-content-center.align-items-center
-                = (cmt.fullName || 'N')[0].toUpperCase()
+            if !cmt.parent_id
+              .comment-item.d-flex.align-items-start.gap-3.mt-4.pt-3.pb-3.border-bottom
+                .avatar.rounded-circle.text-white.fw-bold.d-flex.justify-content-center.align-items-center
+                  = (cmt.fullName || 'N')[0].toUpperCase()
 
-              .comment-body.w-100
-                .d-flex.justify-content-between.align-items-center.mb-1
-                  .fw-bold #{cmt.fullName || 'Người dùng'}
-                  span.text-muted.fs-sm
-                    - const createdAt = new Date(cmt.createdAt);
-                    - const now = new Date();
-                    - const daysAgo = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
-                    = isNaN(daysAgo) ? 'Vừa xong' : `${daysAgo} ngày trước`
+                .comment-body.w-100
+                  .d-flex.justify-content-between.align-items-center.mb-1
+                    .fw-bold #{cmt.fullName || 'Người dùng'}
+                    span.text-muted.fs-sm
+                      - const createdAt = new Date(cmt.create_at || cmt.createdAt);
+                      - const now = new Date();
+                      - const daysAgo = Math.floor((now - createdAt) / (1000 * 60 * 60 * 24));
+                      = isNaN(daysAgo) ? 'Vừa xong' : `${daysAgo} ngày trước`
 
-                .rating.mb-2
-                  - for (let i = 1; i <= 5; i++)
-                    if i <= cmt.rating
-                      i.fas.fa-star.text-warning.me-1
-                    else
-                      i.far.fa-star.text-warning.me-1
+                  .rating.mb-2
+                    - for (let i = 1; i <= 5; i++)
+                      if i <= cmt.rating
+                        i.fas.fa-star.text-warning.me-1
+                      else
+                        i.far.fa-star.text-warning.me-1
 
-                p.mb-0= cmt.comment
+                  p.mb-0= cmt.comment
+
+                  // PHẦN ADMIN TRẢ LỜI
+                  each reply in comments
+                    if reply.parent_id && reply.parent_id.toString() === cmt._id.toString() && reply.role === 'admin'
+                      .comment-item.bg-light.p-3.mt-3.ms-5.rounded
+                        .d-flex.justify-content-between.align-items-center.mb-1
+                          .fw-bold.text-danger Admin
+                          span.text-muted.fs-sm
+                            - const replyAt = new Date(reply.create_at || reply.createdAt);
+                            - const daysAgoReply = Math.floor((now - replyAt) / (1000 * 60 * 60 * 24));
+                            = isNaN(daysAgoReply) ? 'Vừa xong' : `${daysAgoReply} ngày trước`
+                        p.mb-0= reply.comment
         else
           p.text-muted.mt-3 Chưa có bình luận nào.
 
@@ -188,7 +197,6 @@ block main
       const thumbnails = document.querySelectorAll(".thumbnail-img");
       const zoomPane = document.querySelector('#zoomPane');
 
-      // Khởi tạo drift lần đầu với inlinePane: true
       let driftZoom = new Drift(mainImage, {
         paneContainer: zoomPane,
         inlinePane: true,
@@ -201,8 +209,6 @@ block main
           const newSrc = productImages[index];
           mainImage.src = newSrc;
           mainImage.setAttribute('data-zoom', newSrc);
-
-          // Hủy drift cũ và tạo lại với inlinePane: true để zoom pane vẫn nằm trong #zoomPane
           driftZoom.destroy();
           driftZoom = new Drift(mainImage, {
             paneContainer: zoomPane,
@@ -249,17 +255,16 @@ block main
       box-shadow: none !important;
       z-index: 9999 !important;
     }
-    #zoomPane{
-      display : none;
+
+    #zoomPane {
+      display: none;
       border-radius: 12px;
     }
 
-    /* Mọi phần tử có border bo tròn 12px */
     .border {
       border-radius: 12px !important;
     }
 
-    /* CSS cho phần biểu đồ đánh giá */
     .rating-summary {
       background-color: #f8f9fa;
       padding: 20px;

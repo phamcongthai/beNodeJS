@@ -87,6 +87,8 @@ module.exports.products = async (req, res) => {
 };
 //Chi tiết sản phẩm : 
 
+const AccountModel = require('../../models/account.model');
+
 module.exports.productsDetail = async (req, res) => {
   try {
     const find = {
@@ -100,21 +102,46 @@ module.exports.productsDetail = async (req, res) => {
     let enrichedComments = [];
 
     if (product.comments && product.comments.length > 0) {
-      const userIds = product.comments.map(c => c.user_id);
+      const userComments = product.comments.filter(c => c.role !== 'admin');
+      const adminReplies = product.comments.filter(c => c.role === 'admin');
+
+      // Lấy thông tin user thường
+      const userIds = userComments.map(c => c.user_id);
       const users = await UserModel.find({ _id: { $in: userIds }, deleted: false })
         .select('_id fullName avatar');
-
       const userMap = {};
       users.forEach(user => {
         userMap[user._id.toString()] = user;
       });
 
+      // Lấy thông tin admin
+      const adminIds = adminReplies.map(c => c.user_id);
+      const admins = await AccountModel.find({ _id: { $in: adminIds }, deleted: false })
+        .select('_id fullName avatar');
+      const adminMap = {};
+      admins.forEach(admin => {
+        adminMap[admin._id.toString()] = admin;
+      });
+
+      // Gộp tất cả comment và enrich thông tin
       enrichedComments = product.comments.map(comment => {
-        const user = userMap[comment.user_id] || {};
+        let fullName = 'Ẩn danh';
+        let avatar = '/images/default-avatar.png';
+
+        if (comment.role === 'admin') {
+          const admin = adminMap[comment.user_id];
+          fullName = admin?.fullName || 'Admin';
+          avatar = admin?.avatar || '/images/default-avatar.png';
+        } else {
+          const user = userMap[comment.user_id];
+          fullName = user?.fullName || 'Người dùng';
+          avatar = user?.avatar || '/images/default-avatar.png';
+        }
+
         return {
           ...comment._doc,
-          fullName: user.fullName || 'Người dùng ẩn danh',
-          avatar: user.avatar || '/images/default-avatar.png'
+          fullName,
+          avatar
         };
       });
     }
@@ -130,6 +157,7 @@ module.exports.productsDetail = async (req, res) => {
     res.redirect('/products');
   }
 };
+
 //Danh mục :
 module.exports.productsCategory = async (req, res) => {
   const slugCategory = req.params.slug;

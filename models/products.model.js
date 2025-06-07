@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 var slug = require('mongoose-slug-updater');
-const { account } = require('../controllers/admin/accounts.controller');
+const {
+    account
+} = require('../controllers/admin/accounts.controller');
 mongoose.plugin(slug);
 
 const productSchema = new mongoose.Schema({
@@ -21,7 +23,7 @@ const productSchema = new mongoose.Schema({
     status: String,
     deletedTime: Date,
     position: Number,
-    slug: { 
+    slug: {
         type: String, // Kiểu slug  
         slug: "title", // Thuộc tính muốn dùng làm slug, ở đây là title
         unique: true // Là duy nhất
@@ -51,17 +53,44 @@ const productSchema = new mongoose.Schema({
     brand_id: String,
     tags: [String],
     comments: [{
-        user_id: { type: String, required: true },
+        _id: {
+            type: mongoose.Schema.Types.ObjectId,
+            auto: true
+        },
+        user_id: {
+            type: String,
+            required: true
+        },
         role: {
             type: String,
             enum: ['user', 'admin'],
             required: true
         },
-        comment: { type: String, required: true },
-        rating: { type: Number, min: 1, max: 5, required: true },
-        create_at: { type: Date, default: Date.now }
+        comment: {
+            type: String,
+            required: true
+        },
+        rating: {
+            type: Number,
+            min: 1,
+            max: 5,
+            // Chỉ bắt buộc nếu là comment gốc
+            required: function () {
+                return this.parent_id === null;
+            }
+        },
+        parent_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            default: null
+        },
+        create_at: {
+            type: Date,
+            default: Date.now
+        }
     }]
-}, {timestamps: true});
+}, {
+    timestamps: true
+});
 
 const ProductsModel = mongoose.model('Products', productSchema, 'products');
 
