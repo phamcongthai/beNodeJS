@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Thông tin tài khoản</title>
+  </head>
+  <body style="background: #f0f0f0; font-family: Arial, sans-serif;">
+    <div class="container" style="max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border: 1px solid #ddd; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+      <h2 class="text-center" style="text-align: center; margin-bottom: 24px;">Thông tin tài khoản</h2>
+      <div class="text-center mb-4" style="text-align: center; margin-bottom: 24px;">
+        <label for="avatar"><img id="avatarPreview" src="https://via.placeholder.com/120?text=Avatar" alt="Avatar" style="width: 120px !important; height: 120px !important; object-fit: cover !important; border-radius: 50% !important; border: 2px solid #ccc !important; cursor: pointer; display: inline-block !important;"></label><br>
+        <input id="avatar" type="file" name="avatar" accept="image/*" hidden onchange="previewAvatar(event)">
+      </div>
+      <form>
+        <label for="name">Họ & Tên</label>
+        <input type="text" id="name" name="name" value="Thai Pham" style="width: 100%; padding: 10px; margin: 8px 0 16px 0; border: 1px solid #ccc; border-radius: 20px;">
+        <label>Ngày sinh</label>
+        <div class="dob" style="display: flex; gap: 10px; margin-bottom: 16px;">
+          <select name="day" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+            <option>Ngày</option>
+          </select>
+          <select name="month" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+            <option>Tháng</option>
+          </select>
+          <select name="year" style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 6px;">
+            <option>Năm</option>
+          </select>
+        </div>
+        <label>Giới tính</label>
+        <div class="gender" style="margin: 8px 0 16px 0;">
+          <input type="radio" id="male" name="gender" value="male">
+          <label for="male">Nam</label>
+          <input type="radio" id="female" name="gender" value="female" style="margin-left: 12px;">
+          <label for="female">Nữ</label>
+          <input type="radio" id="other" name="gender" value="other" style="margin-left: 12px;">
+          <label for="other">Khác</label>
+        </div>
+        <label for="nationality">Quốc tịch</label>
+        <select name="nationality" id="nationality" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin-bottom: 24px;">
+          <option>Chọn quốc tịch</option>
+        </select>
+        <button type="submit" style="background-color: #d90429; color: white; padding: 12px 20px; border: none; border-radius: 12px; cursor: pointer;">Lưu thay đổi</button>
+      </form>
+    </div>
+    <script>
+      function previewAvatar(event) {
+        const output = document.getElementById('avatarPreview');
+        output.src = URL.createObjectURL(event.target.files[0]);
+      }
+    </script>
+  </body>
+</html>

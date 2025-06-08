@@ -1,34 +1,79 @@
-extends ../../layouts/default
+extends ../../layouts/auth.pug
 include ../../mixin/flash.pug
 
 block main
   +alert-error(5000)
 
-  .container.my-5
-    .row.justify-content-center
-      .col-8
-        h1.text-center.mb-4 Đăng ký tài khoản
+  .container-fluid.p-0
+    .row.no-gutters
+      //- Left info box
+      .col-12.col-md-6.p-0
+        .d-flex.flex-column.align-items-center.justify-content-center.bg-image(style="background-image: url('https://w0.peakpx.com/wallpaper/140/912/HD-wallpaper-online-shopping-laptop-shopping-shopping-on-sites-shopping-bag-on-your-keyboard.jpg'); background-size: cover; background-position: center; height: 100vh; color: white; padding: 30px;")
+          .box-info(style="background-color: #E2E1E1; padding: 20px; border-radius: 10px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); max-width: 500px; text-align: center;")
+            h5.mb-3(style="font-weight: bold; font-size: 24px; color: #d70018;") Gia nhập cộng đồng khách hàng đặc biệt
+            p.mb-4(style="font-size: 16px; color: #333;") Cùng khám phá các ưu đãi và khuyến mãi cực kỳ hấp dẫn dành riêng cho bạn
 
-        form(action="/user/register", method="POST")
-          .form-group.mb-3
-            label(for="fullName") Họ và tên
-            input#fullName.form-control(type="text", name="fullName", required, style="color: black")
+            ul.list-unstyled(style="font-size: 16px; color: #333; padding-left: 1rem; text-align: left;")
+              li.mb-2
+                i.fas.fa-gift.me-2.text-danger
+                | Chiết khấu lên tới 
+                strong 5%
+                | khi mua các sản phẩm
+              li.mb-2
+                i.fas.fa-truck.me-2.text-danger
+                | Miễn phí giao hàng cho đơn từ 
+                strong 300.000đ
+              li.mb-2
+                i.fas.fa-birthday-cake.me-2.text-danger
+                | Tặng voucher sinh nhật lên đến 
+                strong 500.000đ
+              li.mb-2
+                i.fas.fa-exchange-alt.me-2.text-danger
+                | Thu cũ đổi mới với giá ưu đãi lên đến 
+                strong 1 triệu
+              li.mb-2
+                i.fas.fa-arrow-up.me-2.text-danger
+                | Thăng hạng nhận quà tặng trị giá đến 
+                strong 300.000đ
+              li
+                i.fas.fa-graduation-cap.me-2.text-danger
+                | Ưu đãi đặc biệt lên đến 
+                strong 10%
+                | cho học sinh, sinh viên và giáo viên
 
-          .form-group.mb-3
-            label(for="email") Email
-            input#email.form-control(type="email", name="email", required, style="color: black")
+      //- Right form
+      .col-12.col-md-6.p-0
+        .d-flex.flex-column.justify-content-center.bg-white(style="height: 100vh; padding: 40px;")
+          h2.text-center.mb-4(style="color: #d70018; font-weight: bold; font-size: 28px;") Đăng ký tài khoản 
 
-          .form-group.mb-4
-            label(for="password") Mật khẩu
-            input#password.form-control(type="password", name="password", required, style="color: black")
+          form(action="/user/register", method="POST")
+            .form-group.mb-3
+              label(for="fullName") Họ và tên
+              input#fullName.form-control(
+                type="text",
+                name="fullName",
+                required,
+                style="color: black; border-radius: 5px; padding: 1rem; font-size: 16px; border: 1px solid #ccc;")
 
-          button.btn.btn-primary.btn-block(type="submit") Đăng ký
+            .form-group.mb-3
+              label(for="email") Email
+              input#email.form-control(
+                type="email",
+                name="email",
+                required,
+                style="color: black; border-radius: 5px; padding: 1rem; font-size: 16px; border: 1px solid #ccc;")
 
-  // 👇 Có thể thêm style nếu muốn tùy chỉnh thêm
-  style.
-    .form-control {
-      height: 45px;
-    }
-    .btn-block {
-      width: 100%;
-    }
+            .form-group.mb-4
+              label(for="password") Mật khẩu
+              input#password.form-control(
+                type="password",
+                name="password",
+                required,
+                style="color: black; border-radius: 5px; padding: 1rem; font-size: 16px; border: 1px solid #ccc;")
+
+            button.btn.w-100.text-white(
+              style="background-color: #d70018; padding: 1rem; font-size: 18px; border-radius: 5px; transition: background-color 0.3s ease;") 
+              | Đăng ký
+
+            .text-center.mt-3
+              a(href="/user/login") Đã có tài khoản? Đăng nhập ngay

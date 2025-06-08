@@ -3,50 +3,73 @@ extends ../../layouts/default.pug
 block main
   .container.mt-5
     .row.justify-content-center
-      .col-md-8
-        .card.shadow-lg
-          .card-body
-            .row.align-items-center.mb-4
-              .col-md-4.text-center
-                if user.avatar
-                  img(
-                    src=user.avatar,
-                    alt='Avatar',
-                    class='rounded-circle shadow',
-                    style='width: 150px; height: 150px; object-fit: cover;'
-                  )
-                else
-                  img(
-                    src='/admin/images/avatar.png',
-                    alt='Default Avatar',
-                    class='rounded-circle shadow',
-                    style='width: 150px; height: 150px; object-fit: cover;'
-                  )
-              .col-md-8
-                h3.mb-0= user.fullName || 'Chưa cập nhật họ tên'
-                small.text-muted #{user.email}
+      .col-md-10
+        .card.shadow-sm.p-4(style="border-radius: 12px; background: white;")
+          h5.mb-4 Thông tin cá nhân
 
-            hr
+          form(action='/user/update', method='POST', enctype='multipart/form-data')
+            .d-flex.align-items-start.mb-4
+              // Avatar bên trái
+              .position-relative.me-4
+                label(for='avatar-input')
+                  if user.avatar
+                    img(
+                      src=user.avatar,
+                      alt='Avatar',
+                      style='width: 96px !important; height: 96px !important; object-fit: cover; border-radius: 50% !important; cursor: pointer; border: 2px solid #ddd;'
+                    )
+                  else
+                    .d-flex.align-items-center.justify-content-center(
+                      style='width: 96px !important; height: 96px !important; background-color: #e0e0e0; color: #555; font-size: 36px; font-weight: bold; border-radius: 50% !important; cursor: pointer;'
+                    )= user.fullName ? user.fullName.charAt(0).toUpperCase() : '?'
+                input#avatar-input(type='file', name='avatar', hidden)
 
-            dl.row
-              if user.phone
-                dt.col-sm-4 Số điện thoại:
-                dd.col-sm-8= user.phone
+              // Các field bên phải
+              .flex-grow-1
+                .row
+                  .col-md-6.mb-3
+                    label.form-label(for='fullName') Họ & Tên
+                    input.form-control(type='text', name='fullName', id='fullName', value=user.fullName || '')
 
-              dt.col-sm-4 Email:
-              dd.col-sm-8= user.email || 'Chưa có'
+                  .col-md-6.mb-3
+                    label.form-label(for='nickname') Nickname
+                    input.form-control(type='text', name='nickname', id='nickname', placeholder='Thêm nickname', value=user.nickname || '')
 
-              dt.col-sm-4 Trạng thái:
-              dd.col-sm-8
-                if user.status === 'active'
-                  span.badge.bg-success Hoạt động
-                else
-                  span.badge.bg-danger Dừng hoạt động
-              if user.createdAt
-                dt.col-sm-4 Ngày tạo:
-                dd.col-sm-8= new Date(user.createdAt).toLocaleDateString()
+                  .col-md-12.mb-3
+                    label.form-label Ngày sinh
+                    .d-flex.gap-2
+                      select.form-select(name='day')
+                        option(value='') Ngày
+                        - for (let i = 1; i <= 31; i++)
+                          option(value=i)= i
+                      select.form-select(name='month')
+                        option(value='') Tháng
+                        - for (let i = 1; i <= 12; i++)
+                          option(value=i)= i
+                      select.form-select(name='year')
+                        option(value='') Năm
+                        - for (let i = 1950; i <= new Date().getFullYear(); i++)
+                          option(value=i)= i
 
-            .mt-4.text-end
-              a.btn.btn-primary(href=`/edit`)
-                i.fas.fa-edit.me-1
-                | Chỉnh sửa thông tin
+                  .col-md-12.mb-3
+                    label.form-label Giới tính
+                    .form-check.form-check-inline
+                      input.form-check-input(type='radio', name='gender', id='male', value='male', checked=user.gender === 'male')
+                      label.form-check-label(for='male') Nam
+                    .form-check.form-check-inline
+                      input.form-check-input(type='radio', name='gender', id='female', value='female', checked=user.gender === 'female')
+                      label.form-check-label(for='female') Nữ
+                    .form-check.form-check-inline
+                      input.form-check-input(type='radio', name='gender', id='other', value='other', checked=user.gender === 'other')
+                      label.form-check-label(for='other') Khác
+
+                  .col-md-12.mb-4
+                    label.form-label Quốc tịch
+                    select.form-select(name='nationality')
+                      option(value='') Chọn quốc tịch
+                      option(value='vn', selected=user.nationality === 'vn') Việt Nam
+                      option(value='us', selected=user.nationality === 'us') Hoa Kỳ
+                      option(value='jp', selected=user.nationality === 'jp') Nhật Bản
+
+            .text-end
+              button.btn.btn-primary(type='submit', style='padding: 10px 24px; border-radius: 8px;') Lưu thay đổi
