@@ -15,6 +15,7 @@ const ordersRoutes = require('../../routes/admin/orders.route');
 const brandRoutes = require('../../routes/admin/brand.route');
 const adsRoutes = require('../../routes/admin/ads.route');
 const cmtRoutes = require('../../routes/admin/comment.route');
+const blogRoutes = require('../../routes/admin/blog.route');
 module.exports = (app) => {
     app.use(settingsGeneral.settingsGeneral);
     app.use(pathAdmin.prefixAdmin+'/dashboard', authMiddleware.authRequire, dashboardRoutes);
@@ -29,4 +30,5 @@ module.exports = (app) => {
     app.use(pathAdmin.prefixAdmin+'/brands', authMiddleware.authRequire, brandRoutes);
     app.use(pathAdmin.prefixAdmin+'/ads', authMiddleware.authRequire, adsRoutes);
     app.use(pathAdmin.prefixAdmin+'/comment', authMiddleware.authRequire, cmtRoutes);
+    app.use(pathAdmin.prefixAdmin+'/blogs', authMiddleware.authRequire, blogRoutes);
 }

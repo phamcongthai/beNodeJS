@@ -14,7 +14,9 @@ const settingsGeneral = require('../../middleware/admin/settingsGeneral.middlewa
 const chatRoutes = require('../../routes/client/chat.route');
 const adsMiddleware = require('../../middleware/client/ads.middleware');
 const commentRoutes = require('../../routes/client/comment.route');
+const blogsRoutes = require('../../routes/client/blogs.route')
 module.exports = (app) => {
+    app.use(express.json());
     app.use(categorySubmenu.categorySubmenu);// Chỉ dùng cách gọi 1 lần như này bên client
     app.use(cartMiddleware.cart);
     app.use(userMiddleware.userMiddleware);
@@ -27,4 +29,5 @@ module.exports = (app) => {
     app.use('/user', userRoutes);
     app.use('/chat', chatRoutes);
     app.use('/comment', commentRoutes);
+    app.use('/blogs', blogsRoutes);
 }

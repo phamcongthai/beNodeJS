@@ -1,0 +1,32 @@
+extends ../../layouts/default
+
+include ../../mixin/flash.pug
+
+block main
+  h1 Tạo bài viết mới
+
+
+  form(action='/admin/blogs/create' method='POST')
+    .form-group
+      label(for='title') Tiêu đề bài viết
+      input(type='text' class='form-control' name='title' id='title' required)
+
+    .form-group
+      label(for='content') Nội dung bài viết
+      textarea(class='form-control' name='content' id='content' rows='5' required)
+      
+    .form-group
+      label(for='summary') Tóm tắt
+      textarea(class='form-control' name='summary' id='summary' rows='3')
+
+    .form-group
+      label(for='category') Thể loại
+      input(type='text' class='form-control' name='category' id='category')
+
+    .form-group
+      label(for='status') Trạng thái
+      select(name='status' class='form-control' id='status')
+        option(value='pending') Đang chờ duyệt
+        option(value='published') Đã xuất bản
+
+    button(type='submit' class='btn btn-primary' createBtnBlog) Lưu bài viết

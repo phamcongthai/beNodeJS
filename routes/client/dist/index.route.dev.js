@@ -32,7 +32,10 @@ var adsMiddleware = require('../../middleware/client/ads.middleware');
 
 var commentRoutes = require('../../routes/client/comment.route');
 
+var blogsRoutes = require('../../routes/client/blogs.route');
+
 module.exports = function (app) {
+  app.use(express.json());
   app.use(categorySubmenu.categorySubmenu); // Chỉ dùng cách gọi 1 lần như này bên client
 
   app.use(cartMiddleware.cart);
@@ -46,4 +49,5 @@ module.exports = function (app) {
   app.use('/user', userRoutes);
   app.use('/chat', chatRoutes);
   app.use('/comment', commentRoutes);
+  app.use('/blogs', blogsRoutes);
 };

@@ -613,4 +613,49 @@ document.addEventListener("DOMContentLoaded", function () {
       updateInputFiles();
     }); // Nếu muốn, có thể load ảnh có sẵn từ server (product.thumbnail) vào đây (không thể xóa client-side)
   }
-});
+}); // Quản lý bài viết:
+
+var createBtnBlog = document.querySelector('button[createBtnBlog]');
+
+if (createBtnBlog) {
+  createBtnBlog.addEventListener("click", function (event) {
+    window.location.href = "/admin/blogs/create";
+  });
+}
+
+var buttonDetailBlog = document.querySelectorAll('button[button-detailBlog]');
+
+if (buttonDetailBlog) {
+  buttonDetailBlog.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/blogs/detail/".concat(id);
+    });
+  });
+}
+
+var buttonEditBlog = document.querySelectorAll('button[button-editBlog]');
+
+if (buttonEditBlog) {
+  buttonEditBlog.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      window.location.href = "/admin/blogs/edit/".concat(id);
+    });
+  });
+}
+
+var buttonDelBlog = document.querySelectorAll('button[button-delBlog]');
+
+if (buttonDelBlog) {
+  buttonDelBlog.forEach(function (item) {
+    item.addEventListener("click", function (event) {
+      var id = item.getAttribute("id");
+      var confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa bài viết này?");
+
+      if (confirmDelete) {
+        window.location.href = "/admin/blogs/delete/".concat(id);
+      }
+    });
+  });
+}

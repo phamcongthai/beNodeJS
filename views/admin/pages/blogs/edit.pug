@@ -1,0 +1,33 @@
+extends ../../layouts/default
+
+include ../../mixin/flash.pug
+
+block main
+  +alert-success(5000)
+  h1 Chỉnh sửa bài viết
+
+  form(method="POST", action=`/admin/blogs/edit/${blog._id}?_method=PATCH`)
+    .form-group
+      label(for="title") Tiêu đề
+      input.form-control(type="text", name="title", id="title", required, value=blog.title)
+
+    .form-group
+      label(for="summary") Tóm tắt
+      textarea.form-control(name="summary", id="summary")= blog.summary
+
+    .form-group
+      label(for="content") Nội dung
+      textarea.form-control(name="content", id="content", rows="8")= blog.content
+
+    .form-group
+      label(for="tags") Tags (cách nhau bởi dấu phẩy)
+      input.form-control(type="text", name="tags", id="tags", value=blog.tags.join(', '))
+
+    .form-group
+      label(for="status") Trạng thái
+      select.form-control(name="status", id="status")
+        option(value="pending", selected=blog.status === 'pending') Đang chờ duyệt
+        option(value="published", selected=blog.status === 'published') Đã xuất bản
+
+    button.btn.btn-primary(type="submit") Cập nhật
+    a.btn.btn-secondary.ml-2(href="/admin/blogs") Hủy

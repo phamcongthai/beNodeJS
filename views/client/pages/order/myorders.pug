@@ -83,8 +83,9 @@ block main
                   th Tổng
               tbody
                 each product in order.products
+                  
                   tr
-                    td: img(src=product.thumbnail, alt="thumb", width="60")
+                    td: img(src=product.thumbnail[0], alt="thumb", width="60")
                     td
                       a(href=`/products/detail/${product.slug}`) #{product.title} 
                     td #{product.quantity}

@@ -1,0 +1,42 @@
+extends ../../layouts/default
+
+include ../../mixin/flash.pug
+
+block main
+  +alert-success(5000)
+  h1 Chi tiết bài viết
+
+  .card
+    .card-body
+      h3= blog.title
+
+      p
+        strong Tóm tắt:
+        | #{blog.summary || 'Không có'}
+
+      p
+        strong Nội dung:
+        | !{blog.content}
+
+      p
+        strong Trạng thái:
+        if blog.status === 'pending'
+          span.badge.badge-warning Đang chờ duyệt
+        else if blog.status === 'published'
+          span.badge.badge-success Đã xuất bản
+        else
+          span.badge.badge-secondary Không xác định
+
+      p
+        strong Tags:
+        | #{blog.tags.length ? blog.tags.join(', ') : 'Không có'}
+
+      p
+        strong Người tạo:
+        | #{authorInfo}
+
+      p
+        strong Ngày tạo:
+        | #{moment(blog.createdAt).format('DD/MM/YYYY')}
+
+      a.btn.btn-secondary.mt-3(href="/admin/blogs") Quay lại

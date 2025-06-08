@@ -1,0 +1,84 @@
+extends ../../layouts/default
+
+block main
+  .container
+    .row
+      // Bên trái: Danh sách tiêu đề blog
+      .col-md-3  
+        .sidebar
+          h4 Danh sách bài viết
+          ul.list-group#blog-titles
+            each blog in blogs
+              li.list-group-item(
+                role="button",
+                data-slug=blog.slug,
+                class=(blogActive && blog.slug === blogActive.slug ? 'active' : '')
+              )
+                .indicator(style=(blogActive && blog.slug === blogActive.slug ? 'display:block' : ''))
+                a(href=`/blogs/${blog.slug}`)= blog.title
+
+      // Bên phải: Nội dung blog
+      .col-md-9  
+        if blogActive
+          .blog-content
+            h4= blogActive.title
+            if blogActive.content
+              div!= blogActive.content
+            else
+              p Không có nội dung
+            hr
+        else
+          p Không tìm thấy bài viết
+
+  style.
+    .sidebar {
+      background-color: #F3F4F6;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+    }
+
+    .sidebar h4 {
+      font-weight: normal;
+      color: #777;
+      font-size: 14px;
+    }
+
+    #blog-titles .list-group-item {
+      position: relative;
+      padding-left: 25px;
+      cursor: pointer;
+      border: none;
+    }
+
+    #blog-titles .list-group-item.active {
+      background-color: transparent;
+      color: #007BFF;
+    }
+
+    .indicator {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 5px;
+      height: 100%;
+      background-color: red;
+      display: none;
+    }
+
+    .blog-content {
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      background-color: #fff;
+    }
+
+    .blog-content h4 {
+      font-weight: bold;
+    }
+
+    .blog-content hr {
+      margin-top: 15px;
+      border-color: #ddd;
+    }

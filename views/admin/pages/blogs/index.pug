@@ -1,0 +1,78 @@
+extends ../../layouts/default
+
+include ../../mixin/flash.pug
+
+block main
+  +alert-success(5000)
+
+  h1 Quản lý bài viết
+
+  .card.mb-3
+    .card-header Tìm kiếm và Chọn trạng thái
+    .card-body.d-flex.align-items-center.justify-content-between
+      form(id="form-search", method="GET", action="/admin/blogs", class="d-flex align-items-center")
+        .input-group
+          input(
+            type="text"
+            placeholder="Nhập từ khóa"
+            name="keyword"
+            class="form-control"
+            value=keyword
+          )
+          .input-group-append
+            button(class="btn btn-success" type="submit") Tìm
+      .box
+        button(class=`btn btn-sm ml-1 btn-outline-success ${status === 'pending' ? 'active' : ''}`, type="button", onclick="window.location='/admin/blogs?status=pending'") Đang chờ duyệt
+        button(class=`btn btn-sm ml-1 btn-outline-success ${status === 'published' ? 'active' : ''}`, type="button", onclick="window.location='/admin/blogs?status=published'") Đã xuất bản
+
+  .row
+    .col-8
+      form(action=`/admin/blogs/change-multi?_method=PATCH`, method="POST", id="form-change-multi")
+        input(type="hidden", name="ids", id="selected-ids")
+        .d-flex.align-items-start
+          .form-group
+            select(name="type", class="form-control")
+              option(value="active") Hoạt động
+              option(value="inactive") Dừng hoạt động
+              option(value="deleteAll") Xóa tất cả
+          button(type="submit", class="btn btn-primary") Áp dụng
+    .col-4
+      if(currentRole.permissions.includes("post_create"))
+        button(class="btn btn-primary" createBtnBlog) Thêm bài viết
+
+  table(class="table table-hover table-sm" table-checkall)
+    thead
+      tr
+        th
+          input(type="checkbox", name="checkall")
+        th STT
+        th Tiêu đề bài viết
+        th Trạng thái
+        th Người tạo
+        th Ngày tạo
+        th Hành động
+    tbody
+      each item, index in blogsData
+        tr
+          td 
+            input(type="checkbox", id=`${item._id}`, name="id")
+          td= index + 1
+          td= item.title
+          td
+            if item.status === 'pending'
+              button(class="badge badge-warning") Đang chờ duyệt
+            else if item.status === 'published'
+              button(class="badge badge-success") Đã xuất bản
+            else
+              button(class="badge badge-danger") Không hoạt động
+          td= (item.account && item.account.fullName) || 'Không rõ'
+          td= item.createdAt ? moment(item.createdAt).format("DD/MM/YYYY") : null
+          td
+            button(class="btn btn-success btn-sm", id=`${item._id}`, button-detailBlog) Chi tiết
+            if(currentRole.permissions.includes("post_edit"))
+              button(class="btn btn-warning btn-sm ml-1", id=`${item._id}`, button-editBlog) Sửa
+            if(currentRole.permissions.includes("post_delete"))
+              button(class="btn btn-danger btn-sm ml-1", id=`${item._id}`, button-delBlog) Xóa
+
+  form(action="", method="POST", id="form-change-status", data-path="/admin/blogs/change-status")
+  form(action="", method="POST", id="form-deleteT", data-path="/admin/blogs/deleteT")

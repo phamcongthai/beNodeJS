@@ -102,3 +102,33 @@ module.exports.search = async (req, res) => {
         res.status(500).send('Lỗi tải trang tìm kiếm');
     }
 };
+module.exports.suggest = async (req, res) => {
+    const { keyword } = req.body;
+
+    if (!keyword || keyword.trim() === '') {
+        return res.status(400).json({ suggestions: [] });
+    }
+
+    const searchRegex = searchHelper.search(keyword.trim());
+
+    try {
+        const products = await ProductsModel.find({
+            deleted: false,
+            status: 'active',
+            $or: [
+                { title: searchRegex },
+                { tags: searchRegex }
+            ]
+        })
+        .limit(10) // chỉ lấy 10 kết quả gợi ý
+        .select('title') // chỉ lấy tiêu đề
+
+        const suggestions = products.map(p => p.title);
+
+        return res.json({ suggestions });
+
+    } catch (error) {
+        console.error('Lỗi khi gợi ý tìm kiếm:', error);
+        return res.status(500).json({ suggestions: [] });
+    }
+};

@@ -29,7 +29,7 @@ var orderSchema = new mongoose.Schema({
     price: Number,
     discountPercentage: Number,
     quantity: Number,
-    thumbnail: String,
+    thumbnail: [String],
     slug: String,
     newPrice: Number
   }],
