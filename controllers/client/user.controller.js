@@ -180,3 +180,37 @@ module.exports.profile = async (req, res) => {
 
     })
 }
+//[POST : Cập nhật thông tin user :
+module.exports.update = async (req, res) => {
+  try {
+    const tokenUser = req.cookies.token_user;
+    if (!tokenUser) {
+      req.flash('error', 'Bạn chưa đăng nhập');
+      return res.redirect('/user/login');
+    }
+
+    const user = await UserModel.findOne({ token_user: tokenUser });
+    if (!user) {
+      req.flash('error', 'Người dùng không tồn tại');
+      return res.redirect('back');
+    }
+
+    user.fullName = req.body.fullName || user.fullName;
+    user.nickname = req.body.nickname || user.nickname;
+    user.dob.day = req.body.day ? parseInt(req.body.day) : user.day;
+    user.dob.month = req.body.month ? parseInt(req.body.month) : user.month;
+    user.dob.year = req.body.year ? parseInt(req.body.year) : user.year;
+    user.gender = req.body.gender || user.gender;
+    user.nationality = req.body.nationality || user.nationality;
+    user.avatar = req.body.avatar;
+    
+    await user.save();
+
+    req.flash('success', 'Cập nhật thông tin thành công!');
+    res.redirect('/user/profile');
+  } catch (error) {
+    console.log(error);
+    req.flash('error', 'Cập nhật thông tin thất bại!');
+    res.redirect('back');
+  }
+};

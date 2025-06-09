@@ -4,27 +4,28 @@ block main
   .container.mt-5
     .row.justify-content-center
       .col-md-10
-        .card.shadow-sm.p-4(style="border-radius: 12px; background: white;")
+        .card.shadow-sm.p-4(style="border-radius: 12px; background: white; border: 1px solid #ddd;")
           h5.mb-4 Thông tin cá nhân
 
           form(action='/user/update', method='POST', enctype='multipart/form-data')
             .d-flex.align-items-start.mb-4
-              // Avatar bên trái
+              // Avatar
               .position-relative.me-4
                 label(for='avatar-input')
-                  if user.avatar
-                    img(
-                      src=user.avatar,
-                      alt='Avatar',
-                      style='width: 96px !important; height: 96px !important; object-fit: cover; border-radius: 50% !important; cursor: pointer; border: 2px solid #ddd;'
-                    )
-                  else
-                    .d-flex.align-items-center.justify-content-center(
-                      style='width: 96px !important; height: 96px !important; background-color: #e0e0e0; color: #555; font-size: 36px; font-weight: bold; border-radius: 50% !important; cursor: pointer;'
-                    )= user.fullName ? user.fullName.charAt(0).toUpperCase() : '?'
+                  // Ảnh avatar preview
+                  img#avatar-preview(
+                    src=user.avatar || '',
+                    alt='Avatar',
+                    style=`${user.avatar ? '' : 'display: none !important;'}`)
+
+                  // Chữ cái nếu chưa có avatar
+                  .d-flex.align-items-center.justify-content-center#avatar-placeholder(
+                    style=`${user.avatar ? 'display: none !important;' : ''}`
+                  )= user.fullName ? user.fullName.charAt(0).toUpperCase() : '?'
+
                 input#avatar-input(type='file', name='avatar', hidden)
 
-              // Các field bên phải
+              // Các trường thông tin
               .flex-grow-1
                 .row
                   .col-md-6.mb-3
@@ -41,15 +42,15 @@ block main
                       select.form-select(name='day')
                         option(value='') Ngày
                         - for (let i = 1; i <= 31; i++)
-                          option(value=i)= i
+                          option(value=i selected=(user.dob && user.dob.day == i))= i
                       select.form-select(name='month')
                         option(value='') Tháng
                         - for (let i = 1; i <= 12; i++)
-                          option(value=i)= i
+                          option(value=i selected=(user.dob && user.dob.month == i))= i
                       select.form-select(name='year')
                         option(value='') Năm
                         - for (let i = 1950; i <= new Date().getFullYear(); i++)
-                          option(value=i)= i
+                          option(value=i selected=(user.dob && user.dob.year == i))= i
 
                   .col-md-12.mb-3
                     label.form-label Giới tính
@@ -73,3 +74,49 @@ block main
 
             .text-end
               button.btn.btn-primary(type='submit', style='padding: 10px 24px; border-radius: 8px;') Lưu thay đổi
+
+  script.
+    const avatarInput = document.getElementById('avatar-input');
+    const avatarPreview = document.getElementById('avatar-preview');
+    const avatarPlaceholder = document.getElementById('avatar-placeholder');
+
+    avatarInput.addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          avatarPreview.src = e.target.result;
+          avatarPreview.style.display = 'block';
+          avatarPreview.style.setProperty('display', 'block', 'important');
+          avatarPlaceholder.style.setProperty('display', 'none', 'important');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+  style.
+    #avatar-preview {
+      width: 96px !important;
+      height: 96px !important;
+      object-fit: cover;
+      border-radius: 50% !important;
+      border: 2px solid #ddd;
+      cursor: pointer;
+    }
+
+    #avatar-placeholder {
+      width: 96px !important;
+      height: 96px !important;
+      background-color: #e0e0e0;
+      color: #555;
+      font-size: 36px;
+      font-weight: bold;
+      border-radius: 50% !important;
+      cursor: pointer;
+    }
+    .card {
+      border-radius: 12px !important;
+      background: white !important;
+      border: 1px solid #ddd !important;
+      padding : 70px !important;
+    }

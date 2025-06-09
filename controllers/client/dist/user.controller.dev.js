@@ -425,4 +425,72 @@ module.exports.profile = function _callee11(req, res) {
       }
     }
   });
+}; //[POST : Cập nhật thông tin user :
+
+
+module.exports.update = function _callee12(req, res) {
+  var tokenUser, user;
+  return regeneratorRuntime.async(function _callee12$(_context12) {
+    while (1) {
+      switch (_context12.prev = _context12.next) {
+        case 0:
+          _context12.prev = 0;
+          tokenUser = req.cookies.token_user;
+
+          if (tokenUser) {
+            _context12.next = 5;
+            break;
+          }
+
+          req.flash('error', 'Bạn chưa đăng nhập');
+          return _context12.abrupt("return", res.redirect('/user/login'));
+
+        case 5:
+          _context12.next = 7;
+          return regeneratorRuntime.awrap(UserModel.findOne({
+            token_user: tokenUser
+          }));
+
+        case 7:
+          user = _context12.sent;
+
+          if (user) {
+            _context12.next = 11;
+            break;
+          }
+
+          req.flash('error', 'Người dùng không tồn tại');
+          return _context12.abrupt("return", res.redirect('back'));
+
+        case 11:
+          user.fullName = req.body.fullName || user.fullName;
+          user.nickname = req.body.nickname || user.nickname;
+          user.dob.day = req.body.day ? parseInt(req.body.day) : user.day;
+          user.dob.month = req.body.month ? parseInt(req.body.month) : user.month;
+          user.dob.year = req.body.year ? parseInt(req.body.year) : user.year;
+          user.gender = req.body.gender || user.gender;
+          user.nationality = req.body.nationality || user.nationality;
+          user.avatar = req.body.avatar;
+          _context12.next = 21;
+          return regeneratorRuntime.awrap(user.save());
+
+        case 21:
+          req.flash('success', 'Cập nhật thông tin thành công!');
+          res.redirect('/user/profile');
+          _context12.next = 30;
+          break;
+
+        case 25:
+          _context12.prev = 25;
+          _context12.t0 = _context12["catch"](0);
+          console.log(_context12.t0);
+          req.flash('error', 'Cập nhật thông tin thất bại!');
+          res.redirect('back');
+
+        case 30:
+        case "end":
+          return _context12.stop();
+      }
+    }
+  }, null, null, [[0, 25]]);
 };

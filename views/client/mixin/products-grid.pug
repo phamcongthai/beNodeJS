@@ -8,23 +8,37 @@ mixin products-grid(data, name)
         - const formattedOldPrice = item.price.toLocaleString('vi-VN')
         - const formattedNewPrice = discountedPrice.toLocaleString('vi-VN')
         - const mainThumbnail = Array.isArray(item.thumbnail) ? item.thumbnail[0] : item.thumbnail
+        - const avgRating = item.comments?.length ? (item.comments.reduce((sum, c) => sum + (c.rating || 0), 0) / item.comments.length).toFixed(1) : 0
+        - const filledStars = Math.floor(avgRating)
+        - const emptyStars = 5 - filledStars
 
         .swiper-slide
           a.product-item(href=`/products/detail/${item.slug}`)
+            if item.discountPercentage
+              .discount-tag Giảm #{item.discountPercentage}%
+            if item.isFeatured
+              .featured-tag 🔥 Nổi bật
+
             .inner-image
-              if item.isFeatured
-                .featured-tag 🔥 Nổi bật
-              img(src=mainThumbnail, alt="img")
+              img(src=mainThumbnail, alt=item.title)
 
             .inner-content
               h3.inner-title #{item.title}
               .inner-price
                 span.inner-price-old #{formattedOldPrice}đ
                 span.inner-price-new #{formattedNewPrice}đ
-              .inner-discount -#{item.discountPercentage}%
 
-    .product-carousel-button-prev
-    .product-carousel-button-next
+              .rating-fav
+                span.stars
+                  each _ in Array(filledStars)
+                    span.star-filled ⭐
+                  each _ in Array(emptyStars)
+                    span.star-empty ☆
+                span.fav ♥ Yêu thích
+
+    // Mũi tên điều hướng
+    .product-carousel-button-prev &lt;
+    .product-carousel-button-next &gt;
 
   link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css")
 
@@ -48,13 +62,13 @@ mixin products-grid(data, name)
 
     .swiper.product-container .swiper-slide {
       width: 240px !important;
-      height: 300px !important;
+      height: 340px !important;
       flex-shrink: 0;
     }
 
     .product-item {
       width: 235px;
-      height: 320px;
+      height: 340px;
       background: #fff;
       border-radius: 8px;
       overflow: hidden;
@@ -65,6 +79,7 @@ mixin products-grid(data, name)
       justify-content: flex-start;
       text-decoration: none;
       color: inherit;
+      position: relative;
     }
 
     .product-item:hover {
@@ -86,16 +101,29 @@ mixin products-grid(data, name)
       display: block;
     }
 
+    .discount-tag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #d80027;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 3px 6px;
+      border-bottom-right-radius: 8px;
+      z-index: 10;
+    }
+
     .featured-tag {
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 0;
+      right: 0;
       background-color: red;
       color: white;
       font-size: 0.75rem;
       font-weight: bold;
       padding: 3px 8px;
-      border-radius: 4px;
+      border-bottom-left-radius: 8px;
       z-index: 10;
     }
 
@@ -133,10 +161,33 @@ mixin products-grid(data, name)
       font-weight: bold;
     }
 
-    .inner-discount {
-      color: green;
-      font-weight: 600;
+    .rating-fav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-size: 0.875rem;
+      margin-top: auto;
+      padding-top: 6px;
+      border-top: 1px solid #fff;
+    }
+
+    .stars {
+      display: flex;
+      gap: 1px;
+    }
+
+    .star-filled {
+      color: gold;
+    }
+
+    .star-empty {
+      color: #ccc;
+    }
+
+    .fav {
+      color: #ff4d4f;
+      font-weight: 500;
+      font-size: 0.85rem;
     }
 
     .product-carousel-button-prev,
@@ -157,6 +208,8 @@ mixin products-grid(data, name)
       cursor: pointer;
       opacity: 0;
       transition: opacity 0.3s ease;
+      font-size: 20px;
+      font-weight: bold;
     }
 
     .swiper.product-container:hover .product-carousel-button-prev,
@@ -170,18 +223,6 @@ mixin products-grid(data, name)
 
     .product-carousel-button-next {
       right: 10px;
-    }
-
-    .product-carousel-button-prev::after {
-      content: '<';
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    .product-carousel-button-next::after {
-      content: '>';
-      font-size: 18px;
-      font-weight: bold;
     }
 
   script(src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js")
