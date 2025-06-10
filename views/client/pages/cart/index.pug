@@ -5,48 +5,56 @@ block main
   +alert-success(5000)
   +alert-error(5000)
 
-  .container.my-3
-    .row
-      .col-12
-        table.table.table-bordered
-          thead
+  .container.my-5
+    .cart-wrapper
+      h4.mb-4.text-center.fw-bold Giỏ hàng của bạn
+
+      table.table.table-hover.align-middle
+        thead
+          tr
+            th.text-center STT
+            th.text-center Ảnh
+            th Tên
+            th.text-center Giá (sau giảm)
+            th.text-center Số lượng
+            th.text-center Thành tiền
+            th.text-center 
+        tbody
+          - let totalPrice = 0
+          each item, index in products
+            - const finalPrice = Math.round(item.price * (1 - item.discountPercentage / 100))
+            - const quantity = item.quantity || 1
+            - const amount = finalPrice * quantity
+            - totalPrice += amount
             tr
-              th STT
-              th Ảnh
-              th Tên
-              th Giá (sau giảm)
-              th Số lượng
-              th Thành tiền
-              th 
-          tbody
-            - let totalPrice = 0
-            each item, index in products
-              - const finalPrice = Math.round(item.price * (1 - item.discountPercentage / 100))
-              - const quantity = item.quantity || 1
-              - const amount = finalPrice * quantity
-              - totalPrice += amount
-              tr
-                td #{index + 1}
-                td 
-                  img(src=item.thumbnail[0], alt=item.title, width="80px")
-                td 
-                  a(href=`/products/detail/${item.slug}`) #{item.title}
-                td #{finalPrice.toLocaleString()}₫
-                td
-                  input(
-                    type="number", 
-                    name="quantity", 
-                    value=quantity, 
-                    min="1", 
-                    product-id=item.id, 
-                    style="width: 60px"
-                    input-quantity
-                  )
-                td #{amount.toLocaleString()}₫
-                td
-                  a(href=`/cart/delete/${item.id}`, class="btn btn-danger") Xóa
+              td.text-center #{index + 1}
+              td.text-center 
+                img(src=item.thumbnail[0], alt=item.title, width="80px", class="rounded")
+              td 
+                a(href=`/products/detail/${item.slug}`, class="text-dark fw-bold") #{item.title}
+              td.text-center #{finalPrice.toLocaleString()}₫
+              td.text-center
+                input.form-control.text-center(
+                  type="number", 
+                  name="quantity", 
+                  value=quantity, 
+                  min="1", 
+                  product-id=item.id,
+                  style="width: 70px; margin: auto;"
+                  input-quantity
+                )
+              td.text-center #{amount.toLocaleString()}₫
+              td.text-center
+                a(href=`/cart/delete/${item.id}`, class="btn btn-sm btn-outline-danger") Xóa
 
-        h3.text-right Tổng đơn hàng: #{totalPrice.toLocaleString()}₫
+      .d-flex.flex-column.align-items-end.mt-4
+        h5.fw-bold Tổng đơn hàng: #{totalPrice.toLocaleString()}₫
+        a(href="/checkout", class="btn btn-success btn-lg px-4 rounded-pill mt-2") THANH TOÁN
 
-        div.text-right.mt-3
-          a(href="/checkout", class="btn btn-success") THANH TOÁN
+  style.
+    .cart-wrapper {
+      background: white !important;
+      border: 1px solid #dee2e6 !important;
+      border-radius: 12px !important;
+      padding: 24px !important;
+    }

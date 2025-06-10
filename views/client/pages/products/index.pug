@@ -47,10 +47,10 @@ block main
             if data.products.length
               each product, index in data.products
                 .col.product-item(data-index=index, style="flex: 0 0 calc(33.33% - 15px); max-width: calc(33.33% - 15px); margin: 7.5px;")
-                  a(href=`/products/detail/${product.slug}`, style="text-decoration: none;")
-                    .card.shadow-sm(style="height: 300px; border-radius: 12px; display: flex; flex-direction: column;")
+                  a(href=`/products/detail/${product.slug}`, style="text-decoration: none; width: 100%;")
+                    .card.shadow-sm(style="height: 330px; border-radius: 12px; display: flex; flex-direction: column;")
                       if product.thumbnail && Array.isArray(product.thumbnail) && product.thumbnail.length
-                        img.card-img-top(src=product.thumbnail[0], alt=product.title, style="height: 165px; object-fit: cover; border-radius: 12px 12px 0 0;")
+                        img.card-img-top(src=product.thumbnail[0], alt=product.title, style="height: 195px; object-fit: cover; border-radius: 12px 12px 0 0;")
                       .card-body.text-center(style="flex-grow: 1; padding: 0.75rem 1rem;")
                         h6(style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;")= product.title
                         del.text-muted(style="font-size: 0.85rem;")= product.price.toLocaleString() + 'đ'
@@ -58,7 +58,6 @@ block main
                           - const discounted = Math.round(product.price * (1 - product.discountPercentage / 100));
                           p.text-danger.mb-1(style="font-weight: bold; font-size: 1rem;")= discounted.toLocaleString() + 'đ'
                           p.text-success(style="font-size: 0.85rem;") -#{product.discountPercentage}%
-
             else
               .col
                 p.text-muted Không có sản phẩm nào
@@ -132,6 +131,7 @@ block main
       margin-top: 5px;
       font-size: 0.9rem;
     }
+
     .filter-card.stick-end {
       position: absolute !important;
       z-index: 100;
@@ -143,10 +143,18 @@ block main
     .product-item {
       margin-bottom: 15px;
       display: none;
+      justify-content: center;
+      align-items: stretch;
     }
 
     .product-item.show {
       display: flex;
+    }
+
+    .card-img-top {
+      width: 100%;
+      display: block;
+      object-fit: cover;
     }
 
   script.

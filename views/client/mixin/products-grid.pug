@@ -36,7 +36,6 @@ mixin products-grid(data, name)
                     span.star-empty ☆
                 span.fav ♥ Yêu thích
 
-    // Mũi tên điều hướng
     .product-carousel-button-prev &lt;
     .product-carousel-button-next &gt;
 
@@ -61,14 +60,16 @@ mixin products-grid(data, name)
     }
 
     .swiper.product-container .swiper-slide {
-      width: 240px !important;
-      height: 340px !important;
+      height: 340px;
       flex-shrink: 0;
+      display: flex;
+      justify-content: center;
     }
 
     .product-item {
-      width: 235px;
-      height: 340px;
+      width: 100%;
+      max-width: 235px;
+      height: 100%;
       background: #fff;
       border-radius: 8px;
       overflow: hidden;
@@ -229,14 +230,30 @@ mixin products-grid(data, name)
   script.
     document.addEventListener('DOMContentLoaded', function () {
       new Swiper('.product-container', {
-        slidesPerView: 'auto',
-        slidesPerGroup: 1,
         spaceBetween: 20,
+        slidesPerGroup: 1,
         loop: false,
         centeredSlides: false,
         navigation: {
           nextEl: '.product-carousel-button-next',
           prevEl: '.product-carousel-button-prev',
+        },
+        breakpoints: {
+          1280: {
+            slidesPerView: 5,
+          },
+          1024: {
+            slidesPerView: 4,
+          },
+          768: {
+            slidesPerView: 3,
+          },
+          480: {
+            slidesPerView: 2,
+          },
+          0: {
+            slidesPerView: 1,
+          },
         }
       });
     });

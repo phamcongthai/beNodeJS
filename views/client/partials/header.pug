@@ -68,9 +68,11 @@ header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
                   i.fas.fa-user-plus.me-2
                   | Đăng ký
         li.nav-item
-          a.nav-link.text-white.bg-black.d-flex.align-items-center.px-3.py-2.rounded-pill(href="/cart", style="gap: 6px; background-color: black !important;")
+          a.nav-link.text-white.bg-black.d-flex.align-items-center.px-3.py-2.rounded-pill.position-relative(href="/cart", style="gap: 6px; background-color: black !important;")
             i.fas.fa-shopping-cart
-            | Giỏ hàng (#{miniCart ? total : 0})
+            if miniCart && total > 0
+              span.cart-badge= total
+            | Giỏ hàng
 
   // Font Awesome
   link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css")
@@ -291,4 +293,18 @@ header.navbar.navbar-expand-lg.bg-dark.shadow.py-2
     #suggestions-list li:hover {
       background-color: #f0f0f0;
       cursor: pointer;
+    }
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      left: 14px;
+      background-color: orange;
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 2px 5px;
+      border-radius: 999px;
+      line-height: 1;
+      min-width: 18px;
+      text-align: center;
     }
