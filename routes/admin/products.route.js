@@ -19,9 +19,8 @@ router.delete('/deleteT/:id', productController.deleteT);
 //Tạo mới sản phẩm.
 router.get('/create', productController.createProducts);
 router.post(
-  '/create',
-  upload.single('thumbnail'),
-  uploadClould.uploadToClould,
+  '/create',upload.array('thumbnail[]'), // multer nhận nhiều ảnh trong field 'thumbnail'
+  uploadMultilClould.uploadMultipleToCloud,
   validateProducts.validateCreateProducts,
   productController.createProductsBE
 );
@@ -40,7 +39,6 @@ router.patch(
   validateProducts.validateCreateProducts,
   productController.editProductBE
 );
-
-module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.
 //Chi tiết sản phẩm :
 router.get('/detail/:id', productController.detailProducts);
+module.exports = router; // viết như này là để sau này thêm được nhiều route hơn.

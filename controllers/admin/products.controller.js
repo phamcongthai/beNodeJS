@@ -152,65 +152,75 @@ module.exports.deleteT = async (req, res) => {
     res.redirect("back");
 };
 
-// [GET] /admin/products/create/:id
+// [GET] /admin/products/create
 module.exports.createProducts = async (req, res) => {
-    try {
-        const categories = await ProductsCategoryModel.find({
-            deleted: false
-        });
-        const brands = await BrandModel.find({
-            deleted: false
-        });
+  try {
+    const categories = await ProductsCategoryModel.find({ deleted: false });
+    const brands = await BrandModel.find({ deleted: false });
 
-        if (!categories.length) {
-            return res.status(404).send("Không có danh mục nào.");
-        }
-
-        const categoryTree = createTreeHelper(categories);
-
-        res.render("admin/pages/products/createProducts", {
-            title: "Trang tạo mới sản phẩm",
-            category: categoryTree,
-            brands, // truyền danh sách brand xuống pug
-        });
-    } catch (err) {
-        console.error("GET createProducts error:", err);
-        res.redirect("back");
+    if (!categories.length) {
+      return res.status(404).send("Không có danh mục nào.");
     }
+
+    const categoryTree = createTreeHelper(categories);
+
+    res.render("admin/pages/products/createProducts", {
+      title: "Trang tạo mới sản phẩm",
+      category: categoryTree,
+      brands,
+    });
+  } catch (err) {
+    console.error("GET createProducts error:", err);
+    res.redirect("back");
+  }
 };
 
-// [POST] /admin/products/create/:id
+// [POST] /admin/products/create
 module.exports.createProductsBE = async (req, res) => {
-    try {
-        req.body.price = parseInt(req.body.price);
-        req.body.discountPercentage = parseInt(req.body.discountPercentage);
-        req.body.stock = parseInt(req.body.stock);
+  try {
+    req.body.price = parseInt(req.body.price);
+    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.stock = parseInt(req.body.stock);
 
-        req.body.position = req.body.position ?
-            parseInt(req.body.position) :
-            (await ProductsModel.countDocuments()) + 1;
+    // Tự động gán position nếu chưa có
+    req.body.position = req.body.position
+      ? parseInt(req.body.position)
+      : (await ProductsModel.countDocuments()) + 1;
 
-        // ✅ Tách chuỗi tags thành mảng
-        if (req.body.tags && typeof req.body.tags === "string") {
-            req.body.tags = req.body.tags
-                .split(",")
-                .map((tag) => tag.trim())
-                .filter((tag) => tag);
-        }
-
-        // ✅ Người tạo
-        req.body.createBy = {
-            account_id: res.locals.currentUser._id,
-        };
-
-        const product = new ProductsModel(req.body);
-        await product.save();
-
-        res.redirect("/admin/products");
-    } catch (err) {
-        console.error("POST createProductsBE error:", err);
-        res.redirect("back");
+    // Tách tags
+    if (req.body.tags && typeof req.body.tags === "string") {
+      req.body.tags = req.body.tags
+        .split(",")
+        .map(tag => tag.trim())
+        .filter(tag => tag.length > 0);
+    } else {
+      req.body.tags = [];
     }
+
+    // Gán người tạo
+    req.body.createBy = {
+      account_id: res.locals.currentUser._id,
+    };
+
+    // ✅ Xử lý thumbnail giống edit: lấy từ req.body['thumbnail[]']
+    const thumbnails = req.body['thumbnail[]'];
+
+    if (thumbnails && Array.isArray(thumbnails)) {
+      req.body.thumbnail = thumbnails;
+    } else if (typeof thumbnails === "string") {
+      req.body.thumbnail = [thumbnails]; // chỉ 1 ảnh
+    } else {
+      req.body.thumbnail = [];
+    }
+
+    const newProduct = new ProductsModel(req.body);
+    await newProduct.save();
+
+    res.redirect("/admin/products");
+  } catch (err) {
+    console.error("POST createProductsBE error:", err);
+    res.redirect("back");
+  }
 };
 
 // [GET] /admin/products/edit/:id
